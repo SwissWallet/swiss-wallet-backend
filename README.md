@@ -28,7 +28,7 @@ Este documento descreve o fluxo de trabalho de Git adotado por nossa equipe para
 ## Estrutura de Branches
 
 1. **`Developer`**
-   - A branch `develop` é usada para o desenvolvimento de novas funcionalidades e correções de bugs.
+   - A branch `developer` é usada para o desenvolvimento de novas funcionalidades e correções de bugs.
    - Os merges nesta branch representam o código que está pronto para ser integrado e testado na branch de `QA`.
 
 2. **`QA (Quality Assurance)`**
@@ -42,15 +42,15 @@ Este documento descreve o fluxo de trabalho de Git adotado por nossa equipe para
 
 3. **Branches de Funcionalidades (Feature Branches)**
    - **Nome**: `feature/nome-da-funcionalidade`
-   - Criadas a partir da branch `develop` para o desenvolvimento de novas funcionalidades.
+   - Criadas a partir da branch `developer` para o desenvolvimento de novas funcionalidades.
    - Após a conclusão do desenvolvimento, deve-se fazer um pull request para a branch `develop`.
    - Exemplo de criação: `git checkout -b feature/nome-da-funcionalidade develop`
 
 4. **Branches de Correções (Hotfix Branches)**
    - **Nome**: `hotfix/nome-da-correção`
-   - Criadas a partir da branch `main` para correção de bugs críticos em produção.
-   - Após a correção, deve-se fazer um pull request para a branch `main` e `develop`.
-   - Exemplo de criação: `git checkout -b hotfix/nome-da-correção main`
+   - Criadas a partir da branch `master` para correção de bugs críticos em produção.
+   - Após a correção, deve-se fazer um pull request para a branch `developer`.
+   - Exemplo de criação: `git checkout -b hotfix/nome-da-correção master`
 
 5. **Outras Branches**
    - **Também é possível a utilização de outras branches semânticas de acordo com a necessidade da alteração que esta branch representa.**
@@ -58,7 +58,7 @@ Este documento descreve o fluxo de trabalho de Git adotado por nossa equipe para
 ## Fluxo de Trabalho
 
 1. **Início de uma Nova Funcionalidade**
-   - Atualize a branch `develop`
+   - Atualize a branch `developer`
    - Crie uma branch de funcionalidade a partir de `developer`.
    - Trabalhe na funcionalidade e faça commits frequentemente.
    - Quando a funcionalidade estiver concluída, abra um pull request para `developer` e solicite uma revisão de código.
@@ -85,7 +85,7 @@ Este documento descreve o fluxo de trabalho de Git adotado por nossa equipe para
 
 - **Criar e mudar para uma nova branch de funcionalidade**:
   ```bash
-  git checkout -b feature/nome-da-funcionalidade develop
+  git checkout -b feature/nome-da-funcionalidade developer
 
 - **Subir seu código para o repositório remoto**:
   ```bash
