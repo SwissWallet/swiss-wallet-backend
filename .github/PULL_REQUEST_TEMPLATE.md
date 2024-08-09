@@ -13,4 +13,4 @@
 ## Checklist
 
 - [ ] Tests were added?
-- [ ] The documentation was updated (if needed)
+- [ ] The documentation was updated (if needed.)
