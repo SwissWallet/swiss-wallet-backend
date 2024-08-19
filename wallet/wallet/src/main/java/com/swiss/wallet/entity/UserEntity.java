@@ -45,16 +45,13 @@ public class UserEntity {
         this.address = address;
     }
 
-    public UserEntity(String username, String password, String name, String cpf, String birthDate, String phone, String verificationCode, Role role, Address address) {
+    public UserEntity(String username, String password, String name, String cpf, String birthDate, String phone) {
         this.username = username;
         this.password = password;
         this.name = name;
         this.cpf = cpf;
         this.birthDate = birthDate;
         this.phone = phone;
-        this.verificationCode = verificationCode;
-        this.role = role;
-        this.address = address;
     }
 
     public UserEntity() {
