@@ -1,4 +1,4 @@
-package com.swiss.wallet;
+package com.swiss.wallet.web.controller;
 
 import com.swiss.wallet.service.UserService;
 import org.springframework.web.bind.annotation.RequestMapping;
