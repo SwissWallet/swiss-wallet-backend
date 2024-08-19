@@ -33,5 +33,4 @@ public record UserResponseDto (String username,
         return users.stream()
                 .map(user -> toUserResponse(user)).collect(Collectors.toList());
     }
-
 }
