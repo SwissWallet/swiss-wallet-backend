@@ -22,11 +22,6 @@ public class Account {
         this.user = user;
     }
 
-    public Account(Double value, UserEntity user) {
-        this.value = value;
-        this.user = user;
-    }
-
     public Account() {
     }
 
