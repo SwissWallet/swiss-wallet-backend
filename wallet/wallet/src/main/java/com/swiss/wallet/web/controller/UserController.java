@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -45,24 +46,47 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(UserResponseDto.toUserResponse(user));
     }
 
+    @Operation(summary = "Generate code to change password", description = "Resource to generate code",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Resource retrieved successfully",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDto.class))),
+                    @ApiResponse(responseCode = "404", description = "Resource not found",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class)))
+            })
     @PostMapping("/recover-password")
     public ResponseEntity<String> recoverPassword(@RequestParam String username){
         String code = userService.recoverPassword(username);
         return ResponseEntity.ok().body(code);
     }
 
-    //Method for changing a forgotten user password
+    @Operation(summary = "Change forgotten password", description = "Resource to change forgotten password",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Resource retrieved successfully",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDto.class))),
+                    @ApiResponse(responseCode = "404", description = "Resource not found",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+                    @ApiResponse(responseCode = "400", description = "Verification code does not match",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+
+            })
     @PutMapping("/recover-password")
     public ResponseEntity<Void> updateForgottenPassword(@RequestBody UserPasswordRecoveryDto passwordRecoveryDto){
         userService.changeForgottenPassword(passwordRecoveryDto);
         return ResponseEntity.ok().build();
     }
 
+    @Operation(summary = "Recover a logged in user", description = "Requisição exige um Bearer Token. Acesso restrito a CLIENT",
+            security = @SecurityRequirement(name = "security"),
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Resource retrieved successfully",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDto.class))),
+                    @ApiResponse(responseCode = "403", description = "User not allowed to access this resource",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+            })
     @GetMapping("/current")
     @PreAuthorize("hasRole('CLIENT')")
     public ResponseEntity<UserResponseDto> getCurrentUser(@AuthenticationPrincipal JwtUserDetails userDetails){
         UserEntity user = userService.findById(userDetails.getId());
         return ResponseEntity.ok().body(UserResponseDto.toUserResponse(user));
     }
-
 }
