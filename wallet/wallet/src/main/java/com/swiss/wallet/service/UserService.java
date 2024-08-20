@@ -20,10 +20,11 @@ public class UserService {
     private final IAccountRepository accountRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public UserService(IUserRepository userRepository, IAddressRepository addressRepository, IAccountRepository accountRepository) {
+    public UserService(IUserRepository userRepository, IAddressRepository addressRepository, IAccountRepository accountRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.addressRepository = addressRepository;
         this.accountRepository = accountRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public UserEntity saveUser(UserAddressCreateDto userAddressCreateDto) {
