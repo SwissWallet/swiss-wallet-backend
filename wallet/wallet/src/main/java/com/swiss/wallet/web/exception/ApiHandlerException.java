@@ -1,6 +1,7 @@
 package com.swiss.wallet.web.exception;
 
 
+import com.swiss.wallet.exception.InvalidCredencialException;
 import com.swiss.wallet.exception.UserNotFoundException;
 import com.swiss.wallet.exception.UserUniqueViolationException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,5 +29,13 @@ public class ApiHandlerException {
                 .status(HttpStatus.NOT_FOUND)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(new ErrorMessage(request, HttpStatus.NOT_FOUND, ex.getMessage()));
+    }
+
+    @ExceptionHandler(InvalidCredencialException.class)
+    public ResponseEntity<ErrorMessage> invalidCredencialException(RuntimeException ex, HttpServletRequest request){
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new ErrorMessage(request, HttpStatus.BAD_REQUEST, ex.getMessage()));
     }
 }
