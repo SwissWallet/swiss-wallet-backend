@@ -3,6 +3,7 @@ package com.swiss.wallet.service;
 import com.swiss.wallet.entity.Account;
 import com.swiss.wallet.entity.Address;
 import com.swiss.wallet.entity.UserEntity;
+import com.swiss.wallet.exception.UserNotFoundException;
 import com.swiss.wallet.exception.UserUniqueViolationException;
 import com.swiss.wallet.repository.IAccountRepository;
 import com.swiss.wallet.repository.IAddressRepository;
@@ -39,5 +40,12 @@ public class UserService {
         accountRepository.save(account);
 
         return user;
+    }
+
+    public UserEntity findByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(
+                        () -> new UserNotFoundException(String.format("User not found. Please check the user ID or username and try again."))
+                );
     }
 }
