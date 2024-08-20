@@ -34,11 +34,12 @@ public class UserService {
     public UserEntity saveUser(UserAddressCreateDto userAddressCreateDto) {
 
         try{
-            Address address = addressRepository.save(userAddressCreateDto.address().toAddress());
             UserEntity user = userAddressCreateDto.user().toUser();
-            user.setAddress(address);
             user.setPassword(passwordEncoder.encode(userAddressCreateDto.user().password()));
             user = userRepository.save(user);
+            Address address = addressRepository.save(userAddressCreateDto.address().toAddress());
+            user.setAddress(address);
+            userRepository.save(user);
             Account account = new Account();
             account.setUser(user);
             accountRepository.save(account);
