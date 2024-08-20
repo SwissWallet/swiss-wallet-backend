@@ -12,6 +12,7 @@ import com.swiss.wallet.repository.IUserRepository;
 import com.swiss.wallet.web.dto.UserAddressCreateDto;
 import com.swiss.wallet.web.dto.UserPasswordRecoveryDto;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -32,22 +33,20 @@ public class UserService {
 
     public UserEntity saveUser(UserAddressCreateDto userAddressCreateDto) {
 
-        Address address = addressRepository.save(userAddressCreateDto.address().toAddress());
-
-        UserEntity user = userAddressCreateDto.user().toUser();
-        if(user == null){
-            throw new UserUniqueViolationException(String.format("A user with this cpf= %s already exists. Please use a different cpf.", user.getCpf()));
+        try{
+            Address address = addressRepository.save(userAddressCreateDto.address().toAddress());
+            UserEntity user = userAddressCreateDto.user().toUser();
+            user.setAddress(address);
+            user.setPassword(passwordEncoder.encode(userAddressCreateDto.user().password()));
+            user = userRepository.save(user);
+            Account account = new Account();
+            account.setUser(user);
+            accountRepository.save(account);
+            return user;
+        }catch (DataIntegrityViolationException ex){
+            throw new UserUniqueViolationException(String.format("A user with this username= %s already exists. Please use a different username.", userAddressCreateDto.user().username()));
         }
-        user.setAddress(address);
-        user.setPassword(passwordEncoder.encode(userAddressCreateDto.user().password()));
-        user = userRepository.save(user);
 
-
-        Account account = new Account();
-        account.setUser(user);
-        accountRepository.save(account);
-
-        return user;
     }
 
     public UserEntity findByUsername(String username) {
