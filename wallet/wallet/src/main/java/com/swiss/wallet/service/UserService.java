@@ -85,4 +85,12 @@ public class UserService {
         user.setVerificationCode(null);
         userRepository.save(user);
     }
+
+    //Method that searches user by id
+    public UserEntity findById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(
+                        () -> new UserNotFoundException(String.format("User not found. Please check the user ID or username and try again."))
+                );
+    }
 }

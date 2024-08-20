@@ -1,12 +1,15 @@
 package com.swiss.wallet.web.controller;
 
 import com.swiss.wallet.entity.UserEntity;
+import com.swiss.wallet.jwt.JwtUserDetails;
 import com.swiss.wallet.service.UserService;
 import com.swiss.wallet.web.dto.UserAddressCreateDto;
 import com.swiss.wallet.web.dto.UserPasswordRecoveryDto;
 import com.swiss.wallet.web.dto.UserResponseDto;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -38,4 +41,12 @@ public class UserController {
         userService.changeForgottenPassword(passwordRecoveryDto);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/current")
+    @PreAuthorize("hasRole('CLIENT')")
+    public ResponseEntity<UserResponseDto> getCurrentUser(@AuthenticationPrincipal JwtUserDetails userDetails){
+        UserEntity user = userService.findById(userDetails.getId());
+        return ResponseEntity.ok().body(UserResponseDto.toUserResponse(user));
+    }
+
 }
