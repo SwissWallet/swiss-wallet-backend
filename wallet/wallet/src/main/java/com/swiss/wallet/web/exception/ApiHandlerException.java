@@ -4,6 +4,7 @@ package com.swiss.wallet.web.exception;
 import com.swiss.wallet.exception.InvalidCredencialException;
 import com.swiss.wallet.exception.UserNotFoundException;
 import com.swiss.wallet.exception.UserUniqueViolationException;
+import com.swiss.wallet.exception.VerificationCodeInvalidException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -33,6 +34,14 @@ public class ApiHandlerException {
 
     @ExceptionHandler(InvalidCredencialException.class)
     public ResponseEntity<ErrorMessage> invalidCredencialException(RuntimeException ex, HttpServletRequest request){
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new ErrorMessage(request, HttpStatus.BAD_REQUEST, ex.getMessage()));
+    }
+
+    @ExceptionHandler(VerificationCodeInvalidException.class)
+    public ResponseEntity<ErrorMessage> verificationCodeInvalidException(RuntimeException ex, HttpServletRequest request){
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .contentType(MediaType.APPLICATION_JSON)
