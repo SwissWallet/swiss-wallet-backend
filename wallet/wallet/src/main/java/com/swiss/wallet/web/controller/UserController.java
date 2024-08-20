@@ -5,6 +5,7 @@ import com.swiss.wallet.service.UserService;
 import com.swiss.wallet.web.dto.UserAddressCreateDto;
 import com.swiss.wallet.web.dto.UserPasswordRecoveryDto;
 import com.swiss.wallet.web.dto.UserResponseDto;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +20,7 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<UserResponseDto> saveUser(@RequestBody UserAddressCreateDto userAddressCreateDto){
+    public ResponseEntity<UserResponseDto> saveUser(@RequestBody @Valid UserAddressCreateDto userAddressCreateDto){
         UserEntity user = userService.saveUser(userAddressCreateDto);
         return ResponseEntity.ok().body(UserResponseDto.toUserResponse(user));
     }

@@ -1,5 +1,9 @@
 package com.swiss.wallet.web.dto;
 
-public record UserAddressCreateDto (UserCreateDto user,
+import jakarta.validation.Valid;
+
+public record UserAddressCreateDto (@Valid
+                                    UserCreateDto user,
+                                    @Valid
                                     AddressCreateDto address) {
 }
