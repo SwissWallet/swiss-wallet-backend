@@ -6,6 +6,7 @@ import com.swiss.wallet.web.dto.UserAddressCreateDto;
 import com.swiss.wallet.web.dto.UserPasswordRecoveryDto;
 import com.swiss.wallet.web.dto.UserResponseDto;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,7 +23,7 @@ public class UserController {
     @PostMapping
     public ResponseEntity<UserResponseDto> saveUser(@RequestBody @Valid UserAddressCreateDto userAddressCreateDto){
         UserEntity user = userService.saveUser(userAddressCreateDto);
-        return ResponseEntity.ok().body(UserResponseDto.toUserResponse(user));
+        return ResponseEntity.status(HttpStatus.CREATED).body(UserResponseDto.toUserResponse(user));
     }
 
     //Method to generate forgotten code the password
