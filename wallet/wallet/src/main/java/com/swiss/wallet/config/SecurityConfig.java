@@ -37,6 +37,13 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/v3/auth").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v3/users/recover-password").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/api/v3/users/recover-password").permitAll()
+                        .requestMatchers(
+                                antMatcher("/docs-wallet.html"),
+                                antMatcher("/docs-wallet/**"),
+                                antMatcher("/swagger-ui.html"),
+                                antMatcher("/swagger-ui/**"),
+                                antMatcher("/webjars/**")
+                        ).permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(
