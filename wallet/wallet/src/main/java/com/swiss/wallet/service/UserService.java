@@ -10,6 +10,7 @@ import com.swiss.wallet.repository.IAccountRepository;
 import com.swiss.wallet.repository.IAddressRepository;
 import com.swiss.wallet.repository.IUserRepository;
 import com.swiss.wallet.web.dto.UserAddressCreateDto;
+import com.swiss.wallet.web.dto.UserPasswordChangeDto;
 import com.swiss.wallet.web.dto.UserPasswordRecoveryDto;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -93,5 +94,23 @@ public class UserService {
                 .orElseThrow(
                         () -> new UserNotFoundException(String.format("User not found. Please check the user ID or username and try again."))
                 );
+    }
+
+    public void changeUserPassword(UserPasswordChangeDto passwordChangeDto, Long id) {
+        if(!passwordChangeDto.newPassword().equals(passwordChangeDto.confirmPassword())){
+            throw new NewPasswordInvalidException("The new password provided is invalid. Please follow the password requirements.");
+        }
+
+        UserEntity user = userRepository.findById(id)
+                .orElseThrow(
+                        () -> new UserNotFoundException(String.format("User not found. Please check the user ID or username and try again."))
+                );
+
+        if (!passwordEncoder.matches(passwordChangeDto.currentPassword(), user.getPassword())){
+            throw new PasswordInvalidException("The current password provided is invalid. Please try again");
+        }
+
+        user.setPassword(passwordEncoder.encode(passwordChangeDto.newPassword()));
+        userRepository.save(user);
     }
 }
