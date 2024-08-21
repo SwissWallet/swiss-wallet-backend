@@ -89,4 +89,5 @@ public class UserController {
         UserEntity user = userService.findById(userDetails.getId());
         return ResponseEntity.ok().body(UserResponseDto.toUserResponse(user));
     }
+
 }
