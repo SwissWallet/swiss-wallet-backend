@@ -132,4 +132,19 @@ public class UserService {
         addressRepository.save(address);
     }
 
+    public void deleteUser(Long id) {
+        UserEntity user = findById(id);
+        Address address = addressRepository.findById(user.getAddress().getId())
+                .orElseThrow(
+                () -> new AddressNotFoundException(String.format("Address not found. Please check the user ID or username and try again."))
+        );
+        Account account = accountRepository.findAccountByUser(user)
+                .orElseThrow(
+                        () -> new AccountNotFoundException(String.format("Account not found. Please check the user ID or username and try again."))
+                );
+
+        accountRepository.deleteById(account.getId());
+        userRepository.deleteById(id);
+        addressRepository.deleteById(address.getId());
+    }
 }
