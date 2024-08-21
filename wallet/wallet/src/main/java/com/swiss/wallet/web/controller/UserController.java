@@ -104,4 +104,12 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
+    @DeleteMapping
+    @PreAuthorize("hasRole('CLIENT')")
+    public ResponseEntity<Void> deleteUser(@AuthenticationPrincipal JwtUserDetails userDetails){
+
+        userService.deleteUser(userDetails.getId());
+        return ResponseEntity.ok().build();
+    }
+
 }
