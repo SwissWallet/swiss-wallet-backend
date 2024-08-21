@@ -3,9 +3,7 @@ package com.swiss.wallet.service;
 import com.swiss.wallet.entity.Account;
 import com.swiss.wallet.entity.Address;
 import com.swiss.wallet.entity.UserEntity;
-import com.swiss.wallet.exception.UserNotFoundException;
-import com.swiss.wallet.exception.UserUniqueViolationException;
-import com.swiss.wallet.exception.VerificationCodeInvalidException;
+import com.swiss.wallet.exception.*;
 import com.swiss.wallet.repository.IAccountRepository;
 import com.swiss.wallet.repository.IAddressRepository;
 import com.swiss.wallet.repository.IUserRepository;
@@ -97,10 +95,6 @@ public class UserService {
     }
 
     public void changeUserPassword(UserPasswordChangeDto passwordChangeDto, Long id) {
-        if(!passwordChangeDto.newPassword().equals(passwordChangeDto.confirmPassword())){
-            throw new NewPasswordInvalidException("The new password provided is invalid. Please follow the password requirements.");
-        }
-
         UserEntity user = userRepository.findById(id)
                 .orElseThrow(
                         () -> new UserNotFoundException(String.format("User not found. Please check the user ID or username and try again."))
@@ -108,6 +102,10 @@ public class UserService {
 
         if (!passwordEncoder.matches(passwordChangeDto.currentPassword(), user.getPassword())){
             throw new PasswordInvalidException("The current password provided is invalid. Please try again");
+        }
+
+        if(!passwordChangeDto.newPassword().equals(passwordChangeDto.confirmPassword())){
+            throw new NewPasswordInvalidException("The new password provided is invalid. Please follow the password requirements.");
         }
 
         user.setPassword(passwordEncoder.encode(passwordChangeDto.newPassword()));
