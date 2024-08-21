@@ -4,6 +4,7 @@ import com.swiss.wallet.entity.UserEntity;
 import com.swiss.wallet.jwt.JwtUserDetails;
 import com.swiss.wallet.service.UserService;
 import com.swiss.wallet.web.dto.UserAddressCreateDto;
+import com.swiss.wallet.web.dto.UserPasswordChangeDto;
 import com.swiss.wallet.web.dto.UserPasswordRecoveryDto;
 import com.swiss.wallet.web.dto.UserResponseDto;
 import com.swiss.wallet.web.exception.ErrorMessage;
@@ -90,5 +91,11 @@ public class UserController {
         return ResponseEntity.ok().body(UserResponseDto.toUserResponse(user));
     }
 
-
+    @PutMapping("/password")
+    @PreAuthorize("hasRole('CLIENT')")
+    public ResponseEntity<Void> updateUserPassword(@RequestBody UserPasswordChangeDto passwordChangeDto,
+                                                   @AuthenticationPrincipal JwtUserDetails userDetails){
+        userService.changeUserPassword(passwordChangeDto, userDetails.getId());
+        return ResponseEntity.ok().build();
+    }
 }
