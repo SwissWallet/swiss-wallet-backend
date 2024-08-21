@@ -7,6 +7,7 @@ import com.swiss.wallet.exception.*;
 import com.swiss.wallet.repository.IAccountRepository;
 import com.swiss.wallet.repository.IAddressRepository;
 import com.swiss.wallet.repository.IUserRepository;
+import com.swiss.wallet.web.dto.AddressCreateDto;
 import com.swiss.wallet.web.dto.UserAddressCreateDto;
 import com.swiss.wallet.web.dto.UserPasswordChangeDto;
 import com.swiss.wallet.web.dto.UserPasswordRecoveryDto;
@@ -111,4 +112,24 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(passwordChangeDto.newPassword()));
         userRepository.save(user);
     }
+
+    public void changeUserAddress(AddressCreateDto addressCreateDto, Long id){
+        UserEntity user = userRepository.findById(id)
+                .orElseThrow(
+                        () -> new UserNotFoundException(String.format("User not found. Please check the user ID or username and try again."))
+                );
+
+        Address address = addressRepository.findById(user.getAddress().getId())
+                .orElseThrow(
+                        () -> new AddressNotFoundException(String.format("Address not found. Please check the user ID or username and try again."))
+                );
+
+        address.setZipCode(addressCreateDto.zipCode());
+        address.setStreet(addressCreateDto.street());
+        address.setCity(addressCreateDto.city());
+        address.setUf(address.getUf());
+        address.setNumber(addressCreateDto.number());
+        addressRepository.save(address);
+    }
+
 }
