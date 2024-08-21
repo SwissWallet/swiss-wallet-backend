@@ -1,10 +1,7 @@
 package com.swiss.wallet.web.exception;
 
 
-import com.swiss.wallet.exception.InvalidCredencialException;
-import com.swiss.wallet.exception.UserNotFoundException;
-import com.swiss.wallet.exception.UserUniqueViolationException;
-import com.swiss.wallet.exception.VerificationCodeInvalidException;
+import com.swiss.wallet.exception.*;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -63,6 +60,22 @@ public class ApiHandlerException {
                         "Campo(s) inválidos",
                         result)
                 );
+    }
+
+    @ExceptionHandler(NewPasswordInvalidException.class)
+    public ResponseEntity<ErrorMessage> newPasswordInvalidException(RuntimeException ex, HttpServletRequest request){
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new ErrorMessage(request, HttpStatus.BAD_REQUEST, ex.getMessage()));
+    }
+
+    @ExceptionHandler(PasswordInvalidException.class)
+    public ResponseEntity<ErrorMessage> passwordInvalidException(RuntimeException ex, HttpServletRequest request){
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new ErrorMessage(request, HttpStatus.BAD_REQUEST, ex.getMessage()));
     }
 
 }

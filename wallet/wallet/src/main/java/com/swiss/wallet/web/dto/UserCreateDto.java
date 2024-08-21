@@ -12,7 +12,7 @@ public record UserCreateDto (@NotBlank
                              String username,
 
                              @NotBlank
-                             @Min(value = 6)
+                             @Size(min = 6)
                              String password,
 
                              @NotBlank
