@@ -3,10 +3,7 @@ package com.swiss.wallet.web.controller;
 import com.swiss.wallet.entity.UserEntity;
 import com.swiss.wallet.jwt.JwtUserDetails;
 import com.swiss.wallet.service.UserService;
-import com.swiss.wallet.web.dto.UserAddressCreateDto;
-import com.swiss.wallet.web.dto.UserPasswordChangeDto;
-import com.swiss.wallet.web.dto.UserPasswordRecoveryDto;
-import com.swiss.wallet.web.dto.UserResponseDto;
+import com.swiss.wallet.web.dto.*;
 import com.swiss.wallet.web.exception.ErrorMessage;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -98,4 +95,7 @@ public class UserController {
         userService.changeUserPassword(passwordChangeDto, userDetails.getId());
         return ResponseEntity.ok().build();
     }
+
+
+
 }
