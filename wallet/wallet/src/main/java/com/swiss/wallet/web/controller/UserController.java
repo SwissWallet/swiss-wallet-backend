@@ -96,6 +96,12 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-
+    @PutMapping("/address")
+    @PreAuthorize("hasRole('CLIENT')")
+    public ResponseEntity<Void> updateUserAddress(@RequestBody AddressCreateDto addressCreateDto,
+                                                   @AuthenticationPrincipal JwtUserDetails userDetails){
+        userService.changeUserAddress(addressCreateDto, userDetails.getId());
+        return ResponseEntity.ok().build();
+    }
 
 }
