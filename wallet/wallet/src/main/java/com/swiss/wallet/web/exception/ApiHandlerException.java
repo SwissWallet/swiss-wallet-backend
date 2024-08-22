@@ -23,8 +23,8 @@ public class ApiHandlerException {
                 .body(new ErrorMessage(request, HttpStatus.CONFLICT, ex.getMessage()));
     }
 
-    @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<ErrorMessage> userNotFoundException(RuntimeException ex, HttpServletRequest request){
+    @ExceptionHandler(ObjectNotFoundException.class)
+    public ResponseEntity<ErrorMessage> objectNotFoundException(RuntimeException ex, HttpServletRequest request){
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -76,21 +76,5 @@ public class ApiHandlerException {
                 .status(HttpStatus.BAD_REQUEST)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(new ErrorMessage(request, HttpStatus.BAD_REQUEST, ex.getMessage()));
-    }
-
-    @ExceptionHandler(AddressNotFoundException.class)
-    public ResponseEntity<ErrorMessage> addressNotFoundException(RuntimeException ex, HttpServletRequest request){
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(new ErrorMessage(request, HttpStatus.NOT_FOUND, ex.getMessage()));
-    }
-
-    @ExceptionHandler(AccountNotFoundException.class)
-    public ResponseEntity<ErrorMessage> accountNotFoundException(RuntimeException ex, HttpServletRequest request){
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(new ErrorMessage(request, HttpStatus.NOT_FOUND, ex.getMessage()));
     }
 }
