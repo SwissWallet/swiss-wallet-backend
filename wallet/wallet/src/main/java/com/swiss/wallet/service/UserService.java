@@ -53,7 +53,7 @@ public class UserService {
     public UserEntity findByUsername(String username) {
         return userRepository.findByUsername(username)
                 .orElseThrow(
-                        () -> new UserNotFoundException(String.format("User not found. Please check the user ID or username and try again."))
+                        () -> new ObjectNotFoundException(String.format("User not found. Please check the user ID or username and try again."))
                 );
     }
 
@@ -63,7 +63,7 @@ public class UserService {
 
         UserEntity user = userRepository.findByUsername(username)
                 .orElseThrow(
-                        () -> new UserNotFoundException(String.format("User not found. Please check the user ID or username and try again."))
+                        () -> new ObjectNotFoundException(String.format("User not found. Please check the user ID or username and try again."))
                 );
         user.setVerificationCode(passwordEncoder.encode(code));
         userRepository.save(user);
@@ -75,7 +75,7 @@ public class UserService {
     public void changeForgottenPassword(UserPasswordRecoveryDto passwordRecoveryDto) {
         UserEntity user = userRepository.findByUsername(passwordRecoveryDto.username())
                 .orElseThrow(
-                        () -> new UserNotFoundException(String.format("User not found. Please check the user ID or username and try again."))
+                        () -> new ObjectNotFoundException(String.format("User not found. Please check the user ID or username and try again."))
                 );
 
         if (!passwordEncoder.matches(passwordRecoveryDto.verificationCode(), user.getVerificationCode())){
@@ -91,14 +91,14 @@ public class UserService {
     public UserEntity findById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(
-                        () -> new UserNotFoundException(String.format("User not found. Please check the user ID or username and try again."))
+                        () -> new ObjectNotFoundException(String.format("User not found. Please check the user ID or username and try again."))
                 );
     }
 
     public void changeUserPassword(UserPasswordChangeDto passwordChangeDto, Long id) {
         UserEntity user = userRepository.findById(id)
                 .orElseThrow(
-                        () -> new UserNotFoundException(String.format("User not found. Please check the user ID or username and try again."))
+                        () -> new ObjectNotFoundException(String.format("User not found. Please check the user ID or username and try again."))
                 );
 
         if (!passwordEncoder.matches(passwordChangeDto.currentPassword(), user.getPassword())){
@@ -116,12 +116,12 @@ public class UserService {
     public void changeUserAddress(AddressCreateDto addressCreateDto, Long id){
         UserEntity user = userRepository.findById(id)
                 .orElseThrow(
-                        () -> new UserNotFoundException(String.format("User not found. Please check the user ID or username and try again."))
+                        () -> new ObjectNotFoundException(String.format("User not found. Please check the user ID or username and try again."))
                 );
 
         Address address = addressRepository.findById(user.getAddress().getId())
                 .orElseThrow(
-                        () -> new AddressNotFoundException(String.format("Address not found. Please check the user ID or username and try again."))
+                        () -> new ObjectNotFoundException(String.format("Address not found. Please check the user ID or username and try again."))
                 );
 
         address.setZipCode(addressCreateDto.zipCode());
@@ -136,11 +136,11 @@ public class UserService {
         UserEntity user = findById(id);
         Address address = addressRepository.findById(user.getAddress().getId())
                 .orElseThrow(
-                () -> new AddressNotFoundException(String.format("Address not found. Please check the user ID or username and try again."))
+                () -> new ObjectNotFoundException(String.format("Address not found. Please check the user ID or username and try again."))
         );
         Account account = accountRepository.findAccountByUser(user)
                 .orElseThrow(
-                        () -> new AccountNotFoundException(String.format("Account not found. Please check the user ID or username and try again."))
+                        () -> new ObjectNotFoundException(String.format("Account not found. Please check the user ID or username and try again."))
                 );
 
         accountRepository.deleteById(account.getId());
