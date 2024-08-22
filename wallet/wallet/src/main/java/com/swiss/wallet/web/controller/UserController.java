@@ -123,7 +123,14 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-
+    @Operation(summary = "Delete logged in user account", description = "Request requires a Bearer Token. Restricted access to CLIENT",
+            security = @SecurityRequirement(name = "security"),
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Resource retrieved successfully",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDto.class))),
+                    @ApiResponse(responseCode = "403", description = "User not allowed to access this resource",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+            })
     @DeleteMapping
     @PreAuthorize("hasRole('CLIENT')")
     public ResponseEntity<Void> deleteUser(@AuthenticationPrincipal JwtUserDetails userDetails){
