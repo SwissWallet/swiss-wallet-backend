@@ -15,6 +15,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UserService {
@@ -31,6 +32,7 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    @Transactional
     public UserEntity saveUser(UserAddressCreateDto userAddressCreateDto) {
 
         try{
@@ -50,6 +52,7 @@ public class UserService {
 
     }
 
+    @Transactional(readOnly = true)
     public UserEntity findByUsername(String username) {
         return userRepository.findByUsername(username)
                 .orElseThrow(
@@ -58,6 +61,7 @@ public class UserService {
     }
 
     //Method to generate forgotten code the password
+    @Transactional
     public String recoverPassword(String username) {
         String code = RandomStringUtils.randomAlphanumeric(6);
 
@@ -72,6 +76,7 @@ public class UserService {
     }
 
     //Method for changing a forgotten user password, passing the username, verification code and new password
+    @Transactional
     public void changeForgottenPassword(UserPasswordRecoveryDto passwordRecoveryDto) {
         UserEntity user = userRepository.findByUsername(passwordRecoveryDto.username())
                 .orElseThrow(
@@ -95,6 +100,7 @@ public class UserService {
                 );
     }
 
+    @Transactional
     public void changeUserPassword(UserPasswordChangeDto passwordChangeDto, Long id) {
         UserEntity user = userRepository.findById(id)
                 .orElseThrow(
@@ -113,6 +119,7 @@ public class UserService {
         userRepository.save(user);
     }
 
+    @Transactional
     public void changeUserAddress(AddressCreateDto addressCreateDto, Long id){
         UserEntity user = userRepository.findById(id)
                 .orElseThrow(
@@ -132,6 +139,7 @@ public class UserService {
         addressRepository.save(address);
     }
 
+    @Transactional
     public void deleteUser(Long id) {
         UserEntity user = findById(id);
         Address address = addressRepository.findById(user.getAddress().getId())
