@@ -73,7 +73,7 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-    @Operation(summary = "Recover a logged in user", description = "Requisição exige um Bearer Token. Acesso restrito a CLIENT",
+    @Operation(summary = "Recover a logged in user", description = "Request requires a Bearer Token. Restricted access to CLIENT",
             security = @SecurityRequirement(name = "security"),
             responses = {
                     @ApiResponse(responseCode = "200", description = "Resource retrieved successfully",
@@ -88,6 +88,16 @@ public class UserController {
         return ResponseEntity.ok().body(UserResponseDto.toUserResponse(user));
     }
 
+    @Operation(summary = "Change user password", description = "Request requires a Bearer Token. Restricted access to CLIENT",
+            security = @SecurityRequirement(name = "security"),
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Resource retrieved successfully",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDto.class))),
+                    @ApiResponse(responseCode = "400", description = "Password provided invalid or new password provided is invalid",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+                    @ApiResponse(responseCode = "403", description = "User not allowed to access this resource",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+            })
     @PutMapping("/password")
     @PreAuthorize("hasRole('CLIENT')")
     public ResponseEntity<Void> updateUserPassword(@RequestBody UserPasswordChangeDto passwordChangeDto,
@@ -96,6 +106,8 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
+
+
     @PutMapping("/address")
     @PreAuthorize("hasRole('CLIENT')")
     public ResponseEntity<Void> updateUserAddress(@RequestBody AddressCreateDto addressCreateDto,
@@ -103,6 +115,7 @@ public class UserController {
         userService.changeUserAddress(addressCreateDto, userDetails.getId());
         return ResponseEntity.ok().build();
     }
+
 
     @DeleteMapping
     @PreAuthorize("hasRole('CLIENT')")
