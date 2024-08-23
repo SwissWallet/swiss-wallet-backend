@@ -6,20 +6,20 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public record AccountResponseDto(Long id,
-                                 UserResponseDto user,
-                                 Double value) {
+                                 Double value,
+                                 UserResponseDto user) {
 
-    public AccountResponseDto(Long id, UserResponseDto user, Double value) {
+    public AccountResponseDto(Long id, Double value, UserResponseDto user) {
         this.id = id;
-        this.user = user;
         this.value = value;
+        this.user = user;
     }
 
     public static AccountResponseDto toAccountResponseDto(Account account){
         return new AccountResponseDto(
                 account.getId(),
-                UserResponseDto.toUserResponse(account.getUser()),
-                account.getValue()
+                account.getValue(),
+                UserResponseDto.toUserResponse(account.getUser())
         );
     }
     public static List<AccountResponseDto> toListAccountResponse(List<Account> accounts){

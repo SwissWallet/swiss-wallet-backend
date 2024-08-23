@@ -7,9 +7,7 @@ import com.swiss.wallet.web.dto.AccountResponseDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v3/accounts")
@@ -26,5 +24,12 @@ public class AccountController {
     public ResponseEntity<AccountResponseDto> getAccountUserCurrent(@AuthenticationPrincipal JwtUserDetails userDetails){
         Account account = accountService.findByUserId(userDetails.getId());
         return ResponseEntity.ok().body(AccountResponseDto.toAccountResponseDto(account));
+    }
+
+    @PostMapping("/register-deposit")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> registerDeposit(@RequestParam String username, @RequestParam Double value){
+        accountService.registerDeposit(username, value);
+        return ResponseEntity.ok().build();
     }
 }
