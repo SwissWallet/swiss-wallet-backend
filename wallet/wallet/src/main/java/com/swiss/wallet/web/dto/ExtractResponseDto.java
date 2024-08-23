@@ -14,17 +14,15 @@ public record ExtractResponseDto(Long id,
                                  Extract.Type type,
                                  String description,
                                  @JsonFormat(pattern = "dd/MM/yyyy - HH:mm")
-                                 LocalDateTime date,
-                                 AccountResponseDto account
+                                 LocalDateTime date
                                  ) {
 
-    public ExtractResponseDto(Long id, Double value, Extract.Type type, String description, LocalDateTime date, AccountResponseDto account) {
+    public ExtractResponseDto(Long id, Double value, Extract.Type type, String description, LocalDateTime date) {
         this.id = id;
         this.value = value;
         this.type = type;
         this.description = description;
         this.date = date;
-        this.account = account;
     }
 
     public static ExtractResponseDto toExtractResponse(Extract extract){
@@ -33,8 +31,7 @@ public record ExtractResponseDto(Long id,
                 extract.getValue(),
                 extract.getType(),
                 extract.getDescription(),
-                extract.getDate(),
-                AccountResponseDto.toAccountResponseDto(extract.getAccount())
+                extract.getDate()
         );
     }
 
