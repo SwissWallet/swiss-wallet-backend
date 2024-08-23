@@ -27,4 +27,6 @@ public class AccountController {
         Account account = accountService.findByUserId(userDetails.getId());
         return ResponseEntity.ok().body(AccountResponseDto.toAccountResponseDto(account));
     }
+
+
 }
