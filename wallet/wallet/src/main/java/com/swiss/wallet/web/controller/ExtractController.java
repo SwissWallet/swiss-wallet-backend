@@ -32,7 +32,7 @@ public class ExtractController {
         this.extractService = extractService;
     }
 
-    @Operation(summary = "Recover account logged in user", description = "Request requires a Bearer Token. Restricted access to CLIENT",
+    @Operation(summary = "Recover extract logged in user", description = "Request requires a Bearer Token. Restricted access to CLIENT",
             security = @SecurityRequirement(name = "security"),
             responses = {
                     @ApiResponse(responseCode = "200", description = "Resource retrieved successfully",
