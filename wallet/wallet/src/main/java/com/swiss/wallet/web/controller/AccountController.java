@@ -43,6 +43,17 @@ public class AccountController {
         return ResponseEntity.ok().body(AccountResponseDto.toAccountResponseDto(account));
     }
 
+
+    @Operation(summary = "Register deposit in user account", description = "Request requires a Bearer Token. Restricted access to CLIENT",
+            security = @SecurityRequirement(name = "security"),
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Resource retrieved successfully",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDto.class))),
+                    @ApiResponse(responseCode = "404", description = "Resource not found",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+                    @ApiResponse(responseCode = "403", description = "User not allowed to access this resource",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+            })
     @PostMapping("/register-deposit")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> registerDeposit(@RequestParam String username, @RequestParam Double value){
