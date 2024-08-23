@@ -23,8 +23,11 @@ public class ExtractController {
 
     @GetMapping("/current")
     @PreAuthorize("hasRole('CLIENT')")
-    public ResponseEntity<ExtractResponseDto> findExtractByUserLogged(@AuthenticationPrincipal JwtUserDetails userDetails){
+    public ResponseEntity<?> findExtractByUserLogged(@AuthenticationPrincipal JwtUserDetails userDetails){
         Extract extract = extractService.findByUserLogged(userDetails.getId());
+        if (extract == null){
+            return ResponseEntity.noContent().build();
+        }
         return ResponseEntity.ok().body(ExtractResponseDto.toExtractResponse(extract));
     }
 }
