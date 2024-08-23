@@ -11,6 +11,8 @@ import com.swiss.wallet.repository.IUserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 public class ExtractService {
 
@@ -25,7 +27,7 @@ public class ExtractService {
     }
 
     @Transactional(readOnly = true)
-    public Extract findByUserLogged(Long id) {
+    public List<Extract> findByUserLogged(Long id) {
         UserEntity user = userRepository.findById(id)
                 .orElseThrow(
                         () -> new ObjectNotFoundException(String.format("User not found. Please check the user ID or username and try again."))
@@ -35,6 +37,6 @@ public class ExtractService {
                 () -> new ObjectNotFoundException(String.format("Account id = %s not found", user.getName()))
         );
 
-        return extractRepository.findExtractByAccount(account);
+        return extractRepository.findAllByAccount(account);
     }
 }

@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v3/extracts")
 public class ExtractController {
@@ -24,10 +26,10 @@ public class ExtractController {
     @GetMapping("/current")
     @PreAuthorize("hasRole('CLIENT')")
     public ResponseEntity<?> findExtractByUserLogged(@AuthenticationPrincipal JwtUserDetails userDetails){
-        Extract extract = extractService.findByUserLogged(userDetails.getId());
+        List<Extract> extract = extractService.findByUserLogged(userDetails.getId());
         if (extract == null){
             return ResponseEntity.noContent().build();
         }
-        return ResponseEntity.ok().body(ExtractResponseDto.toExtractResponse(extract));
+        return ResponseEntity.ok().body(ExtractResponseDto.toListExtractResponse(extract));
     }
 }

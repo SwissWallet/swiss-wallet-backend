@@ -10,6 +10,8 @@ import com.swiss.wallet.repository.IUserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
 @Service
 public class AccountService {
 
@@ -53,6 +55,7 @@ public class AccountService {
         extract.setValue(value);
         extract.setType(Extract.Type.DEPOSIT);
         extract.setDescription(String.format("Deposit into user account username = %s", user.getUsername()));
+        extract.setDate(LocalDateTime.now());
         extractRepository.save(extract);
 
     }
