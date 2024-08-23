@@ -2,20 +2,21 @@ package com.swiss.wallet.service;
 
 import com.swiss.wallet.entity.Account;
 import com.swiss.wallet.entity.Address;
+import com.swiss.wallet.entity.Extract;
 import com.swiss.wallet.entity.UserEntity;
 import com.swiss.wallet.exception.*;
 import com.swiss.wallet.repository.IAccountRepository;
 import com.swiss.wallet.repository.IAddressRepository;
+import com.swiss.wallet.repository.IExtractRepository;
 import com.swiss.wallet.repository.IUserRepository;
-import com.swiss.wallet.web.dto.AddressCreateDto;
-import com.swiss.wallet.web.dto.UserAddressCreateDto;
-import com.swiss.wallet.web.dto.UserPasswordChangeDto;
-import com.swiss.wallet.web.dto.UserPasswordRecoveryDto;
+import com.swiss.wallet.web.dto.*;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 public class UserService {
@@ -23,12 +24,14 @@ public class UserService {
     private final IUserRepository userRepository;
     private final IAddressRepository addressRepository;
     private final IAccountRepository accountRepository;
+    private final IExtractRepository extractRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public UserService(IUserRepository userRepository, IAddressRepository addressRepository, IAccountRepository accountRepository, PasswordEncoder passwordEncoder) {
+    public UserService(IUserRepository userRepository, IAddressRepository addressRepository, IAccountRepository accountRepository, IExtractRepository extractRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.addressRepository = addressRepository;
         this.accountRepository = accountRepository;
+        this.extractRepository = extractRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -154,5 +157,23 @@ public class UserService {
         accountRepository.deleteById(account.getId());
         userRepository.deleteById(id);
         addressRepository.deleteById(address.getId());
+    }
+
+    public ResponseGlobalDto findByIdGlobal(Long id) {
+        UserEntity user = userRepository.findById(id)
+                .orElseThrow(
+                        () -> new ObjectNotFoundException(String.format("User not found. Please check the user ID or username and try again."))
+                );
+        Address address = addressRepository.findById(user.getAddress().getId())
+                .orElseThrow(
+                        () -> new ObjectNotFoundException(String.format("Address not found. Please check the user ID or username and try again."))
+                );
+        Account account = accountRepository.findAccountByUser(user)
+                .orElseThrow(
+                        () -> new ObjectNotFoundException(String.format("Account not found. Please check the user ID or username and try again."))
+                );
+        List<Extract> extract = extractRepository.findAllByAccount(account);
+
+        return ResponseGlobalDto.toResponseGlobal(user, address, account, extract);
     }
 }

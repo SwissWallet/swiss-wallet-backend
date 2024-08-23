@@ -9,7 +9,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public record ExtractResponseDto(Double value,
+public record ExtractResponseDto(Long id,
+                                 Double value,
                                  Extract.Type type,
                                  String description,
                                  @JsonFormat(pattern = "dd/MM/yyyy - HH:mm")
@@ -17,7 +18,8 @@ public record ExtractResponseDto(Double value,
                                  AccountResponseDto account
                                  ) {
 
-    public ExtractResponseDto(Double value, Extract.Type type, String description, LocalDateTime date, AccountResponseDto account) {
+    public ExtractResponseDto(Long id, Double value, Extract.Type type, String description, LocalDateTime date, AccountResponseDto account) {
+        this.id = id;
         this.value = value;
         this.type = type;
         this.description = description;
@@ -27,6 +29,7 @@ public record ExtractResponseDto(Double value,
 
     public static ExtractResponseDto toExtractResponse(Extract extract){
         return new ExtractResponseDto(
+                extract.getId(),
                 extract.getValue(),
                 extract.getType(),
                 extract.getDescription(),

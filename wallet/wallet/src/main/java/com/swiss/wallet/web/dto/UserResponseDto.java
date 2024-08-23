@@ -1,31 +1,39 @@
 package com.swiss.wallet.web.dto;
 
+import com.swiss.wallet.entity.Role;
 import com.swiss.wallet.entity.UserEntity;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-public record UserResponseDto (String username,
+public record UserResponseDto (Long id,
+                               String username,
                                String name,
+                               String cpf,
                                String birthDate,
                                String phone,
-                               AddressResponseDto address) {
+                               Role role
+                               ) {
 
-    public UserResponseDto(String username, String name, String birthDate, String phone, AddressResponseDto address) {
+    public UserResponseDto(Long id, String username, String name, String cpf, String birthDate, String phone, Role role) {
+        this.id = id;
         this.username = username;
         this.name = name;
+        this.cpf = cpf;
         this.birthDate = birthDate;
         this.phone = phone;
-        this.address = address;
+        this.role = role;
     }
 
     public static UserResponseDto toUserResponse(UserEntity user){
         return new UserResponseDto(
+                user.getId(),
                 user.getUsername(),
                 user.getName(),
+                user.getCpf(),
                 user.getBirthDate(),
                 user.getPhone(),
-                AddressResponseDto.toAddressResponse(user.getAddress())
+                user.getRole()
         );
     }
 
