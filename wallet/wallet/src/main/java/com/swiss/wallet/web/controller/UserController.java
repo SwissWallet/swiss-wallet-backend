@@ -83,9 +83,9 @@ public class UserController {
             })
     @GetMapping("/current")
     @PreAuthorize("hasRole('CLIENT')")
-    public ResponseEntity<UserResponseDto> getCurrentUser(@AuthenticationPrincipal JwtUserDetails userDetails){
-        UserEntity user = userService.findById(userDetails.getId());
-        return ResponseEntity.ok().body(UserResponseDto.toUserResponse(user));
+    public ResponseEntity<ResponseGlobalDto> getCurrentUser(@AuthenticationPrincipal JwtUserDetails userDetails){
+        ResponseGlobalDto responseGlobalDto = userService.findByIdGlobal(userDetails.getId());
+        return ResponseEntity.ok().body(responseGlobalDto);
     }
 
     @Operation(summary = "Change user password", description = "Request requires a Bearer Token. Restricted access to CLIENT",

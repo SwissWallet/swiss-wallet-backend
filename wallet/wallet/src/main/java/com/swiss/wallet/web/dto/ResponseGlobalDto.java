@@ -9,13 +9,13 @@ import java.util.List;
 
 public record ResponseGlobalDto (UserResponseDto user,
                                  AddressResponseDto address,
-                                 AccountResponseDto accountResponseDto,
+                                 AccountResponseDto account,
                                  List<ExtractResponseDto> extracts){
 
-    public ResponseGlobalDto(UserResponseDto user, AddressResponseDto address, AccountResponseDto accountResponseDto, List<ExtractResponseDto> extracts) {
+    public ResponseGlobalDto(UserResponseDto user, AddressResponseDto address, AccountResponseDto account, List<ExtractResponseDto> extracts) {
         this.user = user;
         this.address = address;
-        this.accountResponseDto = accountResponseDto;
+        this.account = account;
         this.extracts = extracts;
     }
 
