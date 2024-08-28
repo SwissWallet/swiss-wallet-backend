@@ -1,8 +1,10 @@
 package com.swiss.wallet.config;
 
+import com.swiss.wallet.entity.Account;
 import com.swiss.wallet.entity.Address;
 import com.swiss.wallet.entity.Role;
 import com.swiss.wallet.entity.UserEntity;
+import com.swiss.wallet.repository.IAccountRepository;
 import com.swiss.wallet.repository.IAddressRepository;
 import com.swiss.wallet.repository.IUserRepository;
 import org.springframework.boot.CommandLineRunner;
@@ -15,11 +17,13 @@ public class AdminUserConfig implements CommandLineRunner {
     private final IUserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final IAddressRepository addressRepository;
+    private final IAccountRepository accountRepository;
 
-    public AdminUserConfig(IUserRepository userRepository, PasswordEncoder passwordEncoder, IAddressRepository addressRepository) {
+    public AdminUserConfig(IUserRepository userRepository, PasswordEncoder passwordEncoder, IAddressRepository addressRepository, IAccountRepository accountRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.addressRepository = addressRepository;
+        this.accountRepository = accountRepository;
     }
 
     @Override
@@ -47,6 +51,9 @@ public class AdminUserConfig implements CommandLineRunner {
                     userEntity.setAddress(address);
                     userRepository.save(userEntity);
 
+                    var account = new Account();
+                    account.setUser(userEntity);
+                    accountRepository.save(account);
                 }
         );
 

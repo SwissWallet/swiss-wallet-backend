@@ -164,6 +164,7 @@ public class UserService {
                 .orElseThrow(
                         () -> new ObjectNotFoundException(String.format("User not found. Please check the user ID or username and try again."))
                 );
+
         Address address = addressRepository.findById(user.getAddress().getId())
                 .orElseThrow(
                         () -> new ObjectNotFoundException(String.format("Address not found. Please check the user ID or username and try again."))
