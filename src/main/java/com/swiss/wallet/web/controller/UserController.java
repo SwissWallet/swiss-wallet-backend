@@ -82,7 +82,7 @@ public class UserController {
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
             })
     @GetMapping("/current")
-    @PreAuthorize("hasRole('CLIENT')")
+    @PreAuthorize("hasRole('CLIENT') or hasRole('ADMIN')")
     public ResponseEntity<ResponseGlobalDto> getCurrentUser(@AuthenticationPrincipal JwtUserDetails userDetails){
         ResponseGlobalDto responseGlobalDto = userService.findByIdGlobal(userDetails.getId());
         return ResponseEntity.ok().body(responseGlobalDto);
