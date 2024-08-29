@@ -41,9 +41,9 @@ public class ProductService {
         product.setValue(createDto.value());
 
         try {
-            // Resize and encode the image
-            String resizedAndEncodedImage = resizeAndEncodeImage(file, 800); // Adjust width as needed
-            product.setImage(resizedAndEncodedImage);
+            // Encode the image without resizing
+            String encodedImage = encodeImageToBase64(file);
+            product.setImage(encodedImage);
         } catch (IOException e) {
             throw new RuntimeException("Failed to process image", e);
         }
@@ -55,30 +55,15 @@ public class ProductService {
         return ProductResponseDto.toProductResponse(product);
     }
 
-    private String resizeAndEncodeImage(MultipartFile file, int targetWidth) throws IOException {
+    private String encodeImageToBase64(MultipartFile file) throws IOException {
         // Read the original image
         BufferedImage bufferedImage = ImageIO.read(file.getInputStream());
 
-        // Calculate the target height to maintain aspect ratio
-        int targetHeight = (int) (bufferedImage.getHeight() * ((double) targetWidth / bufferedImage.getWidth()));
-
-        // Resize the image
-        BufferedImage resizedImage = resizeImage(bufferedImage, targetWidth, targetHeight);
-
-        // Convert the resized image to a byte array and encode it in Base64
+        // Convert the image to a byte array and encode it in Base64
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        ImageIO.write(resizedImage, "jpg", outputStream);
+        ImageIO.write(bufferedImage, "png", outputStream); // Save as PNG to avoid quality loss
         byte[] imageBytes = outputStream.toByteArray();
         return Base64.getEncoder().encodeToString(imageBytes);
-    }
-
-    private BufferedImage resizeImage(BufferedImage originalImage, int targetWidth, int targetHeight) {
-        BufferedImage resizedImage = new BufferedImage(targetWidth, targetHeight, BufferedImage.TYPE_INT_RGB);
-        Graphics2D g2d = resizedImage.createGraphics();
-        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-        g2d.drawImage(originalImage, 0, 0, targetWidth, targetHeight, null);
-        g2d.dispose();
-        return resizedImage;
     }
 
     public List<Product> findAllByCategory(String category) {
