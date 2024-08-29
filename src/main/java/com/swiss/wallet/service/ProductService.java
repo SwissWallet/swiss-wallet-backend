@@ -2,6 +2,7 @@ package com.swiss.wallet.service;
 
 import com.swiss.wallet.entity.Category;
 import com.swiss.wallet.entity.Product;
+import com.swiss.wallet.exception.ObjectNotFoundException;
 import com.swiss.wallet.repository.IProductRepository;
 import com.swiss.wallet.web.dto.ProductCreateDto;
 import com.swiss.wallet.web.dto.ProductResponseDto;
@@ -94,5 +95,13 @@ public class ProductService {
             }
         }
         return null;
+    }
+
+    public void deleteById(Long id) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(
+                        () -> new ObjectNotFoundException("Product not found, Please check the product ID and try again")
+                );
+        productRepository.deleteById(product.getId());
     }
 }

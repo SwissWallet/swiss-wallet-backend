@@ -47,4 +47,12 @@ public class ProductController {
         List<Product> products = productService.findAllByCategory(category);
         return ResponseEntity.ok().body(ProductResponseDto.toListProductResponse(products));
     }
+
+    @DeleteMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> deleteProduct(@RequestParam Long id){
+        productService.deleteById(id);
+        return ResponseEntity.ok().build();
+    }
+
 }
