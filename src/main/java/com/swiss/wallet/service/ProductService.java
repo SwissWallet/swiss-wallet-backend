@@ -14,6 +14,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Base64;
+import java.util.List;
 
 @Service
 public class ProductService {
@@ -77,5 +78,21 @@ public class ProductService {
         g2d.drawImage(originalImage, 0, 0, targetWidth, targetHeight, null);
         g2d.dispose();
         return resizedImage;
+    }
+
+    public List<Product> findAllByCategory(String category) {
+
+        switch (category) {
+            case "STORE" -> {
+                return productRepository.findAllByCategory(Category.STORE);
+            }
+            case "CANTEEN" -> {
+                return productRepository.findAllByCategory(Category.CANTEEN);
+            }
+            case "LIBRARY" -> {
+                return productRepository.findAllByCategory(Category.LIBRARY);
+            }
+        }
+        return null;
     }
 }

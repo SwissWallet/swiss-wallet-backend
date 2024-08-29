@@ -2,16 +2,16 @@ package com.swiss.wallet.web.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.swiss.wallet.entity.Product;
 import com.swiss.wallet.service.ProductService;
 import com.swiss.wallet.web.dto.ProductCreateDto;
 import com.swiss.wallet.web.dto.ProductResponseDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v3/products")
@@ -37,5 +37,14 @@ public class ProductController {
         }
         ProductResponseDto responseDto = productService.saveProduct(createDto, file);
         return ResponseEntity.ok().body(responseDto);
+    }
+
+    @GetMapping("/category")
+    @PreAuthorize("hasRole('ADMIN') OR hasRole('CLIENT')")
+    public ResponseEntity<List<ProductResponseDto>> filterProduct(
+            @RequestParam String category
+    ){
+        List<Product> products = productService.findAllByCategory(category);
+        return ResponseEntity.ok().body(ProductResponseDto.toListProductResponse(products));
     }
 }
