@@ -17,7 +17,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-@Tag(name = "Acoounts", description = "Contains all operations related to resources for registering, editing and reading a account.")
+@Tag(name = "Accounts", description = "Contains all operations related to resources for registering, editing and reading a account.")
 @RestController
 @RequestMapping("/api/v3/accounts")
 public class AccountController {
