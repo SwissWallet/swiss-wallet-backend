@@ -6,6 +6,7 @@ import com.swiss.wallet.entity.Product;
 import com.swiss.wallet.service.ProductService;
 import com.swiss.wallet.web.dto.ProductCreateDto;
 import com.swiss.wallet.web.dto.ProductResponseDto;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
+@Tag(name = "Products", description = "Contains all operations related to resources for registering, editing and reading a product.")
 @RestController
 @RequestMapping("/api/v3/products")
 public class ProductController {
