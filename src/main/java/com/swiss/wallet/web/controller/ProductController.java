@@ -92,4 +92,11 @@ public class ProductController {
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping
+    @PreAuthorize("hasRole('ADMIN') OR hasRole('CLIENT')")
+    public ResponseEntity<List<ProductResponseDto>> findAllProduct(){
+        List<Product> products = productService.findAll();
+        return ResponseEntity.ok().body(ProductResponseDto.toListProductResponse(products));
+    }
+
 }
