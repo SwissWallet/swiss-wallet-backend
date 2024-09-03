@@ -1,0 +1,23 @@
+name: Deploy Backend in Render
+on: 
+  push:
+    branches: [ master ]
+
+jobs:
+  deploy:
+    name: Deploying Backend 
+    runs-on: ubuntu-latest
+
+    steps:
+    
+    - name: Checkout 
+      uses: actions/checkout@v3
+
+    - name: Deploy to Production
+      uses: johnbeynon/render-deploy-action@v0.0.8
+      with:
+        service-id: ${{ secrets.SERVICE_ID }}
+        api-key: ${{ secrets.API_KEY }}
+        
+    
+  
