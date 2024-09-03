@@ -53,7 +53,7 @@ public class ProductController {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-        ProductResponseDto responseDto = productService.saveProduct(createDto, file);
+        ProductResponseDto responseDto = productService.saveProduct(createDto, file, 250, 250);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
 
