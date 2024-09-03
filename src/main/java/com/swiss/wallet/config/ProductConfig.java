@@ -31,10 +31,6 @@ public class ProductConfig implements CommandLineRunner {
 
         ClassPathResource resource = new ClassPathResource(imageCamisa);
         imageCamisa = new String(Files.readAllBytes(resource.getFile().toPath()));
-        resource = new ClassPathResource(imageCoca);
-        imageCamisa = new String(Files.readAllBytes(resource.getFile().toPath()));
-        resource = new ClassPathResource(imageLivro);
-        imageCamisa = new String(Files.readAllBytes(resource.getFile().toPath()));
 
         camisa.setName("Camisa");
         camisa.setValue(40.0F);
@@ -43,12 +39,19 @@ public class ProductConfig implements CommandLineRunner {
         camisa.setCategory(Category.STORE);
         productRepository.save(camisa);
 
+        resource = new ClassPathResource(imageCoca);
+        imageCoca = new String(Files.readAllBytes(resource.getFile().toPath()));
+
         coca.setName("Coca");
         coca.setValue(10.0F);
         coca.setDescription("Coca Cola");
         coca.setImage(imageCoca);
         coca.setCategory(Category.CANTEEN);
         productRepository.save(coca);
+
+
+        resource = new ClassPathResource(imageLivro);
+        imageLivro = new String(Files.readAllBytes(resource.getFile().toPath()));
 
         livro.setName("O Vale dos Mortos");
         livro.setValue(20.0F);
