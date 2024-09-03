@@ -6,11 +6,11 @@ import com.swiss.wallet.exception.ObjectNotFoundException;
 import com.swiss.wallet.repository.IProductRepository;
 import com.swiss.wallet.web.dto.ProductCreateDto;
 import com.swiss.wallet.web.dto.ProductResponseDto;
+import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -26,7 +26,7 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
-    public ProductResponseDto saveProduct(ProductCreateDto createDto, MultipartFile file) {
+    public ProductResponseDto saveProduct(ProductCreateDto createDto, MultipartFile file, int width, int height) {
         Product product = new Product();
         product.setName(createDto.name());
         product.setDescription(createDto.description());
@@ -41,8 +41,8 @@ public class ProductService {
         product.setValue(createDto.value());
 
         try {
-            // Encode the image without resizing
-            String encodedImage = encodeImageToBase64(file);
+            // Encode the image with resizing
+            String encodedImage = encodeImageToBase64(file, width, height);
             product.setImage(encodedImage);
         } catch (IOException e) {
             throw new RuntimeException("Failed to process image", e);
@@ -55,16 +55,24 @@ public class ProductService {
         return ProductResponseDto.toProductResponse(product);
     }
 
-    private String encodeImageToBase64(MultipartFile file) throws IOException {
+    private String encodeImageToBase64(MultipartFile file, int width, int height) throws IOException {
         // Read the original image
-        BufferedImage bufferedImage = ImageIO.read(file.getInputStream());
+        BufferedImage originalImage = ImageIO.read(file.getInputStream());
 
-        // Convert the image to a byte array and encode it in Base64
+        // Resize the image using Thumbnailator
+        BufferedImage resizedImage = Thumbnails.of(originalImage)
+                .size(width, height)
+                .outputQuality(1.0)  // Maximum quality
+                .asBufferedImage();
+
+        // Convert the resized image to a byte array and encode it in Base64
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        ImageIO.write(bufferedImage, "png", outputStream); // Save as PNG to avoid quality loss
+        ImageIO.write(resizedImage, "png", outputStream); // Save as PNG to avoid quality loss
         byte[] imageBytes = outputStream.toByteArray();
         return Base64.getEncoder().encodeToString(imageBytes);
     }
+
+
 
     public List<Product> findAllByCategory(String category) {
 
