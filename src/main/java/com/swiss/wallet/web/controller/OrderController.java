@@ -37,4 +37,11 @@ public class OrderController {
         return ResponseEntity.ok().body(OrderResponseDto.toListOrderResponse(orders));
     }
 
+    @DeleteMapping
+    @PreAuthorize("hasRole('CLIENT')")
+    public ResponseEntity<Void> removeOrder(@AuthenticationPrincipal JwtUserDetails userDetails,
+                                            @RequestParam("idOrder") Long idOrder){
+        orderService.deleteByIdAndUser(idOrder, userDetails.getId());
+        return ResponseEntity.ok().build();
+    }
 }
