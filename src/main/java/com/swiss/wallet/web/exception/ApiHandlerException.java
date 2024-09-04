@@ -96,4 +96,12 @@ public class ApiHandlerException {
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(error);
     }
+
+    @ExceptionHandler(FavoriteAlreadyExistsException.class)
+    public ResponseEntity<ErrorMessage> favoriteAlreadyExistsException(RuntimeException ex, HttpServletRequest request){
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new ErrorMessage(request, HttpStatus.CONFLICT, ex.getMessage()));
+    }
 }
