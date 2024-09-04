@@ -30,5 +30,11 @@ public class OrderController {
         return ResponseEntity.ok().body(OrderResponseDto.toOrderResponse(order));
     }
 
+    @GetMapping("/current")
+    @PreAuthorize("hasRole('CLIENT')")
+    public ResponseEntity<List<OrderResponseDto>> getAllByUser(@AuthenticationPrincipal JwtUserDetails userDetails){
+        List<Order> orders = orderService.findAllByUser(userDetails.getId());
+        return ResponseEntity.ok().body(OrderResponseDto.toListOrderResponse(orders));
+    }
 
 }
