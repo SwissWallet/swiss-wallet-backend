@@ -52,4 +52,18 @@ public class FavoriteService {
                 );
         return favoriteRepository.findALlByUser(user);
     }
+
+    public void deleteFavorite(Long id, Long idProduct) {
+        UserEntity user = userRepository.findById(id)
+                .orElseThrow(
+                        () -> new ObjectNotFoundException(String.format("User not found. Please check the user ID or username and try again."))
+                );
+        Product product = productRepository.findById(idProduct)
+                .orElseThrow(
+                        () -> new ObjectNotFoundException("Product not found, Please check the product ID and try again")
+                );
+
+        Favorite favorite = favoriteRepository.findByProductAndUser(product, user);
+        favoriteRepository.deleteById(favorite.getId());
+    }
 }

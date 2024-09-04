@@ -36,4 +36,5 @@ public class FavoriteController {
         return ResponseEntity.ok().body(FavoriteResponseDto.toListFavoriteResponse(favorites));
     }
 
+
 }
