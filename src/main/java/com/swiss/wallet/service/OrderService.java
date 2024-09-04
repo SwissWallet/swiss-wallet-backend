@@ -53,4 +53,17 @@ public class OrderService {
         return orderRepository.findAllByUser(user);
 
     }
+
+    public void deleteByIdAndUser(Long idOrder, Long id) {
+        UserEntity user = userRepository.findById(id)
+                .orElseThrow(
+                        () -> new ObjectNotFoundException(String.format("User not found. Please check the user ID or username and try again."))
+                );
+
+        Order order = orderRepository.findByIdAndUser(idOrder, user)
+                .orElseThrow(
+                        () -> new ObjectNotFoundException(String.format("Order not found. Please check the user ID or username and try again."))
+                );
+        orderRepository.deleteById(order.getId());
+    }
 }
