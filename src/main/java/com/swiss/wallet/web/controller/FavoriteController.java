@@ -36,5 +36,11 @@ public class FavoriteController {
         return ResponseEntity.ok().body(FavoriteResponseDto.toListFavoriteResponse(favorites));
     }
 
-
+    @DeleteMapping
+    @PreAuthorize("hasRole('CLIENT')")
+    public ResponseEntity<Void> removeFavorite(@AuthenticationPrincipal JwtUserDetails userDetails,
+                                               @RequestParam("idProduct") Long idProduct){
+        favoriteService.deleteFavorite(userDetails.getId(), idProduct);
+        return ResponseEntity.ok().build();
+    }
 }
