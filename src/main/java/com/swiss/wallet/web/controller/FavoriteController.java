@@ -1,14 +1,15 @@
 package com.swiss.wallet.web.controller;
 
+import com.swiss.wallet.entity.Favorite;
 import com.swiss.wallet.jwt.JwtUserDetails;
 import com.swiss.wallet.service.FavoriteService;
+import com.swiss.wallet.web.dto.FavoriteResponseDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v3/favorites")
@@ -26,6 +27,13 @@ public class FavoriteController {
                                              @RequestParam("idProduct") Long idProduct){
         favoriteService.saveFavorite(userDetails.getId(), idProduct);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/current")
+    @PreAuthorize("hasRole('CLIENT')")
+    public ResponseEntity<List<FavoriteResponseDto>> findAllByUserCurrent(@AuthenticationPrincipal JwtUserDetails userDetails){
+        List<Favorite> favorites = favoriteService.findAllByUser(userDetails.getId());
+        return ResponseEntity.ok().body(FavoriteResponseDto.toListFavoriteResponse(favorites));
     }
 
 }
