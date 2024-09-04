@@ -22,7 +22,13 @@ public class OrderController {
         this.orderService = orderService;
     }
 
-
+    @PostMapping
+    @PreAuthorize("hasRole('CLIENT')")
+    public ResponseEntity<OrderResponseDto> saveOrder(@AuthenticationPrincipal JwtUserDetails userDetails,
+                                                      @RequestParam("idProduct") Long idProduct){
+        Order order = orderService.saveOrder(userDetails.getId(), idProduct);
+        return ResponseEntity.ok().body(OrderResponseDto.toOrderResponse(order));
+    }
 
 
 }
