@@ -10,6 +10,8 @@ import com.swiss.wallet.repository.IProductRepository;
 import com.swiss.wallet.repository.IUserRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class FavoriteService {
 
@@ -41,5 +43,13 @@ public class FavoriteService {
         favorite.setUser(user);
         favorite.setProduct(product);
         favoriteRepository.save(favorite);
+    }
+
+    public List<Favorite> findAllByUser(Long id) {
+        UserEntity user = userRepository.findById(id)
+                .orElseThrow(
+                        () -> new ObjectNotFoundException(String.format("User not found. Please check the user ID or username and try again."))
+                );
+        return favoriteRepository.findALlByUser(user);
     }
 }
