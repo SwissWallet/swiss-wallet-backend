@@ -48,7 +48,7 @@ public class AccountService {
                 .orElseThrow(
                         () -> new ObjectNotFoundException(String.format("Account not found. Please check the User %s and try again", user.getName()))
                 );
-        account.setValue(value);
+        account.setValue(account.getValue() + value);
 
         Extract extract = new Extract();
         extract.setAccount(account);
