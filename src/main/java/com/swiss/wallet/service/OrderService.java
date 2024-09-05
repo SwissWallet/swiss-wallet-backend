@@ -71,4 +71,14 @@ public class OrderService {
         return orderRepository.findAll();
     }
 
+    public List<Order> findAllByStatus(String status) {
+
+        return switch (status) {
+            case "ANALYSIS" -> orderRepository.findAllByStatus(Status.ANALYSIS);
+            case "COMPLETED" -> orderRepository.findAllByStatus(Status.COMPLETED);
+            case "UNAVAILABLE" -> orderRepository.findAllByStatus(Status.UNAVAILABLE);
+            case "SEPARATED" -> orderRepository.findAllByStatus(Status.SEPARATED);
+            default -> null;
+        };
+    }
 }
