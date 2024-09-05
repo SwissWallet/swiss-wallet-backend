@@ -14,6 +14,7 @@ public class Extract {
     @Column(name = "id")
     private Long id;
 
+    @Column(name = "value_extract")
     private Double value;
 
     @Column(name = "type")

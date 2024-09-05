@@ -10,6 +10,7 @@ public class Account {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "value_account")
     private Double value = 00.00;
 
     @OneToOne
