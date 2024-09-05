@@ -227,4 +227,40 @@ public class UsersIT {
 
     }
 
+    @Test
+    public void createUser_WithDuplicateUsername_ReturnErrorMessageStatus409(){
+        ErrorMessage responseDto = testClient
+                .post()
+                .uri("/api/v3/users")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .bodyValue(
+                        new UserAddressCreateDto(
+                                new UserCreateDto(
+                                        "joao@email.com",
+                                        "123456",
+                                        "João Henrique",
+                                        "89018551007",
+                                        "20/05/2001",
+                                        "11987654321"
+                                ),
+                                new AddressCreateDto(
+                                        "01000-000",
+                                        "Alameda Joaquina",
+                                        "Taboão da Serra",
+                                        18L,
+                                        "SP"
+                                )
+                        )
+                )
+                .exchange()
+                .expectStatus().isEqualTo(409)
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseDto).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseDto.getStatus()).isEqualTo(409);
+
+
+    }
 }
