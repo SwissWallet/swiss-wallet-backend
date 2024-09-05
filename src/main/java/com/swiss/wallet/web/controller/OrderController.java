@@ -108,10 +108,23 @@ public class OrderController {
         return ResponseEntity.ok().body(OrderResponseDto.toListOrderResponse(orders));
     }
 
+    @Operation(summary = "Recover all order", description = "Request requires a Bearer Token. Restricted access to ADMIN",
+            security = @SecurityRequirement(name = "security"),
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Resource retrieved successfully",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDto.class))),
+                    @ApiResponse(responseCode = "204", description = "Resource successfully retrieved empty list",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDto.class))),
+                    @ApiResponse(responseCode = "403", description = "User not allowed to access this resource",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+            })
     @GetMapping("/status")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<OrderResponseDto>> listOrderByFilter(@RequestParam("status") String status){
         List<Order> orders = orderService.findAllByStatus(status);
+        if (orders.isEmpty()){
+            return ResponseEntity.noContent().build();
+        }
         return ResponseEntity.ok(OrderResponseDto.toListOrderResponse(orders));
     }
 
