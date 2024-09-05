@@ -66,4 +66,9 @@ public class OrderService {
                 );
         orderRepository.deleteById(order.getId());
     }
+
+    public List<Order> findAll() {
+        return orderRepository.findAll();
+    }
+
 }
