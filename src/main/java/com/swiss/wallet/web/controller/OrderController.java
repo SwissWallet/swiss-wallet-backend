@@ -22,7 +22,48 @@ public class OrderController {
         this.orderService = orderService;
     }
 
+    @PostMapping
+    @PreAuthorize("hasRole('CLIENT')")
+    public ResponseEntity<OrderResponseDto> saveOrder(@AuthenticationPrincipal JwtUserDetails userDetails,
+                                                      @RequestParam("idProduct") Long idProduct){
+        Order order = orderService.saveOrder(userDetails.getId(), idProduct);
+        return ResponseEntity.ok().body(OrderResponseDto.toOrderResponse(order));
+    }
 
+    @GetMapping("/current")
+    @PreAuthorize("hasRole('CLIENT')")
+    public ResponseEntity<List<OrderResponseDto>> getAllByUser(@AuthenticationPrincipal JwtUserDetails userDetails){
+        List<Order> orders = orderService.findAllByUser(userDetails.getId());
+        return ResponseEntity.ok().body(OrderResponseDto.toListOrderResponse(orders));
+    }
 
+    @DeleteMapping
+    @PreAuthorize("hasRole('CLIENT')")
+    public ResponseEntity<Void> removeOrder(@AuthenticationPrincipal JwtUserDetails userDetails,
+                                            @RequestParam("idOrder") Long idOrder){
+        orderService.deleteByIdAndUser(idOrder, userDetails.getId());
+        return ResponseEntity.ok().build();
+    }
 
+    @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<OrderResponseDto>> getAllOrder(){
+        List<Order> orders = orderService.findAll();
+        return ResponseEntity.ok().body(OrderResponseDto.toListOrderResponse(orders));
+    }
+
+    @GetMapping("/status")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<OrderResponseDto>> listOrderByFilter(@RequestParam("status") String status){
+        List<Order> orders = orderService.findAllByStatus(status);
+        return ResponseEntity.ok(OrderResponseDto.toListOrderResponse(orders));
+    }
+
+    @PutMapping("/change-status")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<OrderResponseDto> changeStatus(@RequestParam("idOrder") Long idOrder,
+                                                         @RequestParam("status") String status){
+        Order order = orderService.changeStatus(idOrder, status);
+        return ResponseEntity.ok(OrderResponseDto.toOrderResponse(order));
+    }
 }
