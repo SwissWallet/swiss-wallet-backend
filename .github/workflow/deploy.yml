@@ -1,8 +1,9 @@
 name: Deploy Backend in Render
 on: 
   push:
-    branches: [ master, qas ]
-
+    branches: 
+      - master
+      - qas
 jobs:
   deploy:
     name: Deploying Backend 
