@@ -2,7 +2,7 @@
  
 Bem-vindo ao Projeto SwissWallet! Aqui você encontrará informações importantes e links úteis.
 
-
+ 
 
 # Descrição do projeto
 Swiss Wallet
