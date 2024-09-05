@@ -4,6 +4,7 @@ import com.swiss.wallet.entity.Favorite;
 import com.swiss.wallet.jwt.JwtUserDetails;
 import com.swiss.wallet.service.FavoriteService;
 import com.swiss.wallet.web.dto.FavoriteResponseDto;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Tag(name = "Favorite", description = "Contains all operations related to resources for registering, editing and reading a favorite product.")
 @RestController
 @RequestMapping("/api/v3/favorites")
 public class FavoriteController {
