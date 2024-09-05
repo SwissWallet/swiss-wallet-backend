@@ -69,6 +69,15 @@ public class FavoriteController {
         return ResponseEntity.ok().body(FavoriteResponseDto.toListFavoriteResponse(favorites));
     }
 
+    @Operation(summary = "Delete favorite product by id", description = "Request requires a Bearer Token. Restricted access to CLIENT",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Resource retrieved successfully",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDto.class))),
+                    @ApiResponse(responseCode = "404", description = "Resource not found",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+                    @ApiResponse(responseCode = "403", description = "User not allowed to access this resource",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+            })
     @DeleteMapping
     @PreAuthorize("hasRole('CLIENT')")
     public ResponseEntity<Void> removeFavorite(@AuthenticationPrincipal JwtUserDetails userDetails,
