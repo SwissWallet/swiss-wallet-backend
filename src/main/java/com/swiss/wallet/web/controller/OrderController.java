@@ -44,4 +44,11 @@ public class OrderController {
         orderService.deleteByIdAndUser(idOrder, userDetails.getId());
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<OrderResponseDto>> getAllOrder(){
+        List<Order> orders = orderService.findAll();
+        return ResponseEntity.ok().body(OrderResponseDto.toListOrderResponse(orders));
+    }
 }
