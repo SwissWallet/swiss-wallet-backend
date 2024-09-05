@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -29,7 +30,7 @@ public class FavoriteController {
         this.favoriteService = favoriteService;
     }
 
-    @Operation(summary = "Save a new favorite product", description = "Feature to save a new favorite product",
+    @Operation(summary = "Save a new favorite product", description = "Request requires a Bearer Token. Restricted access to CLIENT",
             responses = {
                     @ApiResponse(responseCode = "200", description = "Resource saved successfully",
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDto.class))),
@@ -48,10 +49,23 @@ public class FavoriteController {
         return ResponseEntity.ok().build();
     }
 
+    @Operation(summary = "Recover favorite logged in user", description = "Request requires a Bearer Token. Restricted access to CLIENT",
+            security = @SecurityRequirement(name = "security"),
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Resource retrieved successfully",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDto.class))),
+                    @ApiResponse(responseCode = "204", description = "Resource successfully retrieved empty list",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDto.class))),
+                    @ApiResponse(responseCode = "403", description = "User not allowed to access this resource",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+            })
     @GetMapping("/current")
     @PreAuthorize("hasRole('CLIENT')")
     public ResponseEntity<List<FavoriteResponseDto>> findAllByUserCurrent(@AuthenticationPrincipal JwtUserDetails userDetails){
         List<Favorite> favorites = favoriteService.findAllByUser(userDetails.getId());
+        if(favorites.isEmpty()){
+            return ResponseEntity.noContent().build();
+        }
         return ResponseEntity.ok().body(FavoriteResponseDto.toListFavoriteResponse(favorites));
     }
 

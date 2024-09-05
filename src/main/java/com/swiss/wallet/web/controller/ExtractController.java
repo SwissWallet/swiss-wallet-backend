@@ -37,6 +37,8 @@ public class ExtractController {
             responses = {
                     @ApiResponse(responseCode = "200", description = "Resource retrieved successfully",
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDto.class))),
+                    @ApiResponse(responseCode = "204", description = "Resource successfully retrieved empty list",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDto.class))),
                     @ApiResponse(responseCode = "403", description = "User not allowed to access this resource",
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
             })
@@ -44,7 +46,7 @@ public class ExtractController {
     @PreAuthorize("hasRole('CLIENT')")
     public ResponseEntity<?> findExtractByUserLogged(@AuthenticationPrincipal JwtUserDetails userDetails){
         List<Extract> extract = extractService.findByUserLogged(userDetails.getId());
-        if (extract == null){
+        if (extract.isEmpty()){
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.ok().body(ExtractResponseDto.toListExtractResponse(extract));
