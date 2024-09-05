@@ -32,7 +32,7 @@ public class ProductController {
         this.productService = productService;
     }
 
-    @Operation(summary = "Create a new product", description = "Feature to create a new product",
+    @Operation(summary = "Create a new product", description = "Request requires a Bearer Token. Restricted access to ADMIN",
             responses = {
                     @ApiResponse(responseCode = "201", description = "Resource created successfully",
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDto.class))),
@@ -57,7 +57,7 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
 
-    @Operation(summary = "Search product by category", description = "Resource to search product by category",
+    @Operation(summary = "Search product by category", description = "Request requires a Bearer Token. Restricted access to CLIENT | ADMIN",
             responses = {
                     @ApiResponse(responseCode = "200", description = "Resource retrieved successfully",
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDto.class))),
@@ -76,7 +76,7 @@ public class ProductController {
     }
 
 
-    @Operation(summary = "Delete product by id", description = "Resource to delete product by id",
+    @Operation(summary = "Delete product by id", description = "Request requires a Bearer Token. Restricted access to ADMIN",
             responses = {
                     @ApiResponse(responseCode = "200", description = "Resource retrieved successfully",
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDto.class))),

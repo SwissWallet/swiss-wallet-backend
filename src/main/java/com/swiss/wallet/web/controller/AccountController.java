@@ -44,7 +44,7 @@ public class AccountController {
     }
 
 
-    @Operation(summary = "Register deposit in user account", description = "Request requires a Bearer Token. Restricted access to CLIENT",
+    @Operation(summary = "Register deposit in user account", description = "Request requires a Bearer Token. Restricted access to ADMIN",
             security = @SecurityRequirement(name = "security"),
             responses = {
                     @ApiResponse(responseCode = "200", description = "Resource retrieved successfully",
