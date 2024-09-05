@@ -44,6 +44,21 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(UserResponseDto.toUserResponse(user));
     }
 
+    @Operation(summary = "Recover a logged in user", description = "Request requires a Bearer Token. Restricted access to CLIENT",
+            security = @SecurityRequirement(name = "security"),
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Resource retrieved successfully",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDto.class))),
+                    @ApiResponse(responseCode = "403", description = "User not allowed to access this resource",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+            })
+    @GetMapping("/current")
+    @PreAuthorize("hasRole('CLIENT') or hasRole('ADMIN')")
+    public ResponseEntity<ResponseGlobalDto> getCurrentUser(@AuthenticationPrincipal JwtUserDetails userDetails){
+        ResponseGlobalDto responseGlobalDto = userService.findByIdGlobal(userDetails.getId());
+        return ResponseEntity.ok().body(responseGlobalDto);
+    }
+
     @Operation(summary = "Generate code to change password", description = "Resource to generate code",
             responses = {
                     @ApiResponse(responseCode = "200", description = "Resource retrieved successfully",
@@ -71,21 +86,6 @@ public class UserController {
     public ResponseEntity<Void> updateForgottenPassword(@RequestBody UserPasswordRecoveryDto passwordRecoveryDto){
         userService.changeForgottenPassword(passwordRecoveryDto);
         return ResponseEntity.ok().build();
-    }
-
-    @Operation(summary = "Recover a logged in user", description = "Request requires a Bearer Token. Restricted access to CLIENT",
-            security = @SecurityRequirement(name = "security"),
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "Resource retrieved successfully",
-                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDto.class))),
-                    @ApiResponse(responseCode = "403", description = "User not allowed to access this resource",
-                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
-            })
-    @GetMapping("/current")
-    @PreAuthorize("hasRole('CLIENT') or hasRole('ADMIN')")
-    public ResponseEntity<ResponseGlobalDto> getCurrentUser(@AuthenticationPrincipal JwtUserDetails userDetails){
-        ResponseGlobalDto responseGlobalDto = userService.findByIdGlobal(userDetails.getId());
-        return ResponseEntity.ok().body(responseGlobalDto);
     }
 
     @Operation(summary = "Change user password", description = "Request requires a Bearer Token. Restricted access to CLIENT",

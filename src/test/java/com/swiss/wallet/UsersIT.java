@@ -1,10 +1,7 @@
 package com.swiss.wallet;
 
 import com.swiss.wallet.entity.Role;
-import com.swiss.wallet.web.dto.AddressCreateDto;
-import com.swiss.wallet.web.dto.UserAddressCreateDto;
-import com.swiss.wallet.web.dto.UserCreateDto;
-import com.swiss.wallet.web.dto.UserResponseDto;
+import com.swiss.wallet.web.dto.*;
 import com.swiss.wallet.web.exception.ErrorMessage;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -433,6 +430,39 @@ public class UsersIT {
         org.assertj.core.api.Assertions.assertThat(responseDto).isNotNull();
         org.assertj.core.api.Assertions.assertThat(responseDto.getStatus()).isEqualTo(422);
 
+        responseDto = testClient
+                .post()
+                .uri("/api/v3/users")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .bodyValue(
+                        new UserAddressCreateDto(
+                                new UserCreateDto(
+                                        "tobby@email.com",
+                                        "123456",
+                                        "Tobby Henrique",
+                                        "89018551007",
+                                        "20/01/2000",
+                                        "987654321"
+                                ),
+                                new AddressCreateDto(
+                                        "01000-000",
+                                        "Alameda Joaquina",
+                                        "Taboão da Serra",
+                                        18L,
+                                        "SP"
+                                )
+                        )
+                )
+                .exchange()
+                .expectStatus().isEqualTo(422)
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseDto).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseDto.getStatus()).isEqualTo(422);
+
+
     }
 
     @Test
@@ -469,6 +499,38 @@ public class UsersIT {
         org.assertj.core.api.Assertions.assertThat(responseDto).isNotNull();
         org.assertj.core.api.Assertions.assertThat(responseDto.getStatus()).isEqualTo(409);
 
+
+    }
+
+    @Test
+    public void getUserCurrent_WithValidToken_ReturnResponseGlobalDtoStatus200(){
+        ResponseGlobalDto responseDto = testClient
+                .get()
+                .uri("/api/v3/users/current")
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "joao@email.com", "123456"))
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(ResponseGlobalDto.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseDto).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseDto.user().id()).isEqualTo(400);
+        org.assertj.core.api.Assertions.assertThat(responseDto.user().username()).isEqualTo("joao@email.com");
+        org.assertj.core.api.Assertions.assertThat(responseDto.user().role()).isEqualTo(Role.ROLE_ADMIN);
+
+        responseDto = testClient
+                .get()
+                .uri("/api/v3/users/current")
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "maria@email.com", "123456"))
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(ResponseGlobalDto.class)
+                .returnResult().getResponseBody();
+
+            org.assertj.core.api.Assertions.assertThat(responseDto).isNotNull();
+            org.assertj.core.api.Assertions.assertThat(responseDto.user().id()).isEqualTo(500);
+            org.assertj.core.api.Assertions.assertThat(responseDto.user().username()).isEqualTo("maria@email.com");
+            org.assertj.core.api.Assertions.assertThat(responseDto.user().role()).isEqualTo(Role.ROLE_CLIENT);
 
     }
 
