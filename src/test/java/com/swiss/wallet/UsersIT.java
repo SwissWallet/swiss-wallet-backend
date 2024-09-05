@@ -534,5 +534,18 @@ public class UsersIT {
 
     }
 
+    @Test
+    public void recoverPassword_WithValidUsername_ReturnResponseGlobalDtoStatus200(){
+        String responseDto = testClient
+                .post()
+                .uri("/api/v3/users/recover-password?username=joao@email.com")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(String.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseDto).isNotNull();
+
+    }
 
 }
