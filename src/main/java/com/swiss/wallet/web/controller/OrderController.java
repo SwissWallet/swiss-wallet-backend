@@ -5,6 +5,12 @@ import com.swiss.wallet.entity.Order;
 import com.swiss.wallet.jwt.JwtUserDetails;
 import com.swiss.wallet.service.OrderService;
 import com.swiss.wallet.web.dto.OrderResponseDto;
+import com.swiss.wallet.web.dto.UserResponseDto;
+import com.swiss.wallet.web.exception.ErrorMessage;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -24,6 +30,15 @@ public class OrderController {
         this.orderService = orderService;
     }
 
+    @Operation(summary = "Save a new order", description = "Request requires a Bearer Token. Restricted access to CLIENT",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Resource saved successfully",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDto.class))),
+                    @ApiResponse(responseCode = "404", description = "Resource not found",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+                    @ApiResponse(responseCode = "403", description = "User not allowed to access this resource",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+            })
     @PostMapping
     @PreAuthorize("hasRole('CLIENT')")
     public ResponseEntity<OrderResponseDto> saveOrder(@AuthenticationPrincipal JwtUserDetails userDetails,
