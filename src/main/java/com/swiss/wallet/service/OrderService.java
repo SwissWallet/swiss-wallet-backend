@@ -81,4 +81,17 @@ public class OrderService {
             default -> null;
         };
     }
+
+    public Order changeStatus(Long idOrder, String status) {
+        Order order = orderRepository.findById(idOrder).orElseThrow(
+                () -> new ObjectNotFoundException(String.format("Order id: %s not found", idOrder))
+        );
+        switch (status) {
+            case "ANALYSIS" -> order.setStatus(Status.ANALYSIS);
+            case "SEPARATED" -> order.setStatus(Status.SEPARATED);
+            case "COMPLETED" -> order.setStatus(Status.COMPLETED);
+            case "UNAVAILABLE" -> order.setStatus(Status.UNAVAILABLE);
+        };
+        return orderRepository.save(order);
+    }
 }
