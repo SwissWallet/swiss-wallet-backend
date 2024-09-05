@@ -51,4 +51,11 @@ public class OrderController {
         List<Order> orders = orderService.findAll();
         return ResponseEntity.ok().body(OrderResponseDto.toListOrderResponse(orders));
     }
+
+    @GetMapping("/status")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<OrderResponseDto>> listOrderByFilter(@RequestParam("status") String status){
+        List<Order> orders = orderService.findAllByStatus(status);
+        return ResponseEntity.ok(OrderResponseDto.toListOrderResponse(orders));
+    }
 }
