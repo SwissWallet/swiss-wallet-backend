@@ -535,7 +535,7 @@ public class UsersIT {
     }
 
     @Test
-    public void recoverPassword_WithValidUsername_ReturnResponseGlobalDtoStatus200(){
+    public void recoverPassword_WithValidUsername_ReturnStringStatus200(){
         String responseDto = testClient
                 .post()
                 .uri("/api/v3/users/recover-password?username=joao@email.com")
@@ -547,5 +547,43 @@ public class UsersIT {
         org.assertj.core.api.Assertions.assertThat(responseDto).isNotNull();
 
     }
+
+    @Test
+    public void recoverPassword_WithInvalidUsername_ReturnErrorMessageStatus404(){
+        ErrorMessage responseDto = testClient
+                .post()
+                .uri("/api/v3/users/recover-password?username=joao@email")
+                .exchange()
+                .expectStatus().isNotFound()
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseDto).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseDto.getStatus()).isEqualTo(404);
+
+        responseDto = testClient
+                .post()
+                .uri("/api/v3/users/recover-password?username=joao@")
+                .exchange()
+                .expectStatus().isNotFound()
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseDto).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseDto.getStatus()).isEqualTo(404);
+
+        responseDto = testClient
+                .post()
+                .uri("/api/v3/users/recover-password?username=")
+                .exchange()
+                .expectStatus().isNotFound()
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseDto).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseDto.getStatus()).isEqualTo(404);
+    }
+
+
 
 }
