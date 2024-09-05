@@ -262,6 +262,75 @@ public class UsersIT {
         org.assertj.core.api.Assertions.assertThat(responseDto.getStatus()).isEqualTo(422);
     }
 
+    @Test
+    public void createUser_WithInvalidCPF_ReturnErrorMessageStatus422(){
+        ErrorMessage responseDto = testClient
+                .post()
+                .uri("/api/v3/users")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .bodyValue(
+                        new UserAddressCreateDto(
+                                new UserCreateDto(
+                                        "tobby@email.com",
+                                        "123456",
+                                        "Tobby Henrique",
+                                        "00000000000",
+                                        "20/05/2001",
+                                        "11987654321"
+                                ),
+                                new AddressCreateDto(
+                                        "01000-000",
+                                        "Alameda Joaquina",
+                                        "Taboão da Serra",
+                                        18L,
+                                        "SP"
+                                )
+                        )
+                )
+                .exchange()
+                .expectStatus().isEqualTo(422)
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseDto).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseDto.getStatus()).isEqualTo(422);
+
+        responseDto = testClient
+                .post()
+                .uri("/api/v3/users")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .bodyValue(
+                        new UserAddressCreateDto(
+                                new UserCreateDto(
+                                        "tobby@email.com",
+                                        "123456",
+                                        "Tobby Henrique",
+                                        "",
+                                        "20/05/2001",
+                                        "11987654321"
+                                ),
+                                new AddressCreateDto(
+                                        "01000-000",
+                                        "Alameda Joaquina",
+                                        "Taboão da Serra",
+                                        18L,
+                                        "SP"
+                                )
+                        )
+                )
+                .exchange()
+                .expectStatus().isEqualTo(422)
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseDto).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseDto.getStatus()).isEqualTo(422);
+
+
+    }
+
 
     @Test
     public void createUser_WithDuplicateUsername_ReturnErrorMessageStatus409(){
