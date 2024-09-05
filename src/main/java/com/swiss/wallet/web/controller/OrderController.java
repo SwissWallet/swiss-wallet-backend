@@ -58,4 +58,12 @@ public class OrderController {
         List<Order> orders = orderService.findAllByStatus(status);
         return ResponseEntity.ok(OrderResponseDto.toListOrderResponse(orders));
     }
+
+    @PutMapping("/change-status")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<OrderResponseDto> changeStatus(@RequestParam("idOrder") Long idOrder,
+                                                         @RequestParam("status") String status){
+        Order order = orderService.changeStatus(idOrder, status);
+        return ResponseEntity.ok(OrderResponseDto.toOrderResponse(order));
+    }
 }
