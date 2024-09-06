@@ -1013,4 +1013,23 @@ public class UsersIT {
                 org.assertj.core.api.Assertions.assertThat(responseDto).isNotNull();
                 org.assertj.core.api.Assertions.assertThat(responseDto.getStatus()).isEqualTo(400);
     }
+
+    @Test
+    public void changePassword_WithInvalidPassword_ReturnErrorMessageStatus400(){
+        ErrorMessage responseDto = testClient
+                .put()
+                .uri("/api/v3/users/password")
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "joao@email.com", "123456"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .bodyValue(new UserPasswordChangeDto("12345678", "123456", "123456"))
+                .exchange()
+                .expectStatus().isBadRequest()
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseDto).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseDto.getStatus()).isEqualTo(400);
+    }
+
 }
