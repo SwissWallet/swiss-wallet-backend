@@ -6,9 +6,9 @@ VALUES
 
 INSERT INTO `users` (`id`, `birth_date`, `cpf`, `name`, `password`, `phone`, `role`, `username`, `verification_code`, `id_address`)
 VALUES
-(400, '1990-01-01', '08422365004', 'João Silva', '$2a$12$0mTx/SSBjfscwepDDBuJ3uefaDiz8DUjgKlAOAtoV1YbLcOFmh.a6', '11987654321', 'ROLE_ADMIN', 'joao@email.com', null, 400),
-(500, '1985-05-15', '58793541090', 'Maria Oliveira', '$2a$12$0mTx/SSBjfscwepDDBuJ3uefaDiz8DUjgKlAOAtoV1YbLcOFmh.a6', '21998765432', 'ROLE_CLIENT', 'maria@email.com', null, 500),
-(600, '1992-08-30', '34861623079', 'Carlos Pereira', '$2a$12$0mTx/SSBjfscwepDDBuJ3uefaDiz8DUjgKlAOAtoV1YbLcOFmh.a6', '31987654321', 'ROLE_CLIENT', 'carlos@email.com', null, 600);
+(400, '1990-01-01', '08422365004', 'João Silva', '$2a$12$0mTx/SSBjfscwepDDBuJ3uefaDiz8DUjgKlAOAtoV1YbLcOFmh.a6', '11987654321', 'ROLE_ADMIN', 'joao@email.com', '$2a$12$yLsyMZ9s4VXgaUcDGNl8G.AX0rVIrItFQ/PImH1G32HNQ7ERXsTpS', 400),
+(500, '1985-05-15', '58793541090', 'Maria Oliveira', '$2a$12$0mTx/SSBjfscwepDDBuJ3uefaDiz8DUjgKlAOAtoV1YbLcOFmh.a6', '21998765432', 'ROLE_CLIENT', 'maria@email.com', '$2a$12$yLsyMZ9s4VXgaUcDGNl8G.AX0rVIrItFQ/PImH1G32HNQ7ERXsTpS', 500),
+(600, '1992-08-30', '34861623079', 'Carlos Pereira', '$2a$12$0mTx/SSBjfscwepDDBuJ3uefaDiz8DUjgKlAOAtoV1YbLcOFmh.a6', '31987654321', 'ROLE_CLIENT', 'carlos@email.com', '$2a$12$yLsyMZ9s4VXgaUcDGNl8G.AX0rVIrItFQ/PImH1G32HNQ7ERXsTpS', 600);
 
 INSERT INTO `accounts` (`id`, `value_account`, `id_user`)
 VALUES

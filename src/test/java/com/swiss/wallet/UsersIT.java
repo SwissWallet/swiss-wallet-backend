@@ -763,6 +763,36 @@ public class UsersIT {
         org.assertj.core.api.Assertions.assertThat(responseDto.getStatus()).isEqualTo(404);
     }
 
+    @Test
+    public void updateForgottenPassword_WithValidUsernameAndNewPasswordAndVerificationCode_ReturnErrorMessageStatus200(){
+        testClient
+                .put()
+                .uri("/api/v3/users/recover-password")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .bodyValue(new UserPasswordRecoveryDto("joao@email.com", "654321", "ABCDEF"))
+                .exchange()
+                .expectStatus().isOk();
+
+        testClient
+                .put()
+                .uri("/api/v3/users/recover-password")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .bodyValue(new UserPasswordRecoveryDto("maria@email.com", "654321", "ABCDEF"))
+                .exchange()
+                .expectStatus().isOk();
+
+        testClient
+                .put()
+                .uri("/api/v3/users/recover-password")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .bodyValue(new UserPasswordRecoveryDto("carlos@email.com", "654321", "ABCDEF"))
+                .exchange()
+                .expectStatus().isOk();
+    }
+
 
 
 }
