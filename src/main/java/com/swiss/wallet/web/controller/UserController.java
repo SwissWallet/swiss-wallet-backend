@@ -116,8 +116,8 @@ public class UserController {
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
             })
     @PutMapping("/address")
-    @PreAuthorize("hasRole('CLIENT')")
-    public ResponseEntity<Void> updateUserAddress(@RequestBody AddressCreateDto addressCreateDto,
+    @PreAuthorize("hasRole('CLIENT') OR hasRole('ADMIN')")
+    public ResponseEntity<Void> updateUserAddress(@RequestBody @Valid AddressCreateDto addressCreateDto,
                                                    @AuthenticationPrincipal JwtUserDetails userDetails){
         userService.changeUserAddress(addressCreateDto, userDetails.getId());
         return ResponseEntity.ok().build();

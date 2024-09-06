@@ -10,4 +10,6 @@ public interface IExtractRepository extends JpaRepository<Extract, Long> {
     Extract findExtractByAccount(Account account);
 
     List<Extract> findAllByAccount(Account account);
+
+    void deleteAllByAccount(Account account);
 }
