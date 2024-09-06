@@ -823,7 +823,17 @@ public class UsersIT {
                 .expectStatus().isNotFound();
     }
 
-
+    @Test
+    public void updateForgottenPassword_WithEmptyUsername_ReturnErrorMessageStatus422(){
+        testClient
+                .put()
+                .uri("/api/v3/users/recover-password")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .bodyValue(new UserPasswordRecoveryDto("", "654321", "ABCDEF"))
+                .exchange()
+                .expectStatus().isEqualTo(422);
+    }
 
 
 }
