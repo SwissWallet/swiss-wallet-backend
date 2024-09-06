@@ -795,14 +795,20 @@ public class UsersIT {
 
     @Test
     public void updateForgottenPassword_WithInvalidUsername_ReturnErrorMessageStatus422(){
-        testClient
+        ErrorMessage responseDto = testClient
                 .put()
                 .uri("/api/v3/users/recover-password")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .bodyValue(new UserPasswordRecoveryDto("", "654321", "ABCDEF"))
                 .exchange()
-                .expectStatus().isEqualTo(422);
+                .expectStatus().isEqualTo(422)
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseDto).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseDto.getStatus()).isEqualTo(422);
+
 
         testClient
                 .put()
@@ -811,7 +817,13 @@ public class UsersIT {
                 .accept(MediaType.APPLICATION_JSON)
                 .bodyValue(new UserPasswordRecoveryDto("joao@email", "654321", "ABCDEF"))
                 .exchange()
-                .expectStatus().isEqualTo(422);
+                .expectStatus().isEqualTo(422)
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseDto).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseDto.getStatus()).isEqualTo(422);
+
 
         testClient
                 .put()
@@ -834,14 +846,20 @@ public class UsersIT {
 
     @Test
     public void updateForgottenPassword_WithInvalidNewPassword_ReturnErrorMessageStatus422(){
-        testClient
+        ErrorMessage responseDto = testClient
                 .put()
                 .uri("/api/v3/users/recover-password")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .bodyValue(new UserPasswordRecoveryDto("joao@email.com", "", "ABCDEF"))
                 .exchange()
-                .expectStatus().isEqualTo(422);
+                .expectStatus().isEqualTo(422)
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseDto).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseDto.getStatus()).isEqualTo(422);
+
 
         testClient
                 .put()
@@ -850,19 +868,31 @@ public class UsersIT {
                 .accept(MediaType.APPLICATION_JSON)
                 .bodyValue(new UserPasswordRecoveryDto("joao@email.com", "123", "ABCDEF"))
                 .exchange()
-                .expectStatus().isEqualTo(422);
+                .expectStatus().isEqualTo(422)
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseDto).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseDto.getStatus()).isEqualTo(422);
+
     }
 
     @Test
     public void updateForgottenPassword_WithInvalidVerificationCode_ReturnErrorMessageStatus422(){
-        testClient
+        ErrorMessage responseDto = testClient
                 .put()
                 .uri("/api/v3/users/recover-password")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .bodyValue(new UserPasswordRecoveryDto("joao@email.com", "123456", ""))
                 .exchange()
-                .expectStatus().isEqualTo(422);
+                .expectStatus().isEqualTo(422)
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseDto).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseDto.getStatus()).isEqualTo(422);
+
     }
 
     @Test
@@ -898,8 +928,8 @@ public class UsersIT {
     }
 
     @Test
-    public void changePassword_WithInvalidNewPassword_ReturnStatus422(){
-        testClient
+    public void changePassword_WithInvalidNewPassword_ReturnErrorMessageStatus422(){
+        ErrorMessage responseDto = testClient
                 .put()
                 .uri("/api/v3/users/password")
                 .headers(JwtAuthentication.getHeaderAuthorization(testClient, "joao@email.com", "123456"))
@@ -907,7 +937,13 @@ public class UsersIT {
                 .accept(MediaType.APPLICATION_JSON)
                 .bodyValue(new UserPasswordChangeDto("123456", "654", "654"))
                 .exchange()
-                .expectStatus().isEqualTo(422);
+                .expectStatus().isEqualTo(422)
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseDto).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseDto.getStatus()).isEqualTo(422);
+
         testClient
                 .put()
                 .uri("/api/v3/users/password")
@@ -916,13 +952,19 @@ public class UsersIT {
                 .accept(MediaType.APPLICATION_JSON)
                 .bodyValue(new UserPasswordChangeDto("123456", "", ""))
                 .exchange()
-                .expectStatus().isEqualTo(422);
+                .expectStatus().isEqualTo(422)
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseDto).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseDto.getStatus()).isEqualTo(422);
+
 
     }
 
     @Test
-    public void changePassword_WithInvalidPassword_ReturnStatus422(){
-        testClient
+    public void changePassword_WithInvalidPassword_ReturnErrorMessageStatus422(){
+        ErrorMessage responseDto = testClient
                 .put()
                 .uri("/api/v3/users/password")
                 .headers(JwtAuthentication.getHeaderAuthorization(testClient, "joao@email.com", "123456"))
@@ -930,7 +972,13 @@ public class UsersIT {
                 .accept(MediaType.APPLICATION_JSON)
                 .bodyValue(new UserPasswordChangeDto("", "654321", "654321"))
                 .exchange()
-                .expectStatus().isEqualTo(422);
+                .expectStatus().isEqualTo(422)
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+                org.assertj.core.api.Assertions.assertThat(responseDto).isNotNull();
+                org.assertj.core.api.Assertions.assertThat(responseDto.getStatus()).isEqualTo(422);
+
         testClient
                 .put()
                 .uri("/api/v3/users/password")
@@ -939,7 +987,30 @@ public class UsersIT {
                 .accept(MediaType.APPLICATION_JSON)
                 .bodyValue(new UserPasswordChangeDto("123", "654321", "654321"))
                 .exchange()
-                .expectStatus().isEqualTo(422);
+                .expectStatus().isEqualTo(422)
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
 
+                org.assertj.core.api.Assertions.assertThat(responseDto).isNotNull();
+                org.assertj.core.api.Assertions.assertThat(responseDto.getStatus()).isEqualTo(422);
+
+    }
+
+    @Test
+    public void changePassword_WithInvalidNewPasswordAndConfirmPassword_ReturnErrorMessageStatus400(){
+        ErrorMessage responseDto = testClient
+                .put()
+                .uri("/api/v3/users/password")
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "joao@email.com", "123456"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .bodyValue(new UserPasswordChangeDto("123456", "123456789", "123456"))
+                .exchange()
+                .expectStatus().isBadRequest()
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+                org.assertj.core.api.Assertions.assertThat(responseDto).isNotNull();
+                org.assertj.core.api.Assertions.assertThat(responseDto.getStatus()).isEqualTo(400);
     }
 }
