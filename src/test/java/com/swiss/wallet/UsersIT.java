@@ -794,7 +794,7 @@ public class UsersIT {
     }
 
     @Test
-    public void updateForgottenPassword_WithInvalidUsername_ReturnErrorMessageStatus404(){
+    public void updateForgottenPassword_WithInvalidUsername_ReturnErrorMessageStatus422(){
         testClient
                 .put()
                 .uri("/api/v3/users/recover-password")
@@ -828,6 +828,27 @@ public class UsersIT {
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .bodyValue(new UserPasswordRecoveryDto("joao@", "654321", "ABCDEF"))
+                .exchange()
+                .expectStatus().isEqualTo(422);
+    }
+
+    @Test
+    public void updateForgottenPassword_WithInvalidNewPassword_ReturnErrorMessageStatus422(){
+        testClient
+                .put()
+                .uri("/api/v3/users/recover-password")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .bodyValue(new UserPasswordRecoveryDto("joao@email.com", "", "ABCDEF"))
+                .exchange()
+                .expectStatus().isEqualTo(422);
+
+        testClient
+                .put()
+                .uri("/api/v3/users/recover-password")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .bodyValue(new UserPasswordRecoveryDto("joao@email.com", "123", "ABCDEF"))
                 .exchange()
                 .expectStatus().isEqualTo(422);
     }
