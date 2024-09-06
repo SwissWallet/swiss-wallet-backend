@@ -853,4 +853,15 @@ public class UsersIT {
                 .expectStatus().isEqualTo(422);
     }
 
+    @Test
+    public void updateForgottenPassword_WithInvalidVerificationCode_ReturnErrorMessageStatus422(){
+        testClient
+                .put()
+                .uri("/api/v3/users/recover-password")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .bodyValue(new UserPasswordRecoveryDto("joao@email.com", "123456", ""))
+                .exchange()
+                .expectStatus().isEqualTo(422);
+    }
 }
