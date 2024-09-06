@@ -764,7 +764,7 @@ public class UsersIT {
     }
 
     @Test
-    public void updateForgottenPassword_WithValidUsernameAndNewPasswordAndVerificationCode_ReturnErrorMessageStatus200(){
+    public void updateForgottenPassword_WithValidUsernameAndNewPasswordAndVerificationCode_ReturnStatus200(){
         testClient
                 .put()
                 .uri("/api/v3/users/recover-password")
@@ -897,5 +897,49 @@ public class UsersIT {
                 .expectStatus().isOk();
     }
 
+    @Test
+    public void changePassword_WithInvalidNewPassword_ReturnStatus422(){
+        testClient
+                .put()
+                .uri("/api/v3/users/password")
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "joao@email.com", "123456"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .bodyValue(new UserPasswordChangeDto("123456", "654", "654"))
+                .exchange()
+                .expectStatus().isEqualTo(422);
+        testClient
+                .put()
+                .uri("/api/v3/users/password")
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "carlos@email.com", "123456"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .bodyValue(new UserPasswordChangeDto("123456", "", ""))
+                .exchange()
+                .expectStatus().isEqualTo(422);
 
+    }
+
+    @Test
+    public void changePassword_WithInvalidPassword_ReturnStatus422(){
+        testClient
+                .put()
+                .uri("/api/v3/users/password")
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "joao@email.com", "123456"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .bodyValue(new UserPasswordChangeDto("", "654321", "654321"))
+                .exchange()
+                .expectStatus().isEqualTo(422);
+        testClient
+                .put()
+                .uri("/api/v3/users/password")
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "carlos@email.com", "123456"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .bodyValue(new UserPasswordChangeDto("123", "654321", "654321"))
+                .exchange()
+                .expectStatus().isEqualTo(422);
+
+    }
 }
