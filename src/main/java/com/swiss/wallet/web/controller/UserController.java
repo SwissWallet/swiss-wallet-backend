@@ -99,8 +99,8 @@ public class UserController {
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
             })
     @PutMapping("/password")
-    @PreAuthorize("hasRole('CLIENT')")
-    public ResponseEntity<Void> updateUserPassword(@RequestBody UserPasswordChangeDto passwordChangeDto,
+    @PreAuthorize("hasRole('CLIENT') OR hasRole('ADMIN')")
+    public ResponseEntity<Void> updateUserPassword(@RequestBody @Valid UserPasswordChangeDto passwordChangeDto,
                                                    @AuthenticationPrincipal JwtUserDetails userDetails){
         userService.changeUserPassword(passwordChangeDto, userDetails.getId());
         return ResponseEntity.ok().build();

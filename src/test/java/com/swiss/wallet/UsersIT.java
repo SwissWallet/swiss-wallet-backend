@@ -864,4 +864,38 @@ public class UsersIT {
                 .exchange()
                 .expectStatus().isEqualTo(422);
     }
+
+    @Test
+    public void changePassword_WithValidPasswordAndNwPassword_ReturnStatus200(){
+        testClient
+                .put()
+                .uri("/api/v3/users/password")
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "joao@email.com", "123456"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .bodyValue(new UserPasswordChangeDto("123456", "654321", "654321"))
+                .exchange()
+                .expectStatus().isOk();
+        testClient
+                .put()
+                .uri("/api/v3/users/password")
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "carlos@email.com", "123456"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .bodyValue(new UserPasswordChangeDto("123456", "654321", "654321"))
+                .exchange()
+                .expectStatus().isOk();
+
+        testClient
+                .put()
+                .uri("/api/v3/users/password")
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "maria@email.com", "123456"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .bodyValue(new UserPasswordChangeDto("123456", "654321", "654321"))
+                .exchange()
+                .expectStatus().isOk();
+    }
+
+
 }
