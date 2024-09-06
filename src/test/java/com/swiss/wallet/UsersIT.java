@@ -800,9 +800,9 @@ public class UsersIT {
                 .uri("/api/v3/users/recover-password")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-                .bodyValue(new UserPasswordRecoveryDto("joao@email", "654321", "ABCDEF"))
+                .bodyValue(new UserPasswordRecoveryDto("", "654321", "ABCDEF"))
                 .exchange()
-                .expectStatus().isNotFound();
+                .expectStatus().isEqualTo(422);
 
         testClient
                 .put()
@@ -811,7 +811,16 @@ public class UsersIT {
                 .accept(MediaType.APPLICATION_JSON)
                 .bodyValue(new UserPasswordRecoveryDto("joao@email", "654321", "ABCDEF"))
                 .exchange()
-                .expectStatus().isNotFound();
+                .expectStatus().isEqualTo(422);
+
+        testClient
+                .put()
+                .uri("/api/v3/users/recover-password")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .bodyValue(new UserPasswordRecoveryDto("joao@email", "654321", "ABCDEF"))
+                .exchange()
+                .expectStatus().isEqualTo(422);
 
         testClient
                 .put()
@@ -820,20 +829,7 @@ public class UsersIT {
                 .accept(MediaType.APPLICATION_JSON)
                 .bodyValue(new UserPasswordRecoveryDto("joao@", "654321", "ABCDEF"))
                 .exchange()
-                .expectStatus().isNotFound();
-    }
-
-    @Test
-    public void updateForgottenPassword_WithEmptyUsername_ReturnErrorMessageStatus422(){
-        testClient
-                .put()
-                .uri("/api/v3/users/recover-password")
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .bodyValue(new UserPasswordRecoveryDto("", "654321", "ABCDEF"))
-                .exchange()
                 .expectStatus().isEqualTo(422);
     }
-
 
 }
