@@ -83,7 +83,7 @@ public class UserController {
 
             })
     @PutMapping("/recover-password")
-    public ResponseEntity<Void> updateForgottenPassword(@RequestBody UserPasswordRecoveryDto passwordRecoveryDto){
+    public ResponseEntity<Void> updateForgottenPassword(@RequestBody @Valid UserPasswordRecoveryDto passwordRecoveryDto){
         userService.changeForgottenPassword(passwordRecoveryDto);
         return ResponseEntity.ok().build();
     }
