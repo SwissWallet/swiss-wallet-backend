@@ -508,6 +508,42 @@ public class UsersIT {
     }
 
     @Test
+    public void createUser_WithInvalidUf_ReturnErrorMessageStatus422(){
+        ErrorMessage responseDto = testClient
+                .post()
+                .uri("/api/v3/users")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .bodyValue(
+                        new UserAddressCreateDto(
+                                new UserCreateDto(
+                                        "tobby@email.com",
+                                        "123456",
+                                        "Tobby Henrique",
+                                        "89018551007",
+                                        "20/01/2000",
+                                        "11930152076"
+                                ),
+                                new AddressCreateDto(
+                                        "06766-135",
+                                        "Alameda Joaquina",
+                                        "",
+                                        18L,
+                                        ""
+                                )
+                        )
+                )
+                .exchange()
+                .expectStatus().isEqualTo(422)
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseDto).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseDto.getStatus()).isEqualTo(422);
+
+    }
+
+    @Test
     public void createUser_WithInvalidPhone_ReturnErrorMessageStatus422(){
         ErrorMessage responseDto = testClient
                 .post()
