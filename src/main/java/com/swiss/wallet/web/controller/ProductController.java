@@ -113,4 +113,11 @@ public class ProductController {
         return ResponseEntity.ok().body(ProductResponseDto.toListProductResponse(products));
     }
 
+    @PutMapping("/value")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> updateProductValue(@RequestParam("id") Long id,
+                                                   @RequestParam("newValue") float newValue){
+        productService.changeValue(id, newValue);
+        return ResponseEntity.ok().build();
+    }
 }
