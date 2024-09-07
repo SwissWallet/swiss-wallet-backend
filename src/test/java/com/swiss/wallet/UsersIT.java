@@ -1032,6 +1032,28 @@ public class UsersIT {
         org.assertj.core.api.Assertions.assertThat(responseDto.getStatus()).isEqualTo(400);
     }
 
+
+    @Test
+    public void changeAddress_WithValidDatar_ReturnStatus200(){
+        testClient
+                .put()
+                .uri("/api/v3/users/address")
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "joao@email.com", "123456"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .bodyValue(new AddressCreateDto(
+                                "06766-135",
+                                "Alameda",
+                                "Taboão da Serra",
+                                18L,
+                                "SP"
+                        )
+                )
+                .exchange()
+                .expectStatus().isOk();
+
+    }
+
     @Test
     public void changeAddress_WithInvalidZipCode_ReturnErrorMessageStatus422(){
         ErrorMessage responseDto = testClient
