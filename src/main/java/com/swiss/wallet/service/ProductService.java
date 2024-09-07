@@ -101,4 +101,14 @@ public class ProductService {
     public List<Product> findAll() {
         return productRepository.findAll();
     }
+
+    public void changeValue(Long id, float newValue) {
+
+        Product product = productRepository.findById(id)
+                .orElseThrow(
+                        () -> new ObjectNotFoundException("Product not found, Please check the product ID and try again")
+                );
+        product.setValue(newValue);
+        productRepository.save(product);
+    }
 }
