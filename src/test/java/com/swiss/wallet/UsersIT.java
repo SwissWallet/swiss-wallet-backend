@@ -1109,4 +1109,31 @@ public class UsersIT {
         org.assertj.core.api.Assertions.assertThat(responseDto.getStatus()).isEqualTo(422);
 
     }
+
+    @Test
+    public void changeAddress_WithInvalidNumber_ReturnErrorMessageStatus422(){
+        ErrorMessage responseDto = testClient
+                .put()
+                .uri("/api/v3/users/address")
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "joao@email.com", "123456"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .bodyValue(new AddressCreateDto(
+                                "06766-135",
+                                "Alameda",
+                                "Taboão da Serra",
+                                null,
+                                "SP"
+                        )
+                )
+                .exchange()
+                .expectStatus().isEqualTo(422)
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseDto).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseDto.getStatus()).isEqualTo(422);
+
+    }
+
 }
