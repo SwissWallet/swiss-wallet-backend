@@ -44,6 +44,21 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(UserResponseDto.toUserResponse(user));
     }
 
+    @Operation(summary = "Recover a logged in user", description = "Request requires a Bearer Token. Restricted access to CLIENT",
+            security = @SecurityRequirement(name = "security"),
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Resource retrieved successfully",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDto.class))),
+                    @ApiResponse(responseCode = "403", description = "User not allowed to access this resource",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+            })
+    @GetMapping("/current")
+    @PreAuthorize("hasRole('CLIENT') or hasRole('ADMIN')")
+    public ResponseEntity<ResponseGlobalDto> getCurrentUser(@AuthenticationPrincipal JwtUserDetails userDetails){
+        ResponseGlobalDto responseGlobalDto = userService.findByIdGlobal(userDetails.getId());
+        return ResponseEntity.ok().body(responseGlobalDto);
+    }
+
     @Operation(summary = "Generate code to change password", description = "Resource to generate code",
             responses = {
                     @ApiResponse(responseCode = "200", description = "Resource retrieved successfully",
@@ -68,24 +83,9 @@ public class UserController {
 
             })
     @PutMapping("/recover-password")
-    public ResponseEntity<Void> updateForgottenPassword(@RequestBody UserPasswordRecoveryDto passwordRecoveryDto){
+    public ResponseEntity<Void> updateForgottenPassword(@RequestBody @Valid UserPasswordRecoveryDto passwordRecoveryDto){
         userService.changeForgottenPassword(passwordRecoveryDto);
         return ResponseEntity.ok().build();
-    }
-
-    @Operation(summary = "Recover a logged in user", description = "Request requires a Bearer Token. Restricted access to CLIENT",
-            security = @SecurityRequirement(name = "security"),
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "Resource retrieved successfully",
-                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDto.class))),
-                    @ApiResponse(responseCode = "403", description = "User not allowed to access this resource",
-                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
-            })
-    @GetMapping("/current")
-    @PreAuthorize("hasRole('CLIENT') or hasRole('ADMIN')")
-    public ResponseEntity<ResponseGlobalDto> getCurrentUser(@AuthenticationPrincipal JwtUserDetails userDetails){
-        ResponseGlobalDto responseGlobalDto = userService.findByIdGlobal(userDetails.getId());
-        return ResponseEntity.ok().body(responseGlobalDto);
     }
 
     @Operation(summary = "Change user password", description = "Request requires a Bearer Token. Restricted access to CLIENT",
@@ -99,8 +99,8 @@ public class UserController {
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
             })
     @PutMapping("/password")
-    @PreAuthorize("hasRole('CLIENT')")
-    public ResponseEntity<Void> updateUserPassword(@RequestBody UserPasswordChangeDto passwordChangeDto,
+    @PreAuthorize("hasRole('CLIENT') OR hasRole('ADMIN')")
+    public ResponseEntity<Void> updateUserPassword(@RequestBody @Valid UserPasswordChangeDto passwordChangeDto,
                                                    @AuthenticationPrincipal JwtUserDetails userDetails){
         userService.changeUserPassword(passwordChangeDto, userDetails.getId());
         return ResponseEntity.ok().build();
@@ -116,8 +116,8 @@ public class UserController {
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
             })
     @PutMapping("/address")
-    @PreAuthorize("hasRole('CLIENT')")
-    public ResponseEntity<Void> updateUserAddress(@RequestBody AddressCreateDto addressCreateDto,
+    @PreAuthorize("hasRole('CLIENT') OR hasRole('ADMIN')")
+    public ResponseEntity<Void> updateUserAddress(@RequestBody @Valid AddressCreateDto addressCreateDto,
                                                    @AuthenticationPrincipal JwtUserDetails userDetails){
         userService.changeUserAddress(addressCreateDto, userDetails.getId());
         return ResponseEntity.ok().build();
@@ -132,7 +132,7 @@ public class UserController {
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
             })
     @DeleteMapping
-    @PreAuthorize("hasRole('CLIENT')")
+    @PreAuthorize("hasRole('CLIENT') OR hasRole('ADMIN')")
     public ResponseEntity<Void> deleteUser(@AuthenticationPrincipal JwtUserDetails userDetails){
 
         userService.deleteUser(userDetails.getId());
