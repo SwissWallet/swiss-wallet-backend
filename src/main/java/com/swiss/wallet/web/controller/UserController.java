@@ -132,7 +132,7 @@ public class UserController {
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
             })
     @DeleteMapping
-    @PreAuthorize("hasRole('CLIENT')")
+    @PreAuthorize("hasRole('CLIENT') OR hasRole('ADMIN')")
     public ResponseEntity<Void> deleteUser(@AuthenticationPrincipal JwtUserDetails userDetails){
 
         userService.deleteUser(userDetails.getId());

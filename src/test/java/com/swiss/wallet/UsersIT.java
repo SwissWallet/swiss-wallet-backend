@@ -1183,4 +1183,14 @@ public class UsersIT {
         org.assertj.core.api.Assertions.assertThat(responseDto.getStatus()).isEqualTo(422);
 
     }
+
+    @Test
+    public void deleteUser_WithValidToken_ReturnStatus200(){
+        testClient
+                .delete()
+                .uri("/api/v3/users")
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "joao@email.com", "123456"))
+                .exchange()
+                .expectStatus().isOk();
+    }
 }
