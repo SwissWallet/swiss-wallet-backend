@@ -49,7 +49,7 @@ public class AccountService {
                 .orElseThrow(
                         () -> new ObjectNotFoundException(String.format("Account not found. Please check the User %s and try again", user.getName()))
                 );
-        if (value <= 0){
+        if (value <= 0 || value == null){
             throw new ValueInvalidException(String.format("Invalid value for deposit"));
         }
         account.setValue(account.getValue() + value);

@@ -104,5 +104,30 @@ public class AccountIT {
         org.assertj.core.api.Assertions.assertThat(responseDto.getStatus()).isEqualTo(404);
     }
 
+    @Test
+    public void registerDeposit_WithValue_ReturnErrorMessageStatus400(){
+        ErrorMessage responseDto = testClient
+                .post()
+                .uri("/api/v3/accounts/register-deposit?username=maria@email.com&value=0")
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "joao@email.com", "123456"))
+                .exchange()
+                .expectStatus().isBadRequest()
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
 
+        org.assertj.core.api.Assertions.assertThat(responseDto).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseDto.getStatus()).isEqualTo(400);
+
+        testClient
+                .post()
+                .uri("/api/v3/accounts/register-deposit?username=maria@email.com&value=-10")
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "joao@email.com", "123456"))
+                .exchange()
+                .expectStatus().isBadRequest()
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseDto).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseDto.getStatus()).isEqualTo(400);
+    }
 }
