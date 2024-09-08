@@ -37,7 +37,7 @@ public class AccountController {
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
             })
     @GetMapping("/current")
-    @PreAuthorize("hasRole('CLIENT')")
+    @PreAuthorize("hasRole('CLIENT') OR hasRole('ADMIN')")
     public ResponseEntity<AccountResponseDto> getAccountUserCurrent(@AuthenticationPrincipal JwtUserDetails userDetails){
         Account account = accountService.findByUserId(userDetails.getId());
         return ResponseEntity.ok().body(AccountResponseDto.toAccountResponseDto(account));
