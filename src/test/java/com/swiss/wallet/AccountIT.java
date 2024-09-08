@@ -3,6 +3,7 @@ package com.swiss.wallet;
 import com.swiss.wallet.entity.Role;
 import com.swiss.wallet.web.dto.AccountResponseDto;
 import com.swiss.wallet.web.dto.ResponseGlobalDto;
+import com.swiss.wallet.web.exception.ErrorMessage;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -64,6 +65,44 @@ public class AccountIT {
                 .expectStatus().isOk();
     }
 
+    @Test
+    public void registerDeposit_WithInvalidUsername_ReturnErrorMessageStatus404(){
+        ErrorMessage responseDto = testClient
+                .post()
+                .uri("/api/v3/accounts/register-deposit?username=&value=100")
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "joao@email.com", "123456"))
+                .exchange()
+                .expectStatus().isNotFound()
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseDto).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseDto.getStatus()).isEqualTo(404);
+
+        testClient
+                .post()
+                .uri("/api/v3/accounts/register-deposit?username=maria@email&value=100")
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "joao@email.com", "123456"))
+                .exchange()
+                .expectStatus().isNotFound()
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseDto).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseDto.getStatus()).isEqualTo(404);
+
+        testClient
+                .post()
+                .uri("/api/v3/accounts/register-deposit?username=maria@&value=100")
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "joao@email.com", "123456"))
+                .exchange()
+                .expectStatus().isNotFound()
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseDto).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseDto.getStatus()).isEqualTo(404);
+    }
 
 
 }
