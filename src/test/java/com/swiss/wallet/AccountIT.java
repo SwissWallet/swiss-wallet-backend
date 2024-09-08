@@ -130,4 +130,31 @@ public class AccountIT {
         org.assertj.core.api.Assertions.assertThat(responseDto).isNotNull();
         org.assertj.core.api.Assertions.assertThat(responseDto.getStatus()).isEqualTo(400);
     }
+
+    @Test
+    public void registerDeposit_WithInvalidUser_ReturnErrorMessageStatus403(){
+        ErrorMessage responseDto = testClient
+                .post()
+                .uri("/api/v3/accounts/register-deposit?username=maria@email.com&value=100")
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "maria@email.com", "123456"))
+                .exchange()
+                .expectStatus().isForbidden()
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseDto).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseDto.getStatus()).isEqualTo(403);
+
+        testClient
+                .post()
+                .uri("/api/v3/accounts/register-deposit?username=carlos@email.com&value=200")
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "carlos@email.com", "123456"))
+                .exchange()
+                .expectStatus().isForbidden()
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseDto).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseDto.getStatus()).isEqualTo(403);
+    }
 }
