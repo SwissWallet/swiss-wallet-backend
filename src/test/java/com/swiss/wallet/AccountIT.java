@@ -47,4 +47,23 @@ public class AccountIT {
 
     }
 
+    @Test
+    public void registerDeposit_WithValidToken_ReturnStatus200(){
+         testClient
+                .post()
+                .uri("/api/v3/accounts/register-deposit?username=maria@email.com&value=100")
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "joao@email.com", "123456"))
+                .exchange()
+                .expectStatus().isOk();
+
+        testClient
+                .post()
+                .uri("/api/v3/accounts/register-deposit?username=carlos@email.com&value=200")
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "joao@email.com", "123456"))
+                .exchange()
+                .expectStatus().isOk();
+    }
+
+
+
 }
