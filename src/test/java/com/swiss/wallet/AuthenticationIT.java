@@ -91,6 +91,33 @@ public class AuthenticationIT {
         org.assertj.core.api.Assertions.assertThat(responseBody.getStatus()).isEqualTo(422);
     }
 
+    @Test
+    public void authenticate_WithInvalidPassword_ReturnErrorMessageStatus422() {
+        ErrorMessage responseBody = testClient
+                .post()
+                .uri("/api/v3/auth")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new UserLoginDto("maria@email.com", ""))
+                .exchange()
+                .expectStatus().isEqualTo(422)
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
 
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseBody.getStatus()).isEqualTo(422);
+
+        responseBody = testClient
+                .post()
+                .uri("/api/v3/auth")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new UserLoginDto("maria@email.com", "123"))
+                .exchange()
+                .expectStatus().isEqualTo(422)
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseBody.getStatus()).isEqualTo(422);
+    }
 
 }
