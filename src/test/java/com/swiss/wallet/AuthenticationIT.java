@@ -2,6 +2,7 @@ package com.swiss.wallet;
 
 import com.swiss.wallet.jwt.JwtToken;
 import com.swiss.wallet.web.dto.UserLoginDto;
+import com.swiss.wallet.web.exception.ErrorMessage;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -30,6 +31,35 @@ public class AuthenticationIT {
                 .returnResult().getResponseBody();
 
         org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+    }
+
+    @Test
+    public void authenticate_WithInvalidCredencials_ReturnErrorMessageStatus400(){
+        ErrorMessage responseBody = testClient
+                .post()
+                .uri("/api/v3/auth")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new UserLoginDto("invalido@email.com", "123456"))
+                .exchange()
+                .expectStatus().isBadRequest()
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseBody.getStatus()).isEqualTo(400);
+
+        responseBody = testClient
+                .post()
+                .uri("/api/v3/auth")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new UserLoginDto("maria@email.com", "000000"))
+                .exchange()
+                .expectStatus().isBadRequest()
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseBody.getStatus()).isEqualTo(400);
     }
 
 }
