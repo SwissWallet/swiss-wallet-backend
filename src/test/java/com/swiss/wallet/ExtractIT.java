@@ -15,5 +15,21 @@ public class ExtractIT {
     @Autowired
     WebTestClient testClient;
 
+    @Test
+    public void findExtractByUserLogged_WithValidToken_ReturnStatus204(){
+        testClient
+                .get()
+                .uri("/api/v3/extracts/current")
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "carlos@email.com", "123456"))
+                .exchange()
+                .expectStatus().isNoContent();
+
+        testClient
+                .get()
+                .uri("/api/v3/extracts/current")
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "maria@email.com", "123456"))
+                .exchange()
+                .expectStatus().isNoContent();
+    }
 
 }
