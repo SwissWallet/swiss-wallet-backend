@@ -1,10 +1,8 @@
 package com.swiss.wallet.service;
 
-import com.swiss.wallet.entity.Order;
-import com.swiss.wallet.entity.Product;
-import com.swiss.wallet.entity.Status;
-import com.swiss.wallet.entity.UserEntity;
+import com.swiss.wallet.entity.*;
 import com.swiss.wallet.exception.ObjectNotFoundException;
+import com.swiss.wallet.exception.OrderProductInavlidException;
 import com.swiss.wallet.repository.IOrderRepository;
 import com.swiss.wallet.repository.IProductRepository;
 import com.swiss.wallet.repository.IUserRepository;
@@ -36,6 +34,9 @@ public class OrderService {
                         () -> new ObjectNotFoundException("Product not found, Please check the product ID and try again")
                 );
 
+        if(product.getCategory() != Category.STORE){
+            throw new OrderProductInavlidException(String.format("Invalid product to order"));
+        }
         Order order = new Order();
         order.setUser(user);
         order.setProduct(product);
