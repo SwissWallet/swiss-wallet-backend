@@ -34,4 +34,5 @@ public class PurchaseController {
         List<Purchase> purchases = purchaseService.findAll();
         return ResponseEntity.ok().body(PurchaseResponseDto.toListProductResponse(purchases));
     }
+
 }

@@ -86,4 +86,13 @@ public class PurchaseService {
     public List<Purchase> findAll() {
         return iPurchaseRepository.findAll();
     }
+
+    @Transactional(readOnly = true)
+    public List<Purchase> findAllByUser(String username) {
+        UserEntity user = userRepository.findByUsername(username)
+                .orElseThrow(
+                        () -> new ObjectNotFoundException(String.format("User username= %s not found", username))
+                );
+        return iPurchaseRepository.findAllByUser(user);
+    }
 }
