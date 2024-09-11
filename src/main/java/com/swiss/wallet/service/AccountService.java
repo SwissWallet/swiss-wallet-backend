@@ -40,6 +40,7 @@ public class AccountService {
         return account;
     }
 
+    @Transactional
     public void registerDeposit(String username, Double value) {
         UserEntity user = userRepository.findByUsername(username)
                 .orElseThrow(
