@@ -5,6 +5,6 @@ import jakarta.validation.constraints.NotBlank;
 import java.util.List;
 
 public record PurchaseCreateDto(@NotBlank
-                                String userUsername,
+                                String username,
                                 List<Long> productIds) {
 }

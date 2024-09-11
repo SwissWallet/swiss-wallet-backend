@@ -8,6 +8,7 @@ import com.swiss.wallet.web.dto.PurchaseCreateDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -43,9 +44,9 @@ public class PurchaseService {
 
         float value = calcValueTotal(purchaseCreateDto.productIds());
 
-        UserEntity user = userRepository.findByUsername(purchaseCreateDto.userUsername())
+        UserEntity user = userRepository.findByUsername(purchaseCreateDto.username())
                 .orElseThrow(
-                        () -> new ObjectNotFoundException(String.format("User username= %s not found", purchaseCreateDto.userUsername()))
+                        () -> new ObjectNotFoundException(String.format("User username= %s not found", purchaseCreateDto.username()))
                 );
 
         List<Product> products = iProductRepository.findAllById(purchaseCreateDto.productIds());
@@ -70,6 +71,7 @@ public class PurchaseService {
         extract.setValue((double) value);
         extract.setType(Extract.Type.TRANSACTION);
         extract.setDescription("Points transaction");
+        extract.setDate(LocalDateTime.now());
         iExtractRepository.save(extract);
 
         List<Order> orders = orderRepository.findAllByUserAndProductIn(user, products);
@@ -78,5 +80,10 @@ public class PurchaseService {
         orderRepository.saveAll(orders);
 
         return purchase;
+    }
+
+    @Transactional(readOnly = true)
+    public List<Purchase> findAll() {
+        return iPurchaseRepository.findAll();
     }
 }
