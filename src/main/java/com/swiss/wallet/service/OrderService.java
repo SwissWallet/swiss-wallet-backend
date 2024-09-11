@@ -7,6 +7,7 @@ import com.swiss.wallet.repository.IOrderRepository;
 import com.swiss.wallet.repository.IProductRepository;
 import com.swiss.wallet.repository.IUserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -24,6 +25,7 @@ public class OrderService {
         this.userRepository = userRepository;
     }
 
+    @Transactional
     public Order saveOrder(Long id, Long idProduct) {
         UserEntity user = userRepository.findById(id)
                 .orElseThrow(
@@ -45,6 +47,7 @@ public class OrderService {
 
     }
 
+    @Transactional(readOnly = true)
     public List<Order> findAllByUser(Long id) {
         UserEntity user = userRepository.findById(id)
                 .orElseThrow(
@@ -55,6 +58,7 @@ public class OrderService {
 
     }
 
+    @Transactional
     public void deleteByIdAndUser(Long idOrder, Long id) {
         UserEntity user = userRepository.findById(id)
                 .orElseThrow(
@@ -68,10 +72,12 @@ public class OrderService {
         orderRepository.deleteById(order.getId());
     }
 
+    @Transactional(readOnly = true)
     public List<Order> findAll() {
         return orderRepository.findAll();
     }
 
+    @Transactional(readOnly = true)
     public List<Order> findAllByStatus(String status) {
 
         return switch (status) {
@@ -83,6 +89,7 @@ public class OrderService {
         };
     }
 
+    @Transactional
     public Order changeStatus(Long idOrder, String status) {
         Order order = orderRepository.findById(idOrder).orElseThrow(
                 () -> new ObjectNotFoundException(String.format("Order id: %s not found", idOrder))

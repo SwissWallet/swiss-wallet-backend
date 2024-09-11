@@ -64,8 +64,7 @@ public class UserService {
                 );
     }
 
-    //Method to generate forgotten code the password
-    @Transactional
+    @Transactional(readOnly = true)
     public String recoverPassword(String username) {
         String code = RandomStringUtils.randomAlphanumeric(6);
 
@@ -79,7 +78,6 @@ public class UserService {
         return code;
     }
 
-    //Method for changing a forgotten user password, passing the username, verification code and new password
     @Transactional
     public void changeForgottenPassword(UserPasswordRecoveryDto passwordRecoveryDto) {
         UserEntity user = userRepository.findByUsername(passwordRecoveryDto.username())
@@ -96,7 +94,7 @@ public class UserService {
         userRepository.save(user);
     }
 
-    //Method that searches user by id
+    @Transactional(readOnly = true)
     public UserEntity findById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(
@@ -162,6 +160,7 @@ public class UserService {
         addressRepository.deleteById(address.getId());
     }
 
+    @Transactional(readOnly = true)
     public ResponseGlobalDto findByIdGlobal(Long id) {
         UserEntity user = userRepository.findById(id)
                 .orElseThrow(

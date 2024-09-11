@@ -6,6 +6,7 @@ import com.swiss.wallet.exception.PointInsufficientException;
 import com.swiss.wallet.repository.*;
 import com.swiss.wallet.web.dto.PurchaseCreateDto;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -37,6 +38,7 @@ public class PurchaseService {
         return total;
     }
 
+    @Transactional
     public Purchase savePurchase(PurchaseCreateDto purchaseCreateDto) {
 
         float value = calcValueTotal(purchaseCreateDto.productIds());

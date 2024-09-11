@@ -9,6 +9,7 @@ import com.swiss.wallet.repository.IFavoriteRepository;
 import com.swiss.wallet.repository.IProductRepository;
 import com.swiss.wallet.repository.IUserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -25,6 +26,7 @@ public class FavoriteService {
         this.productRepository = productRepository;
     }
 
+    @Transactional
     public void saveFavorite(Long id, Long idProduct) {
         UserEntity user = userRepository.findById(id)
                 .orElseThrow(
@@ -45,6 +47,7 @@ public class FavoriteService {
         favoriteRepository.save(favorite);
     }
 
+    @Transactional(readOnly = true)
     public List<Favorite> findAllByUser(Long id) {
         UserEntity user = userRepository.findById(id)
                 .orElseThrow(
@@ -53,6 +56,7 @@ public class FavoriteService {
         return favoriteRepository.findALlByUser(user);
     }
 
+    @Transactional
     public void deleteFavorite(Long id, Long idProduct) {
         UserEntity user = userRepository.findById(id)
                 .orElseThrow(
