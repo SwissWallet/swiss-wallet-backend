@@ -35,4 +35,10 @@ public class PurchaseController {
         return ResponseEntity.ok().body(PurchaseResponseDto.toListProductResponse(purchases));
     }
 
+    @GetMapping("/users")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<PurchaseResponseDto>> listAllByUser(@RequestParam String username){
+        List<Purchase> purchases = purchaseService.findAllByUser(username);
+        return ResponseEntity.ok().body(PurchaseResponseDto.toListProductResponse(purchases));
+    }
 }
