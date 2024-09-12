@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +30,7 @@ public class PurchaseController {
         this.purchaseService = purchaseService;
     }
 
-    @Operation(summary = "Create a new purchase", description = "Feature to create a new purchase",
+    @Operation(summary = "Create a new purchase", description = "Request requires a Bearer Token. Restricted access to ADMIN",
             responses = {
                     @ApiResponse(responseCode = "201", description = "Resource created successfully",
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDto.class))),
@@ -47,17 +48,34 @@ public class PurchaseController {
         return ResponseEntity.ok().body(PurchaseResponseDto.toPurchaseResponse(purchase));
     }
 
+    @Operation(summary = "Recover all purchase", description = "Request requires a Bearer Token. Restricted access to ADMIN",
+            security = @SecurityRequirement(name = "security"),
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Resource retrieved successfully",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDto.class))),
+                    @ApiResponse(responseCode = "204", description = "Resource successfully retrieved empty list",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDto.class))),
+                    @ApiResponse(responseCode = "403", description = "User not allowed to access this resource",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+            })
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<PurchaseResponseDto>> listAllPurchase(){
         List<Purchase> purchases = purchaseService.findAll();
-        return ResponseEntity.ok().body(PurchaseResponseDto.toListProductResponse(purchases));
+        if(!purchases.isEmpty()){
+            return ResponseEntity.ok().body(PurchaseResponseDto.toListProductResponse(purchases));
+        }
+        return ResponseEntity.noContent().build();
     }
+
 
     @GetMapping("/users")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<PurchaseResponseDto>> listAllByUser(@RequestParam String username){
         List<Purchase> purchases = purchaseService.findAllByUser(username);
-        return ResponseEntity.ok().body(PurchaseResponseDto.toListProductResponse(purchases));
+        if(!purchases.isEmpty()){
+            return ResponseEntity.ok().body(PurchaseResponseDto.toListProductResponse(purchases));
+        }
+        return ResponseEntity.noContent().build();
     }
 }
