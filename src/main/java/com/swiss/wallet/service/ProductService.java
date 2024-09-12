@@ -57,7 +57,6 @@ public class ProductService {
         return ProductResponseDto.toProductResponse(product);
     }
 
-    @Transactional
     private String encodeImageToBase64(MultipartFile file, int width, int height) throws IOException {
         // Read the original image
         BufferedImage originalImage = ImageIO.read(file.getInputStream());
