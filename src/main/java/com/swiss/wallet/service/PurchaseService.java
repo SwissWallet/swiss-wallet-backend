@@ -54,6 +54,10 @@ public class PurchaseService {
                 () -> new ObjectNotFoundException(String.format("Account id = %s not found", user.getName()))
         );
 
+        if (products.isEmpty()){
+            throw new ObjectNotFoundException(String.format("No products added to the list"));
+        }
+
         if (account.getValue() < value){
             throw new PointInsufficientException("Insufficient ponint balance");
         }
