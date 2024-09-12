@@ -113,6 +113,13 @@ public class ProductController {
         return ResponseEntity.ok().body(ProductResponseDto.toListProductResponse(products));
     }
 
+    @Operation(summary = "Change value product", description = "Request requires a Bearer Token. Restricted access to ADMIN",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Resource retrieved successfully",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDto.class))),
+                    @ApiResponse(responseCode = "404", description = "Resource not found",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+            })
     @PutMapping("/value")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> updateProductValue(@RequestParam("id") Long id,
