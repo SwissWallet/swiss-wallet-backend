@@ -64,7 +64,7 @@ public class UserService {
                 );
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public String recoverPassword(String username) {
         String code = RandomStringUtils.randomAlphanumeric(6);
 
