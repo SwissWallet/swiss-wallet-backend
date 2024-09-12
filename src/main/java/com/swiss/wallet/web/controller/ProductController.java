@@ -22,7 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-@Tag(name = "Products", description = "Contains all operations related to resources for registering, editing and reading a product.")
+@Tag(name = "Product", description = "Contains all operations related to resources for registering, editing and reading a product.")
 @RestController
 @RequestMapping("/api/v3/products")
 public class ProductController {

@@ -4,6 +4,12 @@ import com.swiss.wallet.entity.Purchase;
 import com.swiss.wallet.service.PurchaseService;
 import com.swiss.wallet.web.dto.PurchaseCreateDto;
 import com.swiss.wallet.web.dto.PurchaseResponseDto;
+import com.swiss.wallet.web.dto.UserResponseDto;
+import com.swiss.wallet.web.exception.ErrorMessage;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +29,17 @@ public class PurchaseController {
         this.purchaseService = purchaseService;
     }
 
+    @Operation(summary = "Create a new purchase", description = "Feature to create a new purchase",
+            responses = {
+                    @ApiResponse(responseCode = "201", description = "Resource created successfully",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDto.class))),
+                    @ApiResponse(responseCode = "400", description = "Insufficient ponint balance",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+                     @ApiResponse(responseCode = "404", description = "User or Products not found",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+                    @ApiResponse(responseCode = "422", description = "Resource not processed due to invalid input data",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class)))
+            })
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<PurchaseResponseDto> createPurchase(@RequestBody @Valid PurchaseCreateDto purchaseCreateDto) {
