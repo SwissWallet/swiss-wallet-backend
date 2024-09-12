@@ -31,6 +31,7 @@ public class PurchaseController {
     }
 
     @Operation(summary = "Create a new purchase", description = "Request requires a Bearer Token. Restricted access to ADMIN",
+            security = @SecurityRequirement(name = "security"),
             responses = {
                     @ApiResponse(responseCode = "201", description = "Resource created successfully",
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDto.class))),
