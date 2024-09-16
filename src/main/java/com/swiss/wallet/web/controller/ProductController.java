@@ -75,7 +75,10 @@ public class ProductController {
             @RequestParam String category
     ){
         List<Product> products = productService.findAllByCategory(category);
-        return ResponseEntity.ok().body(ProductResponseDto.toListProductResponse(products));
+        if(!products.isEmpty()){
+            return ResponseEntity.ok().body(ProductResponseDto.toListProductResponse(products));
+        }
+        return ResponseEntity.noContent().build();
     }
 
 
@@ -110,7 +113,10 @@ public class ProductController {
     @PreAuthorize("hasRole('ADMIN') OR hasRole('CLIENT')")
     public ResponseEntity<List<ProductResponseDto>> findAllProduct(){
         List<Product> products = productService.findAll();
-        return ResponseEntity.ok().body(ProductResponseDto.toListProductResponse(products));
+        if(!products.isEmpty()){
+            return ResponseEntity.ok().body(ProductResponseDto.toListProductResponse(products));
+        }
+        return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "Change value product", description = "Request requires a Bearer Token. Restricted access to ADMIN",
