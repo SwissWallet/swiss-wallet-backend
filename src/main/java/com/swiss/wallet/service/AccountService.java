@@ -4,6 +4,7 @@ import com.swiss.wallet.entity.Account;
 import com.swiss.wallet.entity.Extract;
 import com.swiss.wallet.entity.UserEntity;
 import com.swiss.wallet.exception.ObjectNotFoundException;
+import com.swiss.wallet.exception.ValueInvalidException;
 import com.swiss.wallet.repository.IAccountRepository;
 import com.swiss.wallet.repository.IExtractRepository;
 import com.swiss.wallet.repository.IUserRepository;
@@ -39,6 +40,7 @@ public class AccountService {
         return account;
     }
 
+    @Transactional
     public void registerDeposit(String username, Double value) {
         UserEntity user = userRepository.findByUsername(username)
                 .orElseThrow(
@@ -48,6 +50,9 @@ public class AccountService {
                 .orElseThrow(
                         () -> new ObjectNotFoundException(String.format("Account not found. Please check the User %s and try again", user.getName()))
                 );
+        if (value <= 0 || value == null){
+            throw new ValueInvalidException(String.format("Invalid value for deposit"));
+        }
         account.setValue(account.getValue() + value);
 
         Extract extract = new Extract();

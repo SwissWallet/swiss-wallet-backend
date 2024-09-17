@@ -17,7 +17,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-@Tag(name = "Accounts", description = "Contains all operations related to resources for registering, editing and reading a account.")
+@Tag(name = "Account", description = "Contains all operations related to resources for registering, editing and reading a account.")
 @RestController
 @RequestMapping("/api/v3/accounts")
 public class AccountController {
@@ -37,7 +37,7 @@ public class AccountController {
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
             })
     @GetMapping("/current")
-    @PreAuthorize("hasRole('CLIENT')")
+    @PreAuthorize("hasRole('CLIENT') OR hasRole('ADMIN')")
     public ResponseEntity<AccountResponseDto> getAccountUserCurrent(@AuthenticationPrincipal JwtUserDetails userDetails){
         Account account = accountService.findByUserId(userDetails.getId());
         return ResponseEntity.ok().body(AccountResponseDto.toAccountResponseDto(account));

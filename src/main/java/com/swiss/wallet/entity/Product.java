@@ -13,6 +13,7 @@ public class Product {
 
     private String name;
 
+    @Column(name = "value_product")
     private float value;
 
     private String description;

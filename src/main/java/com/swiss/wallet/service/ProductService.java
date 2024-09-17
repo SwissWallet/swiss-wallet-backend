@@ -8,6 +8,7 @@ import com.swiss.wallet.web.dto.ProductCreateDto;
 import com.swiss.wallet.web.dto.ProductResponseDto;
 import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
@@ -26,6 +27,7 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
+    @Transactional
     public ProductResponseDto saveProduct(ProductCreateDto createDto, MultipartFile file, int width, int height) {
         Product product = new Product();
         product.setName(createDto.name());
@@ -72,8 +74,7 @@ public class ProductService {
         return Base64.getEncoder().encodeToString(imageBytes);
     }
 
-
-
+    @Transactional(readOnly = true)
     public List<Product> findAllByCategory(String category) {
 
         switch (category) {
@@ -90,6 +91,7 @@ public class ProductService {
         return null;
     }
 
+    @Transactional
     public void deleteById(Long id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(
@@ -98,7 +100,19 @@ public class ProductService {
         productRepository.deleteById(product.getId());
     }
 
+    @Transactional(readOnly = true)
     public List<Product> findAll() {
         return productRepository.findAll();
+    }
+
+    @Transactional
+    public void changeValue(Long id, float newValue) {
+
+        Product product = productRepository.findById(id)
+                .orElseThrow(
+                        () -> new ObjectNotFoundException("Product not found, Please check the product ID and try again")
+                );
+        product.setValue(newValue);
+        productRepository.save(product);
     }
 }

@@ -5,10 +5,7 @@ import com.swiss.wallet.entity.Address;
 import com.swiss.wallet.entity.Extract;
 import com.swiss.wallet.entity.UserEntity;
 import com.swiss.wallet.exception.*;
-import com.swiss.wallet.repository.IAccountRepository;
-import com.swiss.wallet.repository.IAddressRepository;
-import com.swiss.wallet.repository.IExtractRepository;
-import com.swiss.wallet.repository.IUserRepository;
+import com.swiss.wallet.repository.*;
 import com.swiss.wallet.web.dto.*;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -26,13 +23,17 @@ public class UserService {
     private final IAccountRepository accountRepository;
     private final IExtractRepository extractRepository;
     private final PasswordEncoder passwordEncoder;
+    private final IOrderRepository orderRepository;
+    private final IFavoriteRepository favoriteRepository;
 
-    public UserService(IUserRepository userRepository, IAddressRepository addressRepository, IAccountRepository accountRepository, IExtractRepository extractRepository, PasswordEncoder passwordEncoder) {
+    public UserService(IUserRepository userRepository, IAddressRepository addressRepository, IAccountRepository accountRepository, IExtractRepository extractRepository, PasswordEncoder passwordEncoder, IOrderRepository orderRepository, IFavoriteRepository favoriteRepository) {
         this.userRepository = userRepository;
         this.addressRepository = addressRepository;
         this.accountRepository = accountRepository;
         this.extractRepository = extractRepository;
         this.passwordEncoder = passwordEncoder;
+        this.orderRepository = orderRepository;
+        this.favoriteRepository = favoriteRepository;
     }
 
     @Transactional
@@ -63,7 +64,6 @@ public class UserService {
                 );
     }
 
-    //Method to generate forgotten code the password
     @Transactional
     public String recoverPassword(String username) {
         String code = RandomStringUtils.randomAlphanumeric(6);
@@ -78,7 +78,6 @@ public class UserService {
         return code;
     }
 
-    //Method for changing a forgotten user password, passing the username, verification code and new password
     @Transactional
     public void changeForgottenPassword(UserPasswordRecoveryDto passwordRecoveryDto) {
         UserEntity user = userRepository.findByUsername(passwordRecoveryDto.username())
@@ -95,7 +94,7 @@ public class UserService {
         userRepository.save(user);
     }
 
-    //Method that searches user by id
+    @Transactional(readOnly = true)
     public UserEntity findById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(
@@ -153,12 +152,15 @@ public class UserService {
                 .orElseThrow(
                         () -> new ObjectNotFoundException(String.format("Account not found. Please check the user ID or username and try again."))
                 );
-
+        extractRepository.deleteAllByAccount(account);
+        orderRepository.deleteAllByUser(user);
+        favoriteRepository.deleteAllByUser(user);
         accountRepository.deleteById(account.getId());
         userRepository.deleteById(id);
         addressRepository.deleteById(address.getId());
     }
 
+    @Transactional(readOnly = true)
     public ResponseGlobalDto findByIdGlobal(Long id) {
         UserEntity user = userRepository.findById(id)
                 .orElseThrow(

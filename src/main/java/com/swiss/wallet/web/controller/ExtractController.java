@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-@Tag(name = "Extracts", description = "Contains all operations related to resources for registering, editing and reading a extract.")
+@Tag(name = "Extract", description = "Contains all operations related to resources for registering, editing and reading a extract.")
 @RestController
 @RequestMapping("/api/v3/extracts")
 public class ExtractController {

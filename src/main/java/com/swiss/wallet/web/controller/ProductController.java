@@ -22,7 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-@Tag(name = "Products", description = "Contains all operations related to resources for registering, editing and reading a product.")
+@Tag(name = "Product", description = "Contains all operations related to resources for registering, editing and reading a product.")
 @RestController
 @RequestMapping("/api/v3/products")
 public class ProductController {
@@ -75,7 +75,10 @@ public class ProductController {
             @RequestParam String category
     ){
         List<Product> products = productService.findAllByCategory(category);
-        return ResponseEntity.ok().body(ProductResponseDto.toListProductResponse(products));
+        if(!products.isEmpty()){
+            return ResponseEntity.ok().body(ProductResponseDto.toListProductResponse(products));
+        }
+        return ResponseEntity.noContent().build();
     }
 
 
@@ -110,7 +113,24 @@ public class ProductController {
     @PreAuthorize("hasRole('ADMIN') OR hasRole('CLIENT')")
     public ResponseEntity<List<ProductResponseDto>> findAllProduct(){
         List<Product> products = productService.findAll();
-        return ResponseEntity.ok().body(ProductResponseDto.toListProductResponse(products));
+        if(!products.isEmpty()){
+            return ResponseEntity.ok().body(ProductResponseDto.toListProductResponse(products));
+        }
+        return ResponseEntity.noContent().build();
     }
 
+    @Operation(summary = "Change value product", description = "Request requires a Bearer Token. Restricted access to ADMIN",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Resource retrieved successfully",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDto.class))),
+                    @ApiResponse(responseCode = "404", description = "Resource not found",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+            })
+    @PutMapping("/value")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> updateProductValue(@RequestParam("id") Long id,
+                                                   @RequestParam("newValue") float newValue){
+        productService.changeValue(id, newValue);
+        return ResponseEntity.ok().build();
+    }
 }

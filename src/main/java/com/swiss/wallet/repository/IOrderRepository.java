@@ -19,4 +19,6 @@ public interface IOrderRepository extends JpaRepository<Order, Long> {
     List<Order> findAllByStatus(Status status);
 
     List<Order> findAllByUserAndProductIn(UserEntity user, List<Product> products);
+
+    void deleteAllByUser(UserEntity user);
 }
