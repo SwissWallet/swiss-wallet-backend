@@ -21,4 +21,6 @@ public interface IOrderRepository extends JpaRepository<Order, Long> {
     List<Order> findAllByUserAndProductIn(UserEntity user, List<Product> products);
 
     void deleteAllByUser(UserEntity user);
+
+    void deleteAllByProduct(Product product);
 }
