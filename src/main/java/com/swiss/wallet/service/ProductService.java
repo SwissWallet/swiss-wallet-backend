@@ -3,7 +3,10 @@ package com.swiss.wallet.service;
 import com.swiss.wallet.entity.Category;
 import com.swiss.wallet.entity.Product;
 import com.swiss.wallet.exception.ObjectNotFoundException;
+import com.swiss.wallet.repository.IFavoriteRepository;
+import com.swiss.wallet.repository.IOrderRepository;
 import com.swiss.wallet.repository.IProductRepository;
+import com.swiss.wallet.repository.IPurchaseRepository;
 import com.swiss.wallet.web.dto.ProductCreateDto;
 import com.swiss.wallet.web.dto.ProductResponseDto;
 import net.coobird.thumbnailator.Thumbnails;
@@ -22,9 +25,13 @@ import java.util.List;
 public class ProductService {
 
     private final IProductRepository productRepository;
+    private final IOrderRepository orderRepository;
+    private final IFavoriteRepository favoriteRepository;
 
-    public ProductService(IProductRepository productRepository) {
+    public ProductService(IProductRepository productRepository, IOrderRepository orderRepository, IFavoriteRepository favoriteRepository) {
         this.productRepository = productRepository;
+        this.orderRepository = orderRepository;
+        this.favoriteRepository = favoriteRepository;
     }
 
     @Transactional
@@ -97,6 +104,9 @@ public class ProductService {
                 .orElseThrow(
                         () -> new ObjectNotFoundException("Product not found, Please check the product ID and try again")
                 );
+
+        orderRepository.deleteAllByProduct(product);
+        favoriteRepository.deleteAllByProduct(product);
         productRepository.deleteById(product.getId());
     }
 
