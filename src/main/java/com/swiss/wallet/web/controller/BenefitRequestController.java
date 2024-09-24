@@ -5,11 +5,14 @@ import com.swiss.wallet.jwt.JwtUserDetails;
 import com.swiss.wallet.service.BenefitRequestService;
 import com.swiss.wallet.web.dto.BenefitReqCreateDto;
 import com.swiss.wallet.web.dto.BenefitReqResponseDto;
+import com.swiss.wallet.web.dto.PurchaseResponseDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v3/benefit-requests")
@@ -28,5 +31,16 @@ public class BenefitRequestController {
             @AuthenticationPrincipal JwtUserDetails userDetails){
         BenefitRequest benefitRequest = benefitRequestService.createRequestBenefit(userDetails.getId(), dto.description());
         return ResponseEntity.status(HttpStatus.CREATED).body(BenefitReqResponseDto.toBenefitResponse(benefitRequest));
+    }
+
+    @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<BenefitReqResponseDto>> listAll(){
+        List<BenefitRequest> requests = benefitRequestService.getAll();
+        List<BenefitReqResponseDto> reqResponseDtos = BenefitReqResponseDto.toListRequestBenefits(requests);
+        if (!requests.isEmpty()){
+            return ResponseEntity.ok().body(reqResponseDtos);
+        }
+        return ResponseEntity.noContent().build();
     }
 }
