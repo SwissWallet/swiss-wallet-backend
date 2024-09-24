@@ -22,9 +22,7 @@ public class BenefitRequest {
 
     private String description;
 
-    public BenefitRequest(Long id, UserEntity user, StatusBenefit status, LocalDateTime dateTime, String description) {
-        this.id = id;
-        this.user = user;
+    public BenefitRequest(StatusBenefit status, LocalDateTime dateTime, String description) {
         this.status = status;
         this.dateTime = dateTime;
         this.description = description;
