@@ -59,11 +59,9 @@ public class BenefitService {
         List<Benefit> benefits = benefitRepository.findAll();
         benefits.stream()
                 .forEach(benefit -> {
-                    if (!benefit.getExpireDate().isAfter(LocalDateTime.now())){
+                    if (!benefit.getExpireDate().isAfter(LocalDateTime.now()) && benefit.getStatusBenefit() != StatusBenefit.INACTIVE){
                         benefit.setStatusBenefit(StatusBenefit.INACTIVE);
                         benefitRepository.save(benefit);
-                    }else if(benefit.getStatusBenefit() == StatusBenefit.INACTIVE) {
-                        logger.info("Inactive benefit");
                     }else{
                             Account account = accountRepository.findAccountByUser(benefit.getUser()).orElseThrow(
                                     () -> new ObjectNotFoundException(String.format("Account id = %s not found", benefit.getUser().getName()))
