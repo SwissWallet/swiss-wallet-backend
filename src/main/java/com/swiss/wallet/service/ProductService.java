@@ -6,7 +6,6 @@ import com.swiss.wallet.exception.ObjectNotFoundException;
 import com.swiss.wallet.repository.IFavoriteRepository;
 import com.swiss.wallet.repository.IOrderRepository;
 import com.swiss.wallet.repository.IProductRepository;
-import com.swiss.wallet.repository.IPurchaseRepository;
 import com.swiss.wallet.web.dto.ProductCreateDto;
 import com.swiss.wallet.web.dto.ProductResponseDto;
 import net.coobird.thumbnailator.Thumbnails;
