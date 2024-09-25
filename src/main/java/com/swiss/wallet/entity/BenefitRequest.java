@@ -16,13 +16,13 @@ public class BenefitRequest {
     @JoinColumn(name = "userId")
     private UserEntity user;
 
-    private StatusBenefit status;
+    private StatusRequestBenefit status;
 
     private LocalDateTime dateTime;
 
     private String description;
 
-    public BenefitRequest(StatusBenefit status, LocalDateTime dateTime, String description) {
+    public BenefitRequest(StatusRequestBenefit status, LocalDateTime dateTime, String description) {
         this.status = status;
         this.dateTime = dateTime;
         this.description = description;
@@ -47,11 +47,11 @@ public class BenefitRequest {
         this.user = user;
     }
 
-    public StatusBenefit getStatus() {
+    public StatusRequestBenefit getStatus() {
         return status;
     }
 
-    public void setStatus(StatusBenefit status) {
+    public void setStatus(StatusRequestBenefit status) {
         this.status = status;
     }
 
