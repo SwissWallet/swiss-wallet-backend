@@ -2,6 +2,7 @@ package com.swiss.wallet.service;
 
 import com.swiss.wallet.entity.*;
 import com.swiss.wallet.exception.ObjectNotFoundException;
+import com.swiss.wallet.exception.OrderCartAlreadyPaidException;
 import com.swiss.wallet.exception.PointInsufficientException;
 import com.swiss.wallet.repository.*;
 import com.swiss.wallet.web.dto.OrderCartCreateDto;
@@ -78,5 +79,48 @@ public class OrderCartService {
                         () -> new ObjectNotFoundException(String.format("User username= %s not found", username))
                 );
         return iOrderCartRepository.findAllByUser(user);
+    }
+
+    @Transactional
+    public void paymentOrderCart(Long idUser, Long idOrderCart){
+        OrderCart orderCart = iOrderCartRepository.findById(idOrderCart)
+                .orElseThrow(
+                        () -> new ObjectNotFoundException(String.format("Order card not found"))
+                );
+
+        if (orderCart.getStatus().name() == StatusOrderCart.PAID.name()){
+            throw new OrderCartAlreadyPaidException("Order Cart already paid");
+        }
+        UserEntity user = userRepository.findById(idUser)
+                .orElseThrow(
+                        () -> new ObjectNotFoundException(String.format("User not found. Please check the user ID or username and try again."))
+                );
+        Account account = iAccountRepository.findAccountByUser(user)
+                .orElseThrow(
+                        () -> new ObjectNotFoundException(String.format("Account not found. Please check the user ID or username and try again."))
+                );
+
+        if (account.getValue() < orderCart.getValue()){
+            throw new PointInsufficientException("Insufficient ponint balance");
+        }
+
+        account.setValue(account.getValue() - orderCart.getValue());
+        iAccountRepository.save(account);
+
+        List<Order> orders = orderRepository.findAllByUserAndProductIn(user, orderCart.getProducts());
+        orders.stream()
+                .forEach(order -> order.setStatus(Status.COMPLETED));
+        orderRepository.saveAll(orders);
+
+        orderCart.setStatus(StatusOrderCart.PAID);
+        iOrderCartRepository.save(orderCart);
+
+        Extract extract = new Extract();
+        extract.setAccount(account);
+        extract.setValue((double) orderCart.getValue());
+        extract.setType(Extract.Type.TRANSACTION);
+        extract.setDescription(String.format("Purchase made in the %s", orderCart.getProducts().get(0).getCategory().name()));
+        extract.setDate(LocalDateTime.now());
+        iExtractRepository.save(extract);
     }
 }

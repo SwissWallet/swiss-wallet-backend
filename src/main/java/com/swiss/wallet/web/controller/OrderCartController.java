@@ -111,4 +111,14 @@ public class OrderCartController {
         return ResponseEntity.noContent().build();
     }
 
+    @PostMapping("/paid/{idOrderCart}")
+    @PreAuthorize("hasRole('CLIENT')")
+    public ResponseEntity<Void> paymentOrderCart(
+            @AuthenticationPrincipal JwtUserDetails userDetails,
+            @PathVariable("idOrderCart") Long idOrderCart
+    ){
+        orderCartService.paymentOrderCart(userDetails.getId(), idOrderCart);
+        return ResponseEntity.accepted().build();
+    }
+
 }
