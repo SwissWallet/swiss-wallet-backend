@@ -102,4 +102,12 @@ public class OrderService {
         };
         return orderRepository.save(order);
     }
+
+    public List<Order> listByUsername(String username){
+        UserEntity user = userRepository.findByUsername(username)
+                .orElseThrow(
+                        () -> new ObjectNotFoundException(String.format("User not found. Please check the user ID or username and try again."))
+                );
+        return orderRepository.findAllByUser(user);
+    }
 }
