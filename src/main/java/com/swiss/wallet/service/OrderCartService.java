@@ -40,7 +40,7 @@ public class OrderCartService {
     }
 
     @Transactional
-    public OrderCart savePurchase(OrderCartCreateDto orderCartCreateDto) {
+    public OrderCart saveProductsInOrderCart(OrderCartCreateDto orderCartCreateDto) {
 
         float value = calcValueTotal(orderCartCreateDto.productIds());
 
