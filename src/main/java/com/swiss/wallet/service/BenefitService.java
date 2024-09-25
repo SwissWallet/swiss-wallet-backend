@@ -59,23 +59,26 @@ public class BenefitService {
         List<Benefit> benefits = benefitRepository.findAll();
         benefits.stream()
                 .forEach(benefit -> {
-                    if (!benefit.getExpireDate().isAfter(LocalDateTime.now()) || benefit.getStatusBenefit() == StatusBenefit.INACTIVE){
+                    if (!benefit.getExpireDate().isAfter(LocalDateTime.now())){
                         benefit.setStatusBenefit(StatusBenefit.INACTIVE);
                         benefitRepository.save(benefit);
-                    }else {
-                        Account account = accountRepository.findAccountByUser(benefit.getUser()).orElseThrow(
-                                () -> new ObjectNotFoundException(String.format("Account id = %s not found", benefit.getUser().getName()))
-                        );
-                        account.setValue(account.getValue() + benefit.getValue());
+                    }else if(benefit.getStatusBenefit() == StatusBenefit.INACTIVE) {
+                        logger.info("Inactive benefit");
+                    }else{
+                            Account account = accountRepository.findAccountByUser(benefit.getUser()).orElseThrow(
+                                    () -> new ObjectNotFoundException(String.format("Account id = %s not found", benefit.getUser().getName()))
+                            );
+                            account.setValue(account.getValue() + benefit.getValue());
 
-                        Extract extract = new Extract();
-                        extract.setAccount(account);
-                        extract.setValue((double) benefit.getValue());
-                        extract.setType(Extract.Type.DEPOSIT);
-                        extract.setDescription("Benefit deposit");
-                        extract.setDate(LocalDateTime.now());
-                        extractRepository.save(extract);
+                            Extract extract = new Extract();
+                            extract.setAccount(account);
+                            extract.setValue((double) benefit.getValue());
+                            extract.setType(Extract.Type.DEPOSIT);
+                            extract.setDescription("Benefit deposit");
+                            extract.setDate(LocalDateTime.now());
+                            extractRepository.save(extract);
                     }
+
                 });
         LocalDateTime dateTime = LocalDateTime.now();
         logger.info("Running at {}", dateTime);
