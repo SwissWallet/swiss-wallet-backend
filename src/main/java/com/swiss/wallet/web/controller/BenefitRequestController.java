@@ -53,4 +53,11 @@ public class BenefitRequestController {
         benefitRequestService.updateStatus(dto.idBenefit(), dto.status());
         return ResponseEntity.ok().build();
     }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> removeBenefitRequest(@PathVariable Long id){
+        benefitRequestService.removeBenefitRequest(id);
+        return ResponseEntity.ok().build();
+    }
 }

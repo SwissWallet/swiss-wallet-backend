@@ -67,4 +67,14 @@ public class BenefitRequestService {
         benefitRequestRepository.save(request);
     }
 
+    public void removeBenefitRequest(Long id){
+        BenefitRequest request = benefitRequestRepository.findById(id).orElseThrow(
+                () -> new ObjectNotFoundException(String.format("Benefit request not found. Please check the user ID or username and try again."))
+        );
+
+        request.setStatus(StatusBenefit.CLOSED);
+        benefitRequestRepository.save(request);
+
+    }
+
 }
