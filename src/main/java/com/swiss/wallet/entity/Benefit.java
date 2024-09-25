@@ -20,19 +20,23 @@ public class Benefit {
 
     private StatusBenefit statusBenefit;
 
+    private String description;
+
     private LocalDateTime expireDate;
 
-    public Benefit(Long id, UserEntity user, float value, StatusBenefit statusBenefit, LocalDateTime expireDate) {
+    public Benefit(Long id, UserEntity user, float value, StatusBenefit statusBenefit, String description, LocalDateTime expireDate) {
         this.id = id;
         this.user = user;
         this.value = value;
         this.statusBenefit = statusBenefit;
+        this.description = description;
         this.expireDate = expireDate;
     }
 
-    public Benefit(float value, StatusBenefit statusBenefit, LocalDateTime expireDate) {
+    public Benefit(float value, StatusBenefit statusBenefit, String description, LocalDateTime expireDate) {
         this.value = value;
         this.statusBenefit = statusBenefit;
+        this.description = description;
         this.expireDate = expireDate;
     }
 
@@ -77,5 +81,13 @@ public class Benefit {
 
     public void setExpireDate(LocalDateTime expireDate) {
         this.expireDate = expireDate;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

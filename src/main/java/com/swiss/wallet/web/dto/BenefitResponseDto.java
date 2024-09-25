@@ -1,5 +1,6 @@
 package com.swiss.wallet.web.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.swiss.wallet.entity.Benefit;
 import com.swiss.wallet.entity.StatusBenefit;
 import com.swiss.wallet.entity.UserEntity;
@@ -12,14 +13,17 @@ public record BenefitResponseDto(Long id,
                                  UserResponseDto user,
                                  float value,
                                  String statusBenefit,
-                                 LocalDateTime expireDate) {
+                                 @JsonFormat(pattern = "dd/MM/yyyy - HH:mm")
+                                 LocalDateTime expireDate,
+                                 String description) {
 
-    public BenefitResponseDto(Long id, UserResponseDto user, float value, String statusBenefit, LocalDateTime expireDate) {
+    public BenefitResponseDto(Long id, UserResponseDto user, float value, String statusBenefit, LocalDateTime expireDate, String description) {
         this.id = id;
         this.user = user;
         this.value = value;
         this.statusBenefit = statusBenefit;
         this.expireDate = expireDate;
+        this.description = description;
     }
 
     public static BenefitResponseDto toBenefitResponse(Benefit benefit){
@@ -28,7 +32,8 @@ public record BenefitResponseDto(Long id,
                 UserResponseDto.toUserResponse(benefit.getUser()),
                 benefit.getValue(),
                 benefit.getStatusBenefit().name(),
-                benefit.getExpireDate()
+                benefit.getExpireDate(),
+                benefit.getDescription()
         );
     }
 

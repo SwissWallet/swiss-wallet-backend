@@ -2,7 +2,8 @@ package com.swiss.wallet.web.dto;
 
 import java.time.LocalDateTime;
 
-public record BenefitCreateDto(UserResponseDto user,
+public record BenefitCreateDto(Long userId,
                                float value,
-                               Long months) {
+                               Long months,
+                               String description) {
 }
