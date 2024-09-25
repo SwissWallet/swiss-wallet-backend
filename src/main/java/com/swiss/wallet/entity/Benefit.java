@@ -18,6 +18,8 @@ public class Benefit {
 
     private float value;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
     private StatusBenefit statusBenefit;
 
     private String description;
