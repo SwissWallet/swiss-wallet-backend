@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v3/benefit-requests")
+@RequestMapping("/api/v3/benefit/requests")
 public class BenefitRequestController {
 
     private final BenefitRequestService benefitRequestService;
