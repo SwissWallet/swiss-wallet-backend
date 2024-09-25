@@ -1,6 +1,7 @@
 package com.swiss.wallet.service;
 
 import com.swiss.wallet.entity.BenefitRequest;
+import com.swiss.wallet.entity.Status;
 import com.swiss.wallet.entity.StatusBenefit;
 import com.swiss.wallet.entity.UserEntity;
 import com.swiss.wallet.exception.ObjectNotFoundException;
@@ -40,8 +41,30 @@ public class BenefitRequestService {
     }
 
 
+    @Transactional(readOnly = true)
     public List<BenefitRequest> getAll(){
         return benefitRequestRepository.findAll();
+    }
+
+    @Transactional
+    public void updateStatus(Long idBenefit, String status){
+
+        BenefitRequest request = benefitRequestRepository.findById(idBenefit).orElseThrow(
+                () -> new ObjectNotFoundException(String.format("Benefit request not found. Please check the user ID or username and try again."))
+        );
+
+        switch (status) {
+            case "SENT" -> request.setStatus(StatusBenefit.SENT);
+            case "UNDER_ANALYSIS" -> request.setStatus(StatusBenefit.UNDER_ANALYSIS);
+            case "APPROVED" -> request.setStatus(StatusBenefit.APPROVED);
+            case "NOT_APPROVED" -> request.setStatus(StatusBenefit.NOT_APPROVED);
+            case "PENDING_DOCUMENTS" -> request.setStatus(StatusBenefit.PENDING_DOCUMENTS);
+            case "IN_PROGRESS" -> request.setStatus(StatusBenefit.IN_PROGRESS);
+            case "CLOSED" -> request.setStatus(StatusBenefit.CLOSED);
+            default -> request.setStatus(StatusBenefit.SENT);
+        };
+
+        benefitRequestRepository.save(request);
     }
 
 }

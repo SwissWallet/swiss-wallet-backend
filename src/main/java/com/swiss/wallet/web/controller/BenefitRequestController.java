@@ -6,10 +6,13 @@ import com.swiss.wallet.service.BenefitRequestService;
 import com.swiss.wallet.web.dto.BenefitReqCreateDto;
 import com.swiss.wallet.web.dto.BenefitReqResponseDto;
 import com.swiss.wallet.web.dto.PurchaseResponseDto;
+import com.swiss.wallet.web.dto.UpdateStatusBenefitReqDto;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -42,5 +45,12 @@ public class BenefitRequestController {
             return ResponseEntity.ok().body(reqResponseDtos);
         }
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> updateStatus(@RequestBody UpdateStatusBenefitReqDto dto){
+        benefitRequestService.updateStatus(dto.idBenefit(), dto.status());
+        return ResponseEntity.ok().build();
     }
 }
