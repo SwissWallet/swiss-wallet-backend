@@ -1,9 +1,9 @@
 package com.swiss.wallet.web.controller;
 
-import com.swiss.wallet.entity.Purchase;
-import com.swiss.wallet.service.PurchaseService;
-import com.swiss.wallet.web.dto.PurchaseCreateDto;
-import com.swiss.wallet.web.dto.PurchaseResponseDto;
+import com.swiss.wallet.entity.OrderCart;
+import com.swiss.wallet.service.OrderCartService;
+import com.swiss.wallet.web.dto.OrderCartCreateDto;
+import com.swiss.wallet.web.dto.OrderCartResponseDto;
 import com.swiss.wallet.web.dto.UserResponseDto;
 import com.swiss.wallet.web.exception.ErrorMessage;
 import io.swagger.v3.oas.annotations.Operation;
@@ -22,12 +22,12 @@ import java.util.List;
 @Tag(name = "Purchase", description = "Contains all operations related to resources for registering, editing and reading a purchase.")
 @RestController
 @RequestMapping("/api/v3/purchases")
-public class PurchaseController {
+public class OrderCartController {
 
-    private final PurchaseService purchaseService;
+    private final OrderCartService orderCartService;
 
-    public PurchaseController(PurchaseService purchaseService) {
-        this.purchaseService = purchaseService;
+    public OrderCartController(OrderCartService orderCartService) {
+        this.orderCartService = orderCartService;
     }
 
     @Operation(summary = "Create a new purchase", description = "Request requires a Bearer Token. Restricted access to ADMIN",
@@ -44,9 +44,9 @@ public class PurchaseController {
             })
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<PurchaseResponseDto> createPurchase(@RequestBody @Valid PurchaseCreateDto purchaseCreateDto) {
-        Purchase purchase = purchaseService.savePurchase(purchaseCreateDto);
-        return ResponseEntity.ok().body(PurchaseResponseDto.toPurchaseResponse(purchase));
+    public ResponseEntity<OrderCartResponseDto> createPurchase(@RequestBody @Valid OrderCartCreateDto orderCartCreateDto) {
+        OrderCart orderCart = orderCartService.savePurchase(orderCartCreateDto);
+        return ResponseEntity.ok().body(OrderCartResponseDto.toPurchaseResponse(orderCart));
     }
 
     @Operation(summary = "Recover all purchase", description = "Request requires a Bearer Token. Restricted access to ADMIN",
@@ -61,10 +61,10 @@ public class PurchaseController {
             })
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<PurchaseResponseDto>> listAllPurchase(){
-        List<Purchase> purchases = purchaseService.findAll();
-        if(!purchases.isEmpty()){
-            return ResponseEntity.ok().body(PurchaseResponseDto.toListProductResponse(purchases));
+    public ResponseEntity<List<OrderCartResponseDto>> listAllPurchase(){
+        List<OrderCart> orderCarts = orderCartService.findAll();
+        if(!orderCarts.isEmpty()){
+            return ResponseEntity.ok().body(OrderCartResponseDto.toListProductResponse(orderCarts));
         }
         return ResponseEntity.noContent().build();
     }
@@ -81,10 +81,10 @@ public class PurchaseController {
             })
     @GetMapping("/users")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<PurchaseResponseDto>> listAllByUser(@RequestParam String username){
-        List<Purchase> purchases = purchaseService.findAllByUser(username);
-        if(!purchases.isEmpty()){
-            return ResponseEntity.ok().body(PurchaseResponseDto.toListProductResponse(purchases));
+    public ResponseEntity<List<OrderCartResponseDto>> listAllByUser(@RequestParam String username){
+        List<OrderCart> orderCarts = orderCartService.findAllByUser(username);
+        if(!orderCarts.isEmpty()){
+            return ResponseEntity.ok().body(OrderCartResponseDto.toListProductResponse(orderCarts));
         }
         return ResponseEntity.noContent().build();
     }
