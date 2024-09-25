@@ -1,6 +1,7 @@
 package com.swiss.wallet.service;
 
 import com.swiss.wallet.entity.*;
+import com.swiss.wallet.exception.ChangeStatusInvalidException;
 import com.swiss.wallet.exception.ObjectNotFoundException;
 import com.swiss.wallet.exception.OrderProductInavlidException;
 import com.swiss.wallet.repository.IOrderRepository;
@@ -94,6 +95,11 @@ public class OrderService {
         Order order = orderRepository.findById(idOrder).orElseThrow(
                 () -> new ObjectNotFoundException(String.format("Order id: %s not found", idOrder))
         );
+
+        if (order.getStatus().name() == Status.COMPLETED.name()){
+            throw new ChangeStatusInvalidException("Change invalid order status");
+        }
+
         switch (status) {
             case "ANALYSIS" -> order.setStatus(Status.ANALYSIS);
             case "SEPARATED" -> order.setStatus(Status.SEPARATED);
