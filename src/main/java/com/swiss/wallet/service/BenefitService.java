@@ -97,4 +97,12 @@ public class BenefitService {
     public List<Benefit> getAll() {
         return benefitRepository.findAll();
     }
+
+    public Benefit getById(Long idBenefit) {
+        Benefit benefit = benefitRepository.findById(idBenefit)
+                .orElseThrow(
+                        () -> new ObjectNotFoundException(String.format("Benefit id = %s not found", idBenefit))
+                );
+        return benefit;
+    }
 }

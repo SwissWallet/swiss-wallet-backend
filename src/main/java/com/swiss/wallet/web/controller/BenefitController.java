@@ -48,6 +48,12 @@ public class BenefitController {
         return ResponseEntity.ok().body(BenefitResponseDto.toListBenefitrResponse(benefits));
     }
 
+    @GetMapping("/{idBenefit}")
+    public ResponseEntity<BenefitResponseDto> findById(@PathVariable Long idBenefit){
+        Benefit benefit = benefitService.getById(idBenefit);
+        return ResponseEntity.ok().body(BenefitResponseDto.toBenefitResponse(benefit));
+    }
+
 
 
 }
