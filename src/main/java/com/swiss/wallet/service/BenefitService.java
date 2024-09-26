@@ -93,4 +93,8 @@ public class BenefitService {
         benefit.setStatusBenefit(StatusBenefit.INACTIVE);
         benefitRepository.save(benefit);
     }
+
+    public List<Benefit> getAll() {
+        return benefitRepository.findAll();
+    }
 }

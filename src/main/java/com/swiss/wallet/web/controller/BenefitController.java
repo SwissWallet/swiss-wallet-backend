@@ -38,6 +38,16 @@ public class BenefitController {
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<BenefitResponseDto>> listAll(){
+        List<Benefit> benefits = benefitService.getAll();
+        if (benefits.isEmpty()){
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok().body(BenefitResponseDto.toListBenefitrResponse(benefits));
+    }
+
 
 
 }
