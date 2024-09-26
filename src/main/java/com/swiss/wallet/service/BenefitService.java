@@ -59,9 +59,11 @@ public class BenefitService {
         List<Benefit> benefits = benefitRepository.findAll();
         benefits.stream()
                 .forEach(benefit -> {
-                    if (!benefit.getExpireDate().isAfter(LocalDateTime.now()) && benefit.getStatusBenefit() != StatusBenefit.INACTIVE){
-                        benefit.setStatusBenefit(StatusBenefit.INACTIVE);
-                        benefitRepository.save(benefit);
+                    if (!benefit.getExpireDate().isAfter(LocalDateTime.now())){
+                        if (benefit.getStatusBenefit() == StatusBenefit.ACTIVE) {
+                            benefit.setStatusBenefit(StatusBenefit.INACTIVE);
+                            benefitRepository.save(benefit);
+                        }
                     }else{
                             Account account = accountRepository.findAccountByUser(benefit.getUser()).orElseThrow(
                                     () -> new ObjectNotFoundException(String.format("Account id = %s not found", benefit.getUser().getName()))
@@ -80,5 +82,15 @@ public class BenefitService {
                 });
         LocalDateTime dateTime = LocalDateTime.now();
         logger.info("Running at {}", dateTime);
+    }
+
+    public void disableBenefit(Long idBenefit) {
+
+        Benefit benefit = benefitRepository.findById(idBenefit)
+                .orElseThrow(
+                        () -> new ObjectNotFoundException(String.format("Benefit id = %s not found", idBenefit))
+                );
+        benefit.setStatusBenefit(StatusBenefit.INACTIVE);
+        benefitRepository.save(benefit);
     }
 }
