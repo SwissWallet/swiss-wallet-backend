@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Tag(name = "Purchase", description = "Contains all operations related to resources for registering, editing and reading a purchase.")
+@Tag(name = "Order Cart", description = "Contains all operations related to resources for registering, editing and reading a purchase.")
 @RestController
 @RequestMapping("/api/v3/order/carts")
 public class OrderCartController {
@@ -32,7 +32,7 @@ public class OrderCartController {
         this.orderCartService = orderCartService;
     }
 
-    @Operation(summary = "Create a new purchase", description = "Request requires a Bearer Token. Restricted access to ADMIN",
+    @Operation(summary = "Create a new order cart", description = "Request requires a Bearer Token. Restricted access to ADMIN",
             security = @SecurityRequirement(name = "security"),
             responses = {
                     @ApiResponse(responseCode = "201", description = "Resource created successfully",
@@ -51,7 +51,7 @@ public class OrderCartController {
         return ResponseEntity.ok().body(OrderCartResponseDto.toPurchaseResponse(orderCart));
     }
 
-    @Operation(summary = "Recover all purchase", description = "Request requires a Bearer Token. Restricted access to ADMIN",
+    @Operation(summary = "Recover all order cart", description = "Request requires a Bearer Token. Restricted access to ADMIN",
             security = @SecurityRequirement(name = "security"),
             responses = {
                     @ApiResponse(responseCode = "200", description = "Resource retrieved successfully",
@@ -71,7 +71,7 @@ public class OrderCartController {
         return ResponseEntity.noContent().build();
     }
 
-    @Operation(summary = "Recover purchases user", description = "Request requires a Bearer Token. Restricted access to ADMIN",
+    @Operation(summary = "Recover order cart user", description = "Request requires a Bearer Token. Restricted access to ADMIN",
             security = @SecurityRequirement(name = "security"),
             responses = {
                     @ApiResponse(responseCode = "200", description = "Resource retrieved successfully",
@@ -91,7 +91,7 @@ public class OrderCartController {
         return ResponseEntity.noContent().build();
     }
 
-    @Operation(summary = "Recover purchases logged in user", description = "Request requires a Bearer Token. Restricted access to CLIENT",
+    @Operation(summary = "Recover order cart logged in user", description = "Request requires a Bearer Token. Restricted access to CLIENT",
             security = @SecurityRequirement(name = "security"),
             responses = {
                     @ApiResponse(responseCode = "200", description = "Resource retrieved successfully",
@@ -111,6 +111,16 @@ public class OrderCartController {
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(summary = "Pay order cart of user", description = "Request requires a Bearer Token. Restricted access to CLIENT",
+            security = @SecurityRequirement(name = "security"),
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Resource retrieved successfully",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDto.class))),
+                    @ApiResponse(responseCode = "400", description = "Resource not processed, order cart already paid",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDto.class))),
+                    @ApiResponse(responseCode = "403", description = "User not allowed to access this resource",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+            })
     @PostMapping("/paid/{idOrderCart}")
     @PreAuthorize("hasRole('CLIENT')")
     public ResponseEntity<Void> paymentOrderCart(

@@ -6,6 +6,6 @@ import jakarta.validation.constraints.NotBlank;
 import java.util.List;
 
 public record OrderCartCreateDto(@NotBlank
-                                String username,
+                                 String username,
                                  List<Long> productIds) {
 }

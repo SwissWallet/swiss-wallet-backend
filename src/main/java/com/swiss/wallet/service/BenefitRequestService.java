@@ -1,8 +1,7 @@
 package com.swiss.wallet.service;
 
 import com.swiss.wallet.entity.BenefitRequest;
-import com.swiss.wallet.entity.Status;
-import com.swiss.wallet.entity.StatusBenefit;
+import com.swiss.wallet.entity.StatusRequestBenefit;
 import com.swiss.wallet.entity.UserEntity;
 import com.swiss.wallet.exception.ObjectNotFoundException;
 import com.swiss.wallet.repository.IBenefitRequestRepository;
@@ -36,7 +35,7 @@ public class BenefitRequestService {
         benefitRequest.setUser(user);
         benefitRequest.setDescription(description);
         benefitRequest.setDateTime(LocalDateTime.now());
-        benefitRequest.setStatus(StatusBenefit.SENT);
+        benefitRequest.setStatus(StatusRequestBenefit.SENT);
         return benefitRequestRepository.save(benefitRequest);
     }
 
@@ -54,14 +53,14 @@ public class BenefitRequestService {
         );
 
         switch (status) {
-            case "SENT" -> request.setStatus(StatusBenefit.SENT);
-            case "UNDER_ANALYSIS" -> request.setStatus(StatusBenefit.UNDER_ANALYSIS);
-            case "APPROVED" -> request.setStatus(StatusBenefit.APPROVED);
-            case "NOT_APPROVED" -> request.setStatus(StatusBenefit.NOT_APPROVED);
-            case "PENDING_DOCUMENTS" -> request.setStatus(StatusBenefit.PENDING_DOCUMENTS);
-            case "IN_PROGRESS" -> request.setStatus(StatusBenefit.IN_PROGRESS);
-            case "CLOSED" -> request.setStatus(StatusBenefit.CLOSED);
-            default -> request.setStatus(StatusBenefit.SENT);
+            case "SENT" -> request.setStatus(StatusRequestBenefit.SENT);
+            case "UNDER_ANALYSIS" -> request.setStatus(StatusRequestBenefit.UNDER_ANALYSIS);
+            case "APPROVED" -> request.setStatus(StatusRequestBenefit.APPROVED);
+            case "NOT_APPROVED" -> request.setStatus(StatusRequestBenefit.NOT_APPROVED);
+            case "PENDING_DOCUMENTS" -> request.setStatus(StatusRequestBenefit.PENDING_DOCUMENTS);
+            case "IN_PROGRESS" -> request.setStatus(StatusRequestBenefit.IN_PROGRESS);
+            case "CLOSED" -> request.setStatus(StatusRequestBenefit.CLOSED);
+            default -> request.setStatus(StatusRequestBenefit.SENT);
         };
 
         benefitRequestRepository.save(request);
@@ -72,7 +71,7 @@ public class BenefitRequestService {
                 () -> new ObjectNotFoundException(String.format("Benefit request not found. Please check the user ID or username and try again."))
         );
 
-        request.setStatus(StatusBenefit.CLOSED);
+        request.setStatus(StatusRequestBenefit.CLOSED);
         benefitRequestRepository.save(request);
 
     }

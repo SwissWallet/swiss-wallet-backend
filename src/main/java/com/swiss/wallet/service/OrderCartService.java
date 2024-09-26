@@ -87,7 +87,6 @@ public class OrderCartService {
                 .orElseThrow(
                         () -> new ObjectNotFoundException(String.format("Order card not found"))
                 );
-
         if (orderCart.getStatus().name() == StatusOrderCart.PAID.name()){
             throw new OrderCartAlreadyPaidException("Order Cart already paid");
         }
