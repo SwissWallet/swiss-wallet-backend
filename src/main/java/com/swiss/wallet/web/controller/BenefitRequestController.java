@@ -74,6 +74,7 @@ public class BenefitRequestController {
     }
 
     @Operation(summary = "Change status benefit request", description = "Request requires a Bearer Token. Restricted access to ADMIN",
+            security = @SecurityRequirement(name = "security"),
             responses = {
                     @ApiResponse(responseCode = "200", description = "Resource retrieved successfully",
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDto.class))),

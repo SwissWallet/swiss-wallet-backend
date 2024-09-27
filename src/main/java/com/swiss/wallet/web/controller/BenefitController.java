@@ -4,6 +4,7 @@ import com.swiss.wallet.entity.Benefit;
 import com.swiss.wallet.service.BenefitService;
 import com.swiss.wallet.web.dto.BenefitCreateDto;
 import com.swiss.wallet.web.dto.BenefitResponseDto;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -14,6 +15,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+@Tag(name = "Benefit", description = "Contains all operations related to resources for registering, editing and reading a benefit.")
 @RestController
 @RequestMapping("/api/v3/benefits")
 public class BenefitController {
