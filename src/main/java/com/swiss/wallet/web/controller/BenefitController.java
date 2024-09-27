@@ -4,6 +4,13 @@ import com.swiss.wallet.entity.Benefit;
 import com.swiss.wallet.service.BenefitService;
 import com.swiss.wallet.web.dto.BenefitCreateDto;
 import com.swiss.wallet.web.dto.BenefitResponseDto;
+import com.swiss.wallet.web.dto.UserResponseDto;
+import com.swiss.wallet.web.exception.ErrorMessage;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +33,16 @@ public class BenefitController {
         this.benefitService = benefitService;
     }
 
+    @Operation(summary = "Create a new Benefit", description = "Request requires a Bearer Token. Restricted access to ADMIN",
+            security = @SecurityRequirement(name = "security"),
+            responses = {
+                    @ApiResponse(responseCode = "201", description = "Resource created successfully",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDto.class))),
+                    @ApiResponse(responseCode = "404", description = "Resource not found",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+                    @ApiResponse(responseCode = "403", description = "User not allowed to access this resource",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+            })
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<BenefitResponseDto> saveBenefit(@RequestBody BenefitCreateDto dto){
