@@ -16,7 +16,7 @@ public interface IOrderRepository extends JpaRepository<Order, Long> {
     Optional<Order> findByIdAndUser(Long idOrder, UserEntity user);
 
     @Query("SELECT o FROM Order o WHERE o.status= :status")
-    List<Order> findAllByStatus(StatusOrder statusOrder);
+    List<Order> findAllByStatus(StatusOrder status);
 
     List<Order> findAllByUserAndProductIn(UserEntity user, List<Product> products);
 

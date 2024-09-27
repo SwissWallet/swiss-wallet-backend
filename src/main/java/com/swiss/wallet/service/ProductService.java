@@ -2,6 +2,7 @@ package com.swiss.wallet.service;
 
 import com.swiss.wallet.entity.Category;
 import com.swiss.wallet.entity.Product;
+import com.swiss.wallet.entity.StatusProduct;
 import com.swiss.wallet.exception.ObjectNotFoundException;
 import com.swiss.wallet.repository.IFavoriteRepository;
 import com.swiss.wallet.repository.IOrderRepository;
@@ -39,44 +40,44 @@ public class ProductService {
         Product product = new Product();
         product.setName(createDto.name());
         product.setDescription(createDto.description());
-
-        // Set category based on the DTO
+        product.setValue(createDto.value());
         switch (createDto.category()) {
             case "STORE" -> product.setCategory(Category.STORE);
             case "CANTEEN" -> product.setCategory(Category.CANTEEN);
             case "LIBRARY" -> product.setCategory(Category.LIBRARY);
         }
-
-        product.setValue(createDto.value());
-
         try {
-            // Encode the image with resizing
             String encodedImage = encodeImageToBase64(file, width, height);
             product.setImage(encodedImage);
         } catch (IOException e) {
             throw new RuntimeException("Failed to process image", e);
         }
+        product.setAmount(createDto.amount());
+        product.setStatus(checkAmount(createDto.amount()));
 
-        // Save the product to the repository
         productRepository.save(product);
-
-        // Convert to DTO for response
         return ProductResponseDto.toProductResponse(product);
     }
 
+    private StatusProduct checkAmount(Long amount){
+        if (amount == 0){
+            return StatusProduct.OUT_OF_STOCK;
+        }else if (amount <= 10){
+            return StatusProduct.LOW_STOCK;
+        }
+        return StatusProduct.AVAILABLE;
+    }
+
     private String encodeImageToBase64(MultipartFile file, int width, int height) throws IOException {
-        // Read the original image
         BufferedImage originalImage = ImageIO.read(file.getInputStream());
 
-        // Resize the image using Thumbnailator
         BufferedImage resizedImage = Thumbnails.of(originalImage)
                 .size(width, height)
                 .outputQuality(1.0)  // Maximum quality
                 .asBufferedImage();
 
-        // Convert the resized image to a byte array and encode it in Base64
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        ImageIO.write(resizedImage, "png", outputStream); // Save as PNG to avoid quality loss
+        ImageIO.write(resizedImage, "png", outputStream);
         byte[] imageBytes = outputStream.toByteArray();
         return Base64.getEncoder().encodeToString(imageBytes);
     }
