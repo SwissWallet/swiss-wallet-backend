@@ -43,7 +43,7 @@ public class OrderService {
         Order order = new Order();
         order.setUser(user);
         order.setProduct(product);
-        order.setStatus(Status.ANALYSIS);
+        order.setStatus(StatusOrder.ANALYSIS);
         return orderRepository.save(order);
 
     }
@@ -82,10 +82,10 @@ public class OrderService {
     public List<Order> findAllByStatus(String status) {
 
         return switch (status) {
-            case "ANALYSIS" -> orderRepository.findAllByStatus(Status.ANALYSIS);
-            case "COMPLETED" -> orderRepository.findAllByStatus(Status.COMPLETED);
-            case "UNAVAILABLE" -> orderRepository.findAllByStatus(Status.UNAVAILABLE);
-            case "SEPARATED" -> orderRepository.findAllByStatus(Status.SEPARATED);
+            case "ANALYSIS" -> orderRepository.findAllByStatus(StatusOrder.ANALYSIS);
+            case "COMPLETED" -> orderRepository.findAllByStatus(StatusOrder.COMPLETED);
+            case "UNAVAILABLE" -> orderRepository.findAllByStatus(StatusOrder.UNAVAILABLE);
+            case "SEPARATED" -> orderRepository.findAllByStatus(StatusOrder.SEPARATED);
             default -> null;
         };
     }
@@ -96,15 +96,15 @@ public class OrderService {
                 () -> new ObjectNotFoundException(String.format("Order id: %s not found", idOrder))
         );
 
-        if (order.getStatus().name() == Status.COMPLETED.name()){
+        if (order.getStatus().name() == StatusOrder.COMPLETED.name()){
             throw new ChangeStatusInvalidException("Change invalid order status");
         }
 
         switch (status) {
-            case "ANALYSIS" -> order.setStatus(Status.ANALYSIS);
-            case "SEPARATED" -> order.setStatus(Status.SEPARATED);
-            case "COMPLETED" -> order.setStatus(Status.COMPLETED);
-            case "UNAVAILABLE" -> order.setStatus(Status.UNAVAILABLE);
+            case "ANALYSIS" -> order.setStatus(StatusOrder.ANALYSIS);
+            case "SEPARATED" -> order.setStatus(StatusOrder.SEPARATED);
+            case "COMPLETED" -> order.setStatus(StatusOrder.COMPLETED);
+            case "UNAVAILABLE" -> order.setStatus(StatusOrder.UNAVAILABLE);
         };
         return orderRepository.save(order);
     }

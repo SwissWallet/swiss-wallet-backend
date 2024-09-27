@@ -108,7 +108,7 @@ public class OrderCartService {
 
         List<Order> orders = orderRepository.findAllByUserAndProductIn(user, orderCart.getProducts());
         orders.stream()
-                .forEach(order -> order.setStatus(Status.COMPLETED));
+                .forEach(order -> order.setStatus(StatusOrder.COMPLETED));
         orderRepository.saveAll(orders);
 
         orderCart.setStatus(StatusOrderCart.PAID);

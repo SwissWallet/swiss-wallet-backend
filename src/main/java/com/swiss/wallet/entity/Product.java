@@ -26,21 +26,30 @@ public class Product {
     @Column(name = "category")
     private Category category;
 
-    public Product(Long id, String name, float value, String description, String image, Category category) {
+    private Long amount;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private StatusProduct status;
+
+    public Product(Long id, String name, float value, String description, String image, Category category, Long amount, StatusProduct status) {
         this.id = id;
         this.name = name;
         this.value = value;
         this.description = description;
         this.image = image;
         this.category = category;
+        this.amount = amount;
+        this.status = status;
     }
 
-    public Product(String name, float value, String description, String image, Category category) {
+    public Product(String name, float value, String description, String image, Category category, Long amount) {
         this.name = name;
         this.value = value;
         this.description = description;
         this.image = image;
         this.category = category;
+        this.amount = amount;
     }
 
     public Product() {
@@ -92,5 +101,21 @@ public class Product {
 
     public void setCategory(Category category) {
         this.category = category;
+    }
+
+    public Long getAmount() {
+        return amount;
+    }
+
+    public void setAmount(Long amount) {
+        this.amount = amount;
+    }
+
+    public StatusProduct getStatus() {
+        return status;
+    }
+
+    public void setStatus(StatusProduct status) {
+        this.status = status;
     }
 }
