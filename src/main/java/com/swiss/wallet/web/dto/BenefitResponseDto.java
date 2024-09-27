@@ -17,15 +17,6 @@ public record BenefitResponseDto(Long id,
                                  LocalDateTime expireDate,
                                  String description) {
 
-    public BenefitResponseDto(Long id, UserResponseDto user, float value, String statusBenefit, LocalDateTime expireDate, String description) {
-        this.id = id;
-        this.user = user;
-        this.value = value;
-        this.statusBenefit = statusBenefit;
-        this.expireDate = expireDate;
-        this.description = description;
-    }
-
     public static BenefitResponseDto toBenefitResponse(Benefit benefit){
         return new BenefitResponseDto(
                 benefit.getId(),

@@ -59,6 +59,12 @@ public class OrderCartService {
             throw new ObjectNotFoundException(String.format("No products added to the list"));
         }
 
+        products.stream()
+                .forEach(product -> {
+                    product.setAmount(product.getAmount() - 1);
+                    iProductRepository.save(product);
+                });
+
         OrderCart orderCart = new OrderCart();
         orderCart.setUser(user);
         orderCart.setValue(value);

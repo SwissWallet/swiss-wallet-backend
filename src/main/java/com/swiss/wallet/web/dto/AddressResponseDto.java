@@ -10,15 +10,6 @@ public record AddressResponseDto (Long id,
                                   String uf
                                 ) {
 
-    public AddressResponseDto(Long id, String zipCode, String street, String city, Long number, String uf) {
-        this.id = id;
-        this.zipCode = zipCode;
-        this.street = street;
-        this.city = city;
-        this.number = number;
-        this.uf = uf;
-    }
-
     public static AddressResponseDto toAddressResponse(Address address){
         return new AddressResponseDto(
                 address.getId(),

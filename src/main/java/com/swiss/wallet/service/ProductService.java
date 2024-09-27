@@ -7,6 +7,7 @@ import com.swiss.wallet.exception.ObjectNotFoundException;
 import com.swiss.wallet.repository.IFavoriteRepository;
 import com.swiss.wallet.repository.IOrderRepository;
 import com.swiss.wallet.repository.IProductRepository;
+import com.swiss.wallet.utils.UtilsProduct;
 import com.swiss.wallet.web.dto.ChangeProductDto;
 import com.swiss.wallet.web.dto.ProductCreateDto;
 import com.swiss.wallet.web.dto.ProductResponseDto;
@@ -28,11 +29,13 @@ public class ProductService {
     private final IProductRepository productRepository;
     private final IOrderRepository orderRepository;
     private final IFavoriteRepository favoriteRepository;
+    private final UtilsProduct utilsProduct;
 
-    public ProductService(IProductRepository productRepository, IOrderRepository orderRepository, IFavoriteRepository favoriteRepository) {
+    public ProductService(IProductRepository productRepository, IOrderRepository orderRepository, IFavoriteRepository favoriteRepository, UtilsProduct utilsProduct) {
         this.productRepository = productRepository;
         this.orderRepository = orderRepository;
         this.favoriteRepository = favoriteRepository;
+        this.utilsProduct = utilsProduct;
     }
 
     @Transactional
@@ -47,39 +50,16 @@ public class ProductService {
             case "LIBRARY" -> product.setCategory(Category.LIBRARY);
         }
         try {
-            String encodedImage = encodeImageToBase64(file, width, height);
+            String encodedImage = utilsProduct.encodeImageToBase64(file, width, height);
             product.setImage(encodedImage);
         } catch (IOException e) {
             throw new RuntimeException("Failed to process image", e);
         }
         product.setAmount(createDto.amount());
-        product.setStatus(checkAmount(createDto.amount()));
+        product.setStatus(utilsProduct.checkAmount(createDto.amount()));
 
         productRepository.save(product);
         return ProductResponseDto.toProductResponse(product);
-    }
-
-    private StatusProduct checkAmount(Long amount){
-        if (amount == 0){
-            return StatusProduct.OUT_OF_STOCK;
-        }else if (amount <= 10){
-            return StatusProduct.LOW_STOCK;
-        }
-        return StatusProduct.AVAILABLE;
-    }
-
-    private String encodeImageToBase64(MultipartFile file, int width, int height) throws IOException {
-        BufferedImage originalImage = ImageIO.read(file.getInputStream());
-
-        BufferedImage resizedImage = Thumbnails.of(originalImage)
-                .size(width, height)
-                .outputQuality(1.0)  // Maximum quality
-                .asBufferedImage();
-
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        ImageIO.write(resizedImage, "png", outputStream);
-        byte[] imageBytes = outputStream.toByteArray();
-        return Base64.getEncoder().encodeToString(imageBytes);
     }
 
     @Transactional(readOnly = true)

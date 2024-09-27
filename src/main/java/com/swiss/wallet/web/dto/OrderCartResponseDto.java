@@ -11,13 +11,6 @@ public record OrderCartResponseDto(Long id,
                                    float value,
                                    String status) {
 
-    public OrderCartResponseDto(Long id, UserResponseDto user, List<ProductResponseDto> product, float value, String status) {
-        this.id = id;
-        this.user = user;
-        this.product = product;
-        this.value = value;
-        this.status = status;
-    }
 
     public static OrderCartResponseDto toPurchaseResponse(OrderCart orderCart){
         return new OrderCartResponseDto(

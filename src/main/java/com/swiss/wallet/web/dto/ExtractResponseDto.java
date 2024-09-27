@@ -17,14 +17,6 @@ public record ExtractResponseDto(Long id,
                                  LocalDateTime date
                                  ) {
 
-    public ExtractResponseDto(Long id, Double value, Extract.Type type, String description, LocalDateTime date) {
-        this.id = id;
-        this.value = value;
-        this.type = type;
-        this.description = description;
-        this.date = date;
-    }
-
     public static ExtractResponseDto toExtractResponse(Extract extract){
         return new ExtractResponseDto(
                 extract.getId(),

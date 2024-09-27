@@ -15,16 +15,6 @@ public record UserResponseDto (Long id,
                                Role role
                                ) {
 
-    public UserResponseDto(Long id, String username, String name, String cpf, String birthDate, String phone, Role role) {
-        this.id = id;
-        this.username = username;
-        this.name = name;
-        this.cpf = cpf;
-        this.birthDate = birthDate;
-        this.phone = phone;
-        this.role = role;
-    }
-
     public static UserResponseDto toUserResponse(UserEntity user){
         return new UserResponseDto(
                 user.getId(),
