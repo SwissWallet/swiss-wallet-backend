@@ -45,8 +45,8 @@ public class OrderCartController {
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class)))
             })
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<OrderCartResponseDto> createPurchase(@RequestBody @Valid OrderCartCreateDto orderCartCreateDto) {
+    @PreAuthorize("hasRole('CLIENT')")
+    public ResponseEntity<OrderCartResponseDto> createOrderCart(@RequestBody @Valid OrderCartCreateDto orderCartCreateDto) {
         OrderCart orderCart = orderCartService.saveProductsInOrderCart(orderCartCreateDto);
         return ResponseEntity.ok().body(OrderCartResponseDto.toPurchaseResponse(orderCart));
     }
@@ -63,7 +63,7 @@ public class OrderCartController {
             })
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<OrderCartResponseDto>> listAllPurchase(){
+    public ResponseEntity<List<OrderCartResponseDto>> listAllOrderCarts(){
         List<OrderCart> orderCarts = orderCartService.findAll();
         if(!orderCarts.isEmpty()){
             return ResponseEntity.ok().body(OrderCartResponseDto.toListProductResponse(orderCarts));
