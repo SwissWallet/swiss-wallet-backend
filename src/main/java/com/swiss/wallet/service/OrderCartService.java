@@ -41,13 +41,13 @@ public class OrderCartService {
     }
 
     @Transactional
-    public OrderCart saveProductsInOrderCart(OrderCartCreateDto orderCartCreateDto) {
+    public OrderCart saveProductsInOrderCart(Long idUser, OrderCartCreateDto orderCartCreateDto) {
 
         float value = calcValueTotal(orderCartCreateDto.productIds());
 
-        UserEntity user = userRepository.findByUsername(orderCartCreateDto.username())
+        UserEntity user = userRepository.findById(idUser)
                 .orElseThrow(
-                        () -> new ObjectNotFoundException(String.format("User username= %s not found", orderCartCreateDto.username()))
+                        () -> new ObjectNotFoundException(String.format("User username= %s not found", idUser))
                 );
 
         List<Product> products = iProductRepository.findAllById(orderCartCreateDto.productIds());

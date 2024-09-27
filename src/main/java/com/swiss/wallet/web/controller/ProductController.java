@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.swiss.wallet.entity.Product;
 import com.swiss.wallet.service.ProductService;
+import com.swiss.wallet.web.dto.ChangeProductDto;
 import com.swiss.wallet.web.dto.ProductCreateDto;
 import com.swiss.wallet.web.dto.ProductResponseDto;
 import com.swiss.wallet.web.dto.UserResponseDto;
@@ -104,7 +105,7 @@ public class ProductController {
             responses = {
                     @ApiResponse(responseCode = "200", description = "Resource retrieved successfully",
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDto.class))),
-                    @ApiResponse(responseCode = "404", description = "Resource not found",
+                    @ApiResponse(responseCode = "204", description = "Resource retrieved successfully, list is empty",
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
                     @ApiResponse(responseCode = "403", description = "User not allowed to access this resource",
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
@@ -119,18 +120,19 @@ public class ProductController {
         return ResponseEntity.noContent().build();
     }
 
-    @Operation(summary = "Change value product", description = "Request requires a Bearer Token. Restricted access to ADMIN",
+    @Operation(summary = "Change product", description = "Request requires a Bearer Token. Restricted access to ADMIN",
+            security = @SecurityRequirement(name = "security"),
             responses = {
                     @ApiResponse(responseCode = "200", description = "Resource retrieved successfully",
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDto.class))),
                     @ApiResponse(responseCode = "404", description = "Resource not found",
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
             })
-    @PutMapping("/value")
+    @PutMapping("/update")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Void> updateProductValue(@RequestParam("id") Long id,
-                                                   @RequestParam("newValue") float newValue){
-        productService.changeValue(id, newValue);
+    public ResponseEntity<Void> updateProduct(@RequestParam("id") Long id,
+                                              @RequestBody ChangeProductDto dto){
+        productService.changeValue(id, dto);
         return ResponseEntity.ok().build();
     }
 }

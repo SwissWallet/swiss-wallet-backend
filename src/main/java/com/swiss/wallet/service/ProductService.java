@@ -6,6 +6,7 @@ import com.swiss.wallet.exception.ObjectNotFoundException;
 import com.swiss.wallet.repository.IFavoriteRepository;
 import com.swiss.wallet.repository.IOrderRepository;
 import com.swiss.wallet.repository.IProductRepository;
+import com.swiss.wallet.web.dto.ChangeProductDto;
 import com.swiss.wallet.web.dto.ProductCreateDto;
 import com.swiss.wallet.web.dto.ProductResponseDto;
 import net.coobird.thumbnailator.Thumbnails;
@@ -115,13 +116,15 @@ public class ProductService {
     }
 
     @Transactional
-    public void changeValue(Long id, float newValue) {
+    public void changeValue(Long id, ChangeProductDto dto) {
 
         Product product = productRepository.findById(id)
                 .orElseThrow(
                         () -> new ObjectNotFoundException("Product not found, Please check the product ID and try again")
                 );
-        product.setValue(newValue);
+        product.setValue(dto.value());
+        product.setName(dto.name());
+        product.setDescription(dto.description());
         productRepository.save(product);
     }
 }
