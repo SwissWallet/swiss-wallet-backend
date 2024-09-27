@@ -128,4 +128,18 @@ public class OrderCartService {
         extract.setDate(LocalDateTime.now());
         iExtractRepository.save(extract);
     }
+
+    @Transactional
+    public void cancelOrderCart(Long idOrderCart){
+        OrderCart orderCart = iOrderCartRepository.findById(idOrderCart)
+                .orElseThrow(
+                        () -> new ObjectNotFoundException(String.format("Order Cart not found. Please check the user ID or username and try again."))
+                );
+        orderCart.getProducts().stream()
+                .forEach(product -> {
+                    product.setAmount(product.getAmount() + 1);
+                    iProductRepository.save(product);
+                });
+        iOrderCartRepository.deleteById(orderCart.getId());
+    }
 }

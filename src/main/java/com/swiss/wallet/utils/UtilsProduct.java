@@ -2,6 +2,7 @@ package com.swiss.wallet.utils;
 
 import com.swiss.wallet.entity.StatusProduct;
 import net.coobird.thumbnailator.Thumbnails;
+import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
@@ -10,6 +11,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Base64;
 
+@Component
 public class UtilsProduct {
 
     public StatusProduct checkAmount(Long amount){
