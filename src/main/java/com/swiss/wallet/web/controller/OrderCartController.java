@@ -46,8 +46,8 @@ public class OrderCartController {
             })
     @PostMapping
     @PreAuthorize("hasRole('CLIENT')")
-    public ResponseEntity<OrderCartResponseDto> createOrderCart(@RequestBody @Valid OrderCartCreateDto orderCartCreateDto) {
-        OrderCart orderCart = orderCartService.saveProductsInOrderCart(orderCartCreateDto);
+    public ResponseEntity<OrderCartResponseDto> createOrderCart(@RequestBody @Valid OrderCartCreateDto orderCartCreateDto, @AuthenticationPrincipal JwtUserDetails userDetails) {
+        OrderCart orderCart = orderCartService.saveProductsInOrderCart(userDetails.getId(), orderCartCreateDto);
         return ResponseEntity.ok().body(OrderCartResponseDto.toPurchaseResponse(orderCart));
     }
 

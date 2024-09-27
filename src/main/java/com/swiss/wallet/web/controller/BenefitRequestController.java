@@ -6,6 +6,7 @@ import com.swiss.wallet.service.BenefitRequestService;
 import com.swiss.wallet.web.dto.BenefitReqCreateDto;
 import com.swiss.wallet.web.dto.BenefitReqResponseDto;
 import com.swiss.wallet.web.dto.UpdateStatusBenefitReqDto;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Tag(name = "Benefit Request", description = "Contains all operations related to resources for registering, editing and reading a benefit request.")
 @RestController
 @RequestMapping("/api/v3/benefit/requests")
 public class BenefitRequestController {
@@ -23,6 +25,7 @@ public class BenefitRequestController {
     public BenefitRequestController(BenefitRequestService benefitRequestService) {
         this.benefitRequestService = benefitRequestService;
     }
+
 
     @PostMapping
     @PreAuthorize("hasRole('CLIENT')")
