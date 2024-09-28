@@ -131,6 +131,16 @@ public class OrderCartController {
         return ResponseEntity.accepted().build();
     }
 
+    @Operation(summary = "Delete order cart", description = "Request requires a Bearer Token. Restricted access to CLIENT",
+            security = @SecurityRequirement(name = "security"),
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Resource retrieved successfully",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDto.class))),
+                    @ApiResponse(responseCode = "204", description = "Resource successfully retrieved empty list",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDto.class))),
+                    @ApiResponse(responseCode = "403", description = "User not allowed to access this resource",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+            })
     @DeleteMapping("/{idOrderCart}")
     @PreAuthorize("hasRole('CLIENT')")
     public ResponseEntity<Void> removeOrderCart(@PathVariable Long idOrderCart){
