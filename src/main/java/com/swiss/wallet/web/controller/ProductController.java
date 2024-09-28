@@ -124,6 +124,8 @@ public class ProductController {
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDto.class))),
                     @ApiResponse(responseCode = "404", description = "Resource not found",
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+                    @ApiResponse(responseCode = "403", description = "User not allowed to access this resource",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
             })
     @PutMapping("/update")
     @PreAuthorize("hasRole('ADMIN')")
@@ -133,6 +135,16 @@ public class ProductController {
         return ResponseEntity.ok().build();
     }
 
+    @Operation(summary = "Change product", description = "Request requires a Bearer Token. Restricted access to ADMIN",
+            security = @SecurityRequirement(name = "security"),
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Resource retrieved successfully",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDto.class))),
+                    @ApiResponse(responseCode = "404", description = "Resource not found",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+                    @ApiResponse(responseCode = "403", description = "User not allowed to access this resource",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+            })
     @PutMapping("/amount")
     public ResponseEntity<ProductResponseDto> updateAmount(@RequestBody ChangeAmountDto dto){
         Product product = productService.changeAmount(dto);

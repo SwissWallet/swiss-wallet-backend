@@ -15,11 +15,14 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Tag(name = "Order Cart", description = "Contains all operations related to resources for registering, editing and reading a purchase.")
 @RestController
@@ -131,10 +134,21 @@ public class OrderCartController {
         return ResponseEntity.accepted().build();
     }
 
+    @Operation(summary = "Delete order cart", description = "Request requires a Bearer Token. Restricted access to CLIENT",
+            security = @SecurityRequirement(name = "security"),
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Resource retrieved successfully",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDto.class))),
+                    @ApiResponse(responseCode = "204", description = "Resource successfully retrieved empty list",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDto.class))),
+                    @ApiResponse(responseCode = "403", description = "User not allowed to access this resource",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+            })
     @DeleteMapping("/{idOrderCart}")
     @PreAuthorize("hasRole('CLIENT')")
     public ResponseEntity<Void> removeOrderCart(@PathVariable Long idOrderCart){
         orderCartService.cancelOrderCart(idOrderCart);
         return ResponseEntity.ok().build();
     }
+
 }

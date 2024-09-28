@@ -8,11 +8,13 @@ import com.swiss.wallet.exception.ProductOutOfStockException;
 import com.swiss.wallet.repository.*;
 import com.swiss.wallet.utils.UtilsProduct;
 import com.swiss.wallet.web.dto.OrderCartCreateDto;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class OrderCartService {
@@ -77,12 +79,13 @@ public class OrderCartService {
         orderCart.setValue(value);
         orderCart.setProducts(products);
         orderCart.setStatus(StatusOrderCart.PENDING);
+        orderCart.setDateTime(LocalDateTime.now());
         return iOrderCartRepository.save(orderCart);
     }
 
     @Transactional(readOnly = true)
     public List<OrderCart> findAll() {
-        return iOrderCartRepository.findAll();
+        return iOrderCartRepository.findByStatusAll(StatusOrderCart.PENDING);
     }
 
     @Transactional(readOnly = true)
@@ -150,5 +153,18 @@ public class OrderCartService {
                 });
 
         iOrderCartRepository.deleteById(orderCart.getId());
+    }
+
+    @Transactional
+    @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.MINUTES)
+    public void checkOrderCart(){
+        List<OrderCart> orderCarts = iOrderCartRepository.findByStatusAll(StatusOrderCart.PENDING);
+        orderCarts.stream()
+                .forEach(orderCart -> {
+                    LocalDateTime dateTime = orderCart.getDateTime();
+                    if (orderCart.getDateTime().isAfter(dateTime.plusMinutes(2))){
+                        iOrderCartRepository.deleteById(orderCart.getId());
+                    }
+                });
     }
 }
