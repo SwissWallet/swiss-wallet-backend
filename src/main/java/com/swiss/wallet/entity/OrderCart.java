@@ -2,6 +2,7 @@ package com.swiss.wallet.entity;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -30,6 +31,8 @@ public class OrderCart {
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private StatusOrderCart status;
+
+    private LocalDateTime dateTime;
 
     public OrderCart(Long id, UserEntity user, List<Product> products, float value, StatusOrderCart status) {
         this.id = id;
@@ -87,5 +90,13 @@ public class OrderCart {
 
     public void setStatus(StatusOrderCart status) {
         this.status = status;
+    }
+
+    public LocalDateTime getDateTime() {
+        return dateTime;
+    }
+
+    public void setDateTime(LocalDateTime dateTime) {
+        this.dateTime = dateTime;
     }
 }

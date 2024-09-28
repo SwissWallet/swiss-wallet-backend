@@ -15,11 +15,14 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Tag(name = "Order Cart", description = "Contains all operations related to resources for registering, editing and reading a purchase.")
 @RestController
@@ -147,4 +150,5 @@ public class OrderCartController {
         orderCartService.cancelOrderCart(idOrderCart);
         return ResponseEntity.ok().build();
     }
+
 }
