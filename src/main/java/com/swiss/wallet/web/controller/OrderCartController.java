@@ -131,4 +131,10 @@ public class OrderCartController {
         return ResponseEntity.accepted().build();
     }
 
+    @DeleteMapping("/{idOrderCart}")
+    @PreAuthorize("hasRole('CLIENT')")
+    public ResponseEntity<Void> removeOrderCart(@PathVariable Long idOrderCart){
+        orderCartService.cancelOrderCart(idOrderCart);
+        return ResponseEntity.ok().build();
+    }
 }

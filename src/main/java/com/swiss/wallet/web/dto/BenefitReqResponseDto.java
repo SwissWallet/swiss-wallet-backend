@@ -15,14 +15,6 @@ public record BenefitReqResponseDto (Long id,
                                      LocalDateTime dateTime,
                                      String description){
 
-    public BenefitReqResponseDto(Long id, UserResponseDto user, StatusRequestBenefit status, LocalDateTime dateTime, String description) {
-        this.id = id;
-        this.user = user;
-        this.status = status;
-        this.dateTime = dateTime;
-        this.description = description;
-    }
-
     public static BenefitReqResponseDto toBenefitResponse(BenefitRequest benefitRequest){
         return new BenefitReqResponseDto(
                 benefitRequest.getId(),

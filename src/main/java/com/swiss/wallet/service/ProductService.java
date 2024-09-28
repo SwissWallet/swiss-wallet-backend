@@ -2,10 +2,13 @@ package com.swiss.wallet.service;
 
 import com.swiss.wallet.entity.Category;
 import com.swiss.wallet.entity.Product;
+import com.swiss.wallet.entity.StatusProduct;
 import com.swiss.wallet.exception.ObjectNotFoundException;
 import com.swiss.wallet.repository.IFavoriteRepository;
 import com.swiss.wallet.repository.IOrderRepository;
 import com.swiss.wallet.repository.IProductRepository;
+import com.swiss.wallet.utils.UtilsProduct;
+import com.swiss.wallet.web.dto.ChangeAmountDto;
 import com.swiss.wallet.web.dto.ChangeProductDto;
 import com.swiss.wallet.web.dto.ProductCreateDto;
 import com.swiss.wallet.web.dto.ProductResponseDto;
@@ -27,11 +30,13 @@ public class ProductService {
     private final IProductRepository productRepository;
     private final IOrderRepository orderRepository;
     private final IFavoriteRepository favoriteRepository;
+    private final UtilsProduct utilsProduct;
 
-    public ProductService(IProductRepository productRepository, IOrderRepository orderRepository, IFavoriteRepository favoriteRepository) {
+    public ProductService(IProductRepository productRepository, IOrderRepository orderRepository, IFavoriteRepository favoriteRepository, UtilsProduct utilsProduct) {
         this.productRepository = productRepository;
         this.orderRepository = orderRepository;
         this.favoriteRepository = favoriteRepository;
+        this.utilsProduct = utilsProduct;
     }
 
     @Transactional
@@ -39,46 +44,23 @@ public class ProductService {
         Product product = new Product();
         product.setName(createDto.name());
         product.setDescription(createDto.description());
-
-        // Set category based on the DTO
+        product.setValue(createDto.value());
         switch (createDto.category()) {
             case "STORE" -> product.setCategory(Category.STORE);
             case "CANTEEN" -> product.setCategory(Category.CANTEEN);
             case "LIBRARY" -> product.setCategory(Category.LIBRARY);
         }
-
-        product.setValue(createDto.value());
-
         try {
-            // Encode the image with resizing
-            String encodedImage = encodeImageToBase64(file, width, height);
+            String encodedImage = utilsProduct.encodeImageToBase64(file, width, height);
             product.setImage(encodedImage);
         } catch (IOException e) {
             throw new RuntimeException("Failed to process image", e);
         }
+        product.setAmount(createDto.amount());
+        product.setStatus(utilsProduct.checkAmount(createDto.amount()));
 
-        // Save the product to the repository
         productRepository.save(product);
-
-        // Convert to DTO for response
         return ProductResponseDto.toProductResponse(product);
-    }
-
-    private String encodeImageToBase64(MultipartFile file, int width, int height) throws IOException {
-        // Read the original image
-        BufferedImage originalImage = ImageIO.read(file.getInputStream());
-
-        // Resize the image using Thumbnailator
-        BufferedImage resizedImage = Thumbnails.of(originalImage)
-                .size(width, height)
-                .outputQuality(1.0)  // Maximum quality
-                .asBufferedImage();
-
-        // Convert the resized image to a byte array and encode it in Base64
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        ImageIO.write(resizedImage, "png", outputStream); // Save as PNG to avoid quality loss
-        byte[] imageBytes = outputStream.toByteArray();
-        return Base64.getEncoder().encodeToString(imageBytes);
     }
 
     @Transactional(readOnly = true)
@@ -126,5 +108,15 @@ public class ProductService {
         product.setName(dto.name());
         product.setDescription(dto.description());
         productRepository.save(product);
+    }
+
+    public Product changeAmount(ChangeAmountDto dto) {
+        Product product = productRepository.findById(dto.id())
+                .orElseThrow(
+                        () -> new ObjectNotFoundException("Product not found, Please check the product ID and try again")
+                );
+        product.setAmount(product.getAmount() + dto.amount());
+        product.setStatus(utilsProduct.checkAmount(product.getAmount()));
+        return productRepository.save(product);
     }
 }

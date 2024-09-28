@@ -10,13 +10,6 @@ public record OrderResponseDto(Long id,
                                ProductResponseDto product,
                                String status) {
 
-    public OrderResponseDto(Long id, UserResponseDto user, ProductResponseDto product, String status) {
-        this.id = id;
-        this.user = user;
-        this.product = product;
-        this.status = status;
-    }
-
     public static OrderResponseDto toOrderResponse(Order order){
         return new OrderResponseDto(
                 order.getId(),

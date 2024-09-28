@@ -4,7 +4,9 @@ import com.swiss.wallet.entity.*;
 import com.swiss.wallet.exception.ObjectNotFoundException;
 import com.swiss.wallet.exception.OrderCartAlreadyPaidException;
 import com.swiss.wallet.exception.PointInsufficientException;
+import com.swiss.wallet.exception.ProductOutOfStockException;
 import com.swiss.wallet.repository.*;
+import com.swiss.wallet.utils.UtilsProduct;
 import com.swiss.wallet.web.dto.OrderCartCreateDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,14 +23,16 @@ public class OrderCartService {
     private final IAccountRepository iAccountRepository;
     private final IExtractRepository iExtractRepository;
     private final IOrderRepository orderRepository;
+    private final UtilsProduct utilsProduct;
 
-    public OrderCartService(IOrderCartRepository iOrderCartRepository, IUserRepository userRepository, IProductRepository iProductRepository, IAccountRepository iAccountRepository, IExtractRepository iExtractRepository, IOrderRepository orderRepository) {
+    public OrderCartService(IOrderCartRepository iOrderCartRepository, IUserRepository userRepository, IProductRepository iProductRepository, IAccountRepository iAccountRepository, IExtractRepository iExtractRepository, IOrderRepository orderRepository, UtilsProduct utilsProduct) {
         this.iOrderCartRepository = iOrderCartRepository;
         this.userRepository = userRepository;
         this.iProductRepository = iProductRepository;
         this.iAccountRepository = iAccountRepository;
         this.iExtractRepository = iExtractRepository;
         this.orderRepository = orderRepository;
+        this.utilsProduct = utilsProduct;
     }
 
     public float calcValueTotal(List<Long> productIds){
@@ -58,6 +62,15 @@ public class OrderCartService {
         if (products.isEmpty()){
             throw new ObjectNotFoundException(String.format("No products added to the list"));
         }
+
+        products.stream()
+                .forEach(product -> {
+                    if (product.getStatus() == StatusProduct.OUT_OF_STOCK){
+                        throw new ProductOutOfStockException(String.format("Product %s unavailable or out of stock", product.getName()));
+                    }
+                    product.setAmount(product.getAmount() - 1);
+                    iProductRepository.save(product);
+                });
 
         OrderCart orderCart = new OrderCart();
         orderCart.setUser(user);
@@ -108,7 +121,7 @@ public class OrderCartService {
 
         List<Order> orders = orderRepository.findAllByUserAndProductIn(user, orderCart.getProducts());
         orders.stream()
-                .forEach(order -> order.setStatus(Status.COMPLETED));
+                .forEach(order -> order.setStatus(StatusOrder.COMPLETED));
         orderRepository.saveAll(orders);
 
         orderCart.setStatus(StatusOrderCart.PAID);
@@ -121,5 +134,21 @@ public class OrderCartService {
         extract.setDescription(String.format("Purchase made in the %s", orderCart.getProducts().get(0).getCategory().name()));
         extract.setDate(LocalDateTime.now());
         iExtractRepository.save(extract);
+    }
+
+    @Transactional
+    public void cancelOrderCart(Long idOrderCart){
+        OrderCart orderCart = iOrderCartRepository.findById(idOrderCart)
+                .orElseThrow(
+                        () -> new ObjectNotFoundException(String.format("Order Cart not found. Please check the user ID or username and try again."))
+                );
+        orderCart.getProducts().stream()
+                .forEach(product -> {
+                    product.setAmount(product.getAmount() + 1);
+                    product.setStatus(utilsProduct.checkAmount(product.getAmount()));
+                    iProductRepository.save(product);
+                });
+
+        iOrderCartRepository.deleteById(orderCart.getId());
     }
 }

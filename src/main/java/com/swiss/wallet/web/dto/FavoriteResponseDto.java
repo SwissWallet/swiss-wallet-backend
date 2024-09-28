@@ -9,12 +9,6 @@ public record FavoriteResponseDto(Long id,
                                   UserResponseDto user,
                                   ProductResponseDto product) {
 
-    public FavoriteResponseDto(Long id, UserResponseDto user, ProductResponseDto product) {
-        this.id = id;
-        this.user = user;
-        this.product = product;
-    }
-
     public static FavoriteResponseDto toFavoriteResponse(Favorite favorite){
         return new FavoriteResponseDto(
                 favorite.getId(),

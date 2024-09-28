@@ -135,4 +135,13 @@ public class ApiHandlerException {
                 .body(new ErrorMessage(request, HttpStatus.BAD_REQUEST, ex.getMessage()));
     }
 
+    @ExceptionHandler(ProductOutOfStockException.class)
+    public ResponseEntity<ErrorMessage> productOutOfStockException(RuntimeException ex, HttpServletRequest request){
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new ErrorMessage(request, HttpStatus.BAD_REQUEST, ex.getMessage()));
+    }
+
+
 }

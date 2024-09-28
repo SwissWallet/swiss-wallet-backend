@@ -1,6 +1,6 @@
 package com.swiss.wallet.entity;
 
-public enum Status {
+public enum StatusOrder {
 
     COMPLETED, UNAVAILABLE, SEPARATED, ANALYSIS
 
