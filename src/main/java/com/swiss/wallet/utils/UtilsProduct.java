@@ -15,7 +15,7 @@ import java.util.Base64;
 public class UtilsProduct {
 
     public StatusProduct checkAmount(Long amount){
-        if (amount == 0){
+        if (amount <= 0){
             return StatusProduct.OUT_OF_STOCK;
         }else if (amount <= 10){
             return StatusProduct.LOW_STOCK;

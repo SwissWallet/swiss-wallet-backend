@@ -4,10 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.swiss.wallet.entity.Product;
 import com.swiss.wallet.service.ProductService;
-import com.swiss.wallet.web.dto.ChangeProductDto;
-import com.swiss.wallet.web.dto.ProductCreateDto;
-import com.swiss.wallet.web.dto.ProductResponseDto;
-import com.swiss.wallet.web.dto.UserResponseDto;
+import com.swiss.wallet.web.dto.*;
 import com.swiss.wallet.web.exception.ErrorMessage;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -134,5 +131,11 @@ public class ProductController {
                                               @RequestBody ChangeProductDto dto){
         productService.changeValue(id, dto);
         return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/amount")
+    public ResponseEntity<ProductResponseDto> updateAmount(@RequestBody ChangeAmountDto dto){
+        Product product = productService.changeAmount(dto);
+        return ResponseEntity.ok().body(ProductResponseDto.toProductResponse(product));
     }
 }

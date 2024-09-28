@@ -8,6 +8,7 @@ import com.swiss.wallet.repository.IFavoriteRepository;
 import com.swiss.wallet.repository.IOrderRepository;
 import com.swiss.wallet.repository.IProductRepository;
 import com.swiss.wallet.utils.UtilsProduct;
+import com.swiss.wallet.web.dto.ChangeAmountDto;
 import com.swiss.wallet.web.dto.ChangeProductDto;
 import com.swiss.wallet.web.dto.ProductCreateDto;
 import com.swiss.wallet.web.dto.ProductResponseDto;
@@ -107,5 +108,15 @@ public class ProductService {
         product.setName(dto.name());
         product.setDescription(dto.description());
         productRepository.save(product);
+    }
+
+    public Product changeAmount(ChangeAmountDto dto) {
+        Product product = productRepository.findById(dto.id())
+                .orElseThrow(
+                        () -> new ObjectNotFoundException("Product not found, Please check the product ID and try again")
+                );
+        product.setAmount(product.getAmount() + dto.amount());
+        product.setStatus(utilsProduct.checkAmount(product.getAmount()));
+        return productRepository.save(product);
     }
 }
