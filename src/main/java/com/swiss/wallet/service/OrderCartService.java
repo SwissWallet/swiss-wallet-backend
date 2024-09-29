@@ -84,6 +84,7 @@ public class OrderCartService {
         List<Order> orders = orderRepository.findAllByUserAndProductIn(user, products);
         orderRepository.deleteAll(orders);
 
+
         return iOrderCartRepository.save(orderCart);
     }
 
