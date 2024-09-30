@@ -57,10 +57,6 @@ public class OrderCartService {
                 );
 
         List<Product> products = iProductRepository.findAllById(orderCartCreateDto.productIds());
-        Account account = iAccountRepository.findAccountByUser(user).orElseThrow(
-                () -> new ObjectNotFoundException(String.format("Account id = %s not found", user.getName()))
-        );
-
         if (products.isEmpty()){
             throw new ObjectNotFoundException(String.format("No products added to the list"));
         }
@@ -71,8 +67,10 @@ public class OrderCartService {
                         throw new ProductOutOfStockException(String.format("Product %s unavailable or out of stock", product.getName()));
                     }
                     product.setAmount(product.getAmount() - 1);
+                    product.setStatus(utilsProduct.checkAmount(product.getAmount()));
                     iProductRepository.save(product);
                 });
+
 
         OrderCart orderCart = new OrderCart();
         orderCart.setUser(user);
