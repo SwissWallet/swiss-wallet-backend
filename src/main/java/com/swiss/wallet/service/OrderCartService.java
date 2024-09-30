@@ -166,7 +166,7 @@ public class OrderCartService {
                 .forEach(orderCart -> {
                     LocalDateTime dateTime = orderCart.getDateTime();
                     if (orderCart.getDateTime().isAfter(dateTime.plusMinutes(2))){
-                        iOrderCartRepository.deleteById(orderCart.getId());
+                        cancelOrderCart(orderCart.getId());
                     }
                 });
     }
