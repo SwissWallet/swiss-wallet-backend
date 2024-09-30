@@ -80,6 +80,11 @@ public class OrderCartService {
         orderCart.setProducts(products);
         orderCart.setStatus(StatusOrderCart.PENDING);
         orderCart.setDateTime(LocalDateTime.now());
+
+        List<Order> orders = orderRepository.findAllByUserAndProductIn(user, products);
+        orderRepository.deleteAll(orders);
+
+
         return iOrderCartRepository.save(orderCart);
     }
 
