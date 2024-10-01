@@ -8,6 +8,8 @@ import com.swiss.wallet.exception.ProductOutOfStockException;
 import com.swiss.wallet.repository.*;
 import com.swiss.wallet.utils.UtilsProduct;
 import com.swiss.wallet.web.dto.OrderCartCreateDto;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +28,7 @@ public class OrderCartService {
     private final IExtractRepository iExtractRepository;
     private final IOrderRepository orderRepository;
     private final UtilsProduct utilsProduct;
+    private static final Logger logger = LoggerFactory.getLogger(OrderCartService.class);
 
     public OrderCartService(IOrderCartRepository iOrderCartRepository, IUserRepository userRepository, IProductRepository iProductRepository, IAccountRepository iAccountRepository, IExtractRepository iExtractRepository, IOrderRepository orderRepository, UtilsProduct utilsProduct) {
         this.iOrderCartRepository = iOrderCartRepository;
@@ -161,13 +164,19 @@ public class OrderCartService {
     @Transactional
     @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.MINUTES)
     public void checkOrderCart(){
-        List<OrderCart> orderCarts = iOrderCartRepository.findByStatusAll(StatusOrderCart.PENDING);
+        List<OrderCart> orderCarts = iOrderCartRepository.findAll();
         orderCarts.stream()
                 .forEach(orderCart -> {
                     LocalDateTime dateTime = orderCart.getDateTime();
-                    if (orderCart.getDateTime().isAfter(dateTime.plusMinutes(2))){
+                    dateTime = dateTime.plusMinutes(2);
+                    if (!orderCart.getDateTime().isAfter(dateTime)){
+                        if (orderCart.getStatus() == StatusOrderCart.PENDING){
+                        logger.info("orderlog " + orderCart.getId());
                         cancelOrderCart(orderCart.getId());
+                        }
                     }
                 });
+        LocalDateTime dateTime = LocalDateTime.now();
+        logger.info("Order Cart == Running at {}", dateTime);
     }
 }
