@@ -42,7 +42,7 @@ public class OrderCartController {
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDto.class))),
                     @ApiResponse(responseCode = "404", description = "User or Products not found",
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
-                    @ApiResponse(responseCode = "400", description = "Resource not processed due to invalid input data",
+                    @ApiResponse(responseCode = "400", description = "Resource product unavailable or out of stock",
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
                     @ApiResponse(responseCode = "403", description = "User not allowed to access this resource",
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
