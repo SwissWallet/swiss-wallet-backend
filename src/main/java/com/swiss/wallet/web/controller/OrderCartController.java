@@ -40,12 +40,12 @@ public class OrderCartController {
             responses = {
                     @ApiResponse(responseCode = "201", description = "Resource created successfully",
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDto.class))),
-                    @ApiResponse(responseCode = "400", description = "Insufficient ponint balance",
-                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
-                     @ApiResponse(responseCode = "404", description = "User or Products not found",
+                    @ApiResponse(responseCode = "404", description = "User or Products not found",
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
                     @ApiResponse(responseCode = "422", description = "Resource not processed due to invalid input data",
-                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class)))
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+                    @ApiResponse(responseCode = "403", description = "User not allowed to access this resource",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
             })
     @PostMapping
     @PreAuthorize("hasRole('CLIENT')")
