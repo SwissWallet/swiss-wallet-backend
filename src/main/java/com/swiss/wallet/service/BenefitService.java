@@ -81,7 +81,7 @@ public class BenefitService {
 
                 });
         LocalDateTime dateTime = LocalDateTime.now();
-        logger.info("Running at {}", dateTime);
+        logger.info("Benefit == Running at {}", dateTime);
     }
 
     public void disableBenefit(Long idBenefit) {

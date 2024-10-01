@@ -5,6 +5,7 @@ import com.swiss.wallet.entity.Product;
 import com.swiss.wallet.entity.StatusProduct;
 import com.swiss.wallet.exception.ObjectNotFoundException;
 import com.swiss.wallet.repository.IFavoriteRepository;
+import com.swiss.wallet.repository.IOrderCartRepository;
 import com.swiss.wallet.repository.IOrderRepository;
 import com.swiss.wallet.repository.IProductRepository;
 import com.swiss.wallet.utils.UtilsProduct;
@@ -31,12 +32,14 @@ public class ProductService {
     private final IOrderRepository orderRepository;
     private final IFavoriteRepository favoriteRepository;
     private final UtilsProduct utilsProduct;
+    private final IOrderCartRepository orderCartRepository;
 
-    public ProductService(IProductRepository productRepository, IOrderRepository orderRepository, IFavoriteRepository favoriteRepository, UtilsProduct utilsProduct) {
+    public ProductService(IProductRepository productRepository, IOrderRepository orderRepository, IFavoriteRepository favoriteRepository, UtilsProduct utilsProduct, IOrderCartRepository orderCartRepository) {
         this.productRepository = productRepository;
         this.orderRepository = orderRepository;
         this.favoriteRepository = favoriteRepository;
         this.utilsProduct = utilsProduct;
+        this.orderCartRepository = orderCartRepository;
     }
 
     @Transactional
@@ -89,6 +92,7 @@ public class ProductService {
 
         orderRepository.deleteAllByProduct(product);
         favoriteRepository.deleteAllByProduct(product);
+        orderCartRepository.deleteByProductsIn(List.of(product));
         productRepository.deleteById(product.getId());
     }
 
