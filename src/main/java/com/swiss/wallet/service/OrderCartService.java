@@ -15,7 +15,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -40,40 +43,65 @@ public class OrderCartService {
         this.utilsProduct = utilsProduct;
     }
 
-    public float calcValueTotal(List<Long> productIds){
-        List<Product> products = iProductRepository.findAllById(productIds);
-        float total = 0.0f;
-        for (Product product : products){
-            total += product.getValue();
+    public float calcValueTotal(List<Long> productIds) {
+        // Usamos um Map para contar a quantidade de cada produto
+        Map<Long, Integer> productCounts = new HashMap<>();
+
+        // Contar a quantidade de cada ID de produto
+        for (Long productId : productIds) {
+            productCounts.put(productId, productCounts.getOrDefault(productId, 0) + 1);
         }
+
+        // Buscar todos os produtos a partir dos IDs
+        List<Product> products = iProductRepository.findAllById(productCounts.keySet());
+
+        float total = 0.0f;
+
+        // Calcular o valor total considerando a quantidade de cada produto
+        for (Product product : products) {
+            int count = productCounts.get(product.getId());
+            total += product.getValue() * count; // Multiplica o valor pelo número de unidades
+        }
+
         return total;
     }
 
+
     @Transactional
     public OrderCart saveProductsInOrderCart(Long idUser, OrderCartCreateDto orderCartCreateDto) {
-
+        Map<Long, Integer> productCounts = new HashMap<>();
         float value = calcValueTotal(orderCartCreateDto.productIds());
 
         UserEntity user = userRepository.findById(idUser)
-                .orElseThrow(
-                        () -> new ObjectNotFoundException(String.format("User username= %s not found", idUser))
-                );
+                .orElseThrow(() -> new ObjectNotFoundException(String.format("User username= %s not found", idUser)));
 
-        List<Product> products = iProductRepository.findAllById(orderCartCreateDto.productIds());
-        if (products.isEmpty()){
-            throw new ObjectNotFoundException(String.format("No products added to the list"));
-        }
+        orderCartCreateDto.productIds().forEach(productId -> {
+            productCounts.put(productId, productCounts.getOrDefault(productId, 0) + 1);
+        });
 
-        products.stream()
-                .forEach(product -> {
-                    if (product.getStatus() == StatusProduct.OUT_OF_STOCK){
-                        throw new ProductOutOfStockException(String.format("Product %s unavailable or out of stock", product.getName()));
-                    }
-                    product.setAmount(product.getAmount() - 1);
-                    product.setStatus(utilsProduct.checkAmount(product.getAmount()));
-                    iProductRepository.save(product);
-                });
+        List<Product> products = new ArrayList<>();
+        productCounts.forEach((productId, count) -> {
+            Product product = iProductRepository.findById(productId).orElseThrow(
+                    () -> new ObjectNotFoundException("Product not found")
+            );
 
+            if (product.getStatus() == StatusProduct.OUT_OF_STOCK) {
+                throw new ProductOutOfStockException(String.format("Product %s unavailable or out of stock", product.getName()));
+            }
+
+            if (product.getAmount() < count) {
+                throw new ProductOutOfStockException(String.format("Not enough stock for product %s", product.getName()));
+            }
+
+            product.setAmount(product.getAmount() - count); // Decrementa a quantidade total
+            product.setStatus(utilsProduct.checkAmount(product.getAmount()));
+            iProductRepository.save(product);
+
+            // Adiciona o produto à lista a quantidade correta de vezes
+            for (int i = 0; i < count; i++) {
+                products.add(product);
+            }
+        });
 
         OrderCart orderCart = new OrderCart();
         orderCart.setUser(user);
@@ -85,9 +113,9 @@ public class OrderCartService {
         List<Order> orders = orderRepository.findAllByUserAndProductIn(user, products);
         orderRepository.deleteAll(orders);
 
-
         return iOrderCartRepository.save(orderCart);
     }
+
 
     @Transactional(readOnly = true)
     public List<OrderCart> findAll() {
@@ -107,7 +135,7 @@ public class OrderCartService {
     public void paymentOrderCart(Long idUser, Long idOrderCart){
         OrderCart orderCart = iOrderCartRepository.findById(idOrderCart)
                 .orElseThrow(
-                        () -> new ObjectNotFoundException(String.format("Order card not found"))
+                        () -> new ObjectNotFoundException(String.format("Order cart not found"))
                 );
         if (orderCart.getStatus().name() == StatusOrderCart.PAID.name()){
             throw new OrderCartAlreadyPaidException("Order Cart already paid");
