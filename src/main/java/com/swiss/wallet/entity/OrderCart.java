@@ -34,6 +34,8 @@ public class OrderCart {
 
     private LocalDateTime dateTime;
 
+    private LocalDateTime expireTime;
+
     public OrderCart(Long id, UserEntity user, List<Product> products, float value, StatusOrderCart status) {
         this.id = id;
         this.user = user;
@@ -98,5 +100,13 @@ public class OrderCart {
 
     public void setDateTime(LocalDateTime dateTime) {
         this.dateTime = dateTime;
+    }
+
+    public LocalDateTime getExpireTime() {
+        return expireTime;
+    }
+
+    public void setExpireTime(LocalDateTime expireTime) {
+        this.expireTime = expireTime;
     }
 }

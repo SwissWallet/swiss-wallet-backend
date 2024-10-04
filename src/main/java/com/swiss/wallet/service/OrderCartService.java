@@ -109,6 +109,7 @@ public class OrderCartService {
         orderCart.setProducts(products);
         orderCart.setStatus(StatusOrderCart.PENDING);
         orderCart.setDateTime(LocalDateTime.now());
+        orderCart.setExpireTime(orderCart.getDateTime().plusMinutes(2));
 
         List<Order> orders = orderRepository.findAllByUserAndProductIn(user, products);
         orderRepository.deleteAll(orders);
@@ -195,9 +196,7 @@ public class OrderCartService {
         List<OrderCart> orderCarts = iOrderCartRepository.findAll();
         orderCarts.stream()
                 .forEach(orderCart -> {
-                    LocalDateTime dateTime = orderCart.getDateTime();
-                    dateTime = dateTime.plusMinutes(2);
-                    if (!orderCart.getDateTime().isAfter(dateTime)){
+                    if (!orderCart.getExpireTime().isAfter(LocalDateTime.now())){
                         if (orderCart.getStatus() == StatusOrderCart.PENDING){
                         logger.info("orderlog " + orderCart.getId());
                         cancelOrderCart(orderCart.getId());
