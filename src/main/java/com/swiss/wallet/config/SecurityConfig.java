@@ -35,6 +35,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/api/v3/users").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v3/auth").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v3/auth/mobile").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v3/users/recover-password").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/api/v3/users/recover-password").permitAll()
                         .requestMatchers(
