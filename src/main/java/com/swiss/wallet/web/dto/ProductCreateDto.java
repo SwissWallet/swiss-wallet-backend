@@ -10,5 +10,7 @@ public record ProductCreateDto(@NotBlank
                                @NotBlank
                                 String description,
                                @NotBlank
-                                String category){
+                                String category,
+                               @NotNull
+                               Long amount){
 }

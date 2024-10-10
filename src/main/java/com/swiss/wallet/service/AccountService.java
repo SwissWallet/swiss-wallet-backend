@@ -2,6 +2,7 @@ package com.swiss.wallet.service;
 
 import com.swiss.wallet.entity.Account;
 import com.swiss.wallet.entity.Extract;
+import com.swiss.wallet.entity.TokenNotification;
 import com.swiss.wallet.entity.UserEntity;
 import com.swiss.wallet.exception.ObjectNotFoundException;
 import com.swiss.wallet.exception.ValueInvalidException;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class AccountService {
@@ -19,11 +21,13 @@ public class AccountService {
     private final IAccountRepository accountRepository;
     private final IUserRepository userRepository;
     private final IExtractRepository extractRepository;
+    private final NotificationService notificationService;
 
-    public AccountService(IAccountRepository accountRepository, IUserRepository userRepository, IExtractRepository extractRepository) {
+    public AccountService(IAccountRepository accountRepository, IUserRepository userRepository, IExtractRepository extractRepository, NotificationService notificationService) {
         this.accountRepository = accountRepository;
         this.userRepository = userRepository;
         this.extractRepository = extractRepository;
+        this.notificationService = notificationService;
     }
 
     @Transactional(readOnly = true)
@@ -62,6 +66,13 @@ public class AccountService {
         extract.setDescription(String.format("Deposit into user account username = %s", user.getUsername()));
         extract.setDate(LocalDateTime.now());
         extractRepository.save(extract);
+
+        List<TokenNotification> tokens = notificationService.findAllByUser(user);
+
+        tokens.stream()
+                .forEach(tokenNotification -> {
+                    notificationService.sendNotification(tokenNotification.getToken(), "Deposito", String.format("Foram Depositados %.0f pontos", value));
+                });
 
     }
 }

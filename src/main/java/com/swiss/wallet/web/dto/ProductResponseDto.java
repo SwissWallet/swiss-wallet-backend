@@ -1,6 +1,7 @@
 package com.swiss.wallet.web.dto;
 
 import com.swiss.wallet.entity.Product;
+import com.swiss.wallet.entity.StatusProduct;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -10,16 +11,10 @@ public record ProductResponseDto(Long id,
                                  float value,
                                  String description,
                                  String category,
+                                 Long amount,
+                                 StatusProduct status,
                                  String image) {
 
-    public ProductResponseDto(Long id, String name, float value, String description, String category, String image) {
-        this.id = id;
-        this.name = name;
-        this.value = value;
-        this.description = description;
-        this.category = category;
-        this.image = image;
-    }
 
     public static ProductResponseDto toProductResponse(Product product){
         return new ProductResponseDto(
@@ -28,6 +23,8 @@ public record ProductResponseDto(Long id,
                 product.getValue(),
                 product.getDescription(),
                 product.getCategory().name(),
+                product.getAmount(),
+                product.getStatus(),
                 product.getImage()
         );
     }

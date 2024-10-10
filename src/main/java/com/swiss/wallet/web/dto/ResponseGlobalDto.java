@@ -12,12 +12,6 @@ public record ResponseGlobalDto (UserResponseDto user,
                                  AccountResponseDto account,
                                  List<ExtractResponseDto> extracts){
 
-    public ResponseGlobalDto(UserResponseDto user, AddressResponseDto address, AccountResponseDto account, List<ExtractResponseDto> extracts) {
-        this.user = user;
-        this.address = address;
-        this.account = account;
-        this.extracts = extracts;
-    }
 
     public static ResponseGlobalDto toResponseGlobal(UserEntity user,
                                                      Address address,

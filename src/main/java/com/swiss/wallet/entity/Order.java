@@ -21,16 +21,16 @@ public class Order {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
-    private Status status;
+    private StatusOrder status;
 
-    public Order(Long id, UserEntity user, Product product, Status status) {
+    public Order(Long id, UserEntity user, Product product, StatusOrder status) {
         this.id = id;
         this.user = user;
         this.product = product;
         this.status = status;
     }
 
-    public Order(UserEntity user, Product product, Status status) {
+    public Order(UserEntity user, Product product, StatusOrder status) {
         this.user = user;
         this.product = product;
         this.status = status;
@@ -63,11 +63,11 @@ public class Order {
         this.product = product;
     }
 
-    public Status getStatus() {
+    public StatusOrder getStatus() {
         return status;
     }
 
-    public void setStatus(Status status) {
-        this.status = status;
+    public void setStatus(StatusOrder statusOrder) {
+        this.status = statusOrder;
     }
 }

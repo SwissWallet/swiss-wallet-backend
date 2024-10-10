@@ -2,11 +2,12 @@ package com.swiss.wallet.entity;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Table(name = "purchases ")
-public class Purchase {
+@Table(name = "orderCarts ")
+public class OrderCart {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,27 +21,35 @@ public class Purchase {
     @ManyToMany
     @JoinTable(
             name = "idProduct",
-            joinColumns = @JoinColumn(name = "purchaseId"),
+            joinColumns = @JoinColumn(name = "orderCartId"),
             inverseJoinColumns = @JoinColumn(name = "productId"))
     private List<Product> products;
 
     @Column(name = "value")
     private float value;
 
-    public Purchase(Long id, UserEntity user, List<Product> products, float value) {
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private StatusOrderCart status;
+
+    private LocalDateTime dateTime;
+
+    public OrderCart(Long id, UserEntity user, List<Product> products, float value, StatusOrderCart status) {
         this.id = id;
         this.user = user;
         this.products = products;
         this.value = value;
+        this.status = status;
     }
 
-    public Purchase(UserEntity user, List<Product> products, float value) {
+    public OrderCart(UserEntity user, List<Product> products, float value, StatusOrderCart status) {
         this.user = user;
         this.products = products;
         this.value = value;
+        this.status = status;
     }
 
-    public Purchase() {
+    public OrderCart() {
     }
 
     public Long getId() {
@@ -73,5 +82,21 @@ public class Purchase {
 
     public void setValue(float value) {
         this.value = value;
+    }
+
+    public StatusOrderCart getStatus() {
+        return status;
+    }
+
+    public void setStatus(StatusOrderCart status) {
+        this.status = status;
+    }
+
+    public LocalDateTime getDateTime() {
+        return dateTime;
+    }
+
+    public void setDateTime(LocalDateTime dateTime) {
+        this.dateTime = dateTime;
     }
 }

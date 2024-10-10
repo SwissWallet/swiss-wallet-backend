@@ -8,11 +8,6 @@ import java.util.stream.Collectors;
 public record AccountResponseDto(Long id,
                                  Double value) {
 
-    public AccountResponseDto(Long id, Double value) {
-        this.id = id;
-        this.value = value;
-    }
-
     public static AccountResponseDto toAccountResponseDto(Account account){
         return new AccountResponseDto(
                 account.getId(),

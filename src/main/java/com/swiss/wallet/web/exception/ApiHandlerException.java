@@ -87,15 +87,6 @@ public class ApiHandlerException {
                 .body(new ErrorMessage(request, HttpStatus.FORBIDDEN, ex.getMessage()));
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorMessage> internalServerErrorException(Exception ex, HttpServletRequest request) {
-        ErrorMessage error = new ErrorMessage(
-                request, HttpStatus.INTERNAL_SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
-        return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(error);
-    }
 
     @ExceptionHandler(FavoriteAlreadyExistsException.class)
     public ResponseEntity<ErrorMessage> favoriteAlreadyExistsException(RuntimeException ex, HttpServletRequest request){
@@ -122,6 +113,30 @@ public class ApiHandlerException {
     }
     @ExceptionHandler(PointInsufficientException.class)
     public ResponseEntity<ErrorMessage> pointInsufficientException(RuntimeException ex, HttpServletRequest request){
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new ErrorMessage(request, HttpStatus.BAD_REQUEST, ex.getMessage()));
+    }
+
+    @ExceptionHandler(OrderCartAlreadyPaidException.class)
+    public ResponseEntity<ErrorMessage> orderCartAlreadyPaidException(RuntimeException ex, HttpServletRequest request){
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new ErrorMessage(request, HttpStatus.BAD_REQUEST, ex.getMessage()));
+    }
+
+    @ExceptionHandler(ChangeStatusInvalidException.class)
+    public ResponseEntity<ErrorMessage> changeStatusInvalidException(RuntimeException ex, HttpServletRequest request){
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new ErrorMessage(request, HttpStatus.BAD_REQUEST, ex.getMessage()));
+    }
+
+    @ExceptionHandler(ProductOutOfStockException.class)
+    public ResponseEntity<ErrorMessage> productOutOfStockException(RuntimeException ex, HttpServletRequest request){
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .contentType(MediaType.APPLICATION_JSON)
