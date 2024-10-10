@@ -1,6 +1,7 @@
 package com.swiss.wallet.web.controller;
 
 import com.swiss.wallet.entity.Benefit;
+import com.swiss.wallet.jwt.JwtUserDetails;
 import com.swiss.wallet.service.BenefitService;
 import com.swiss.wallet.web.dto.BenefitCreateDto;
 import com.swiss.wallet.web.dto.BenefitResponseDto;
@@ -16,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -98,11 +100,19 @@ public class BenefitController {
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
             })
     @GetMapping("/{idBenefit}")
+    @PreAuthorize("hasRole('CLIENT')")
     public ResponseEntity<BenefitResponseDto> findById(@PathVariable Long idBenefit){
         Benefit benefit = benefitService.getById(idBenefit);
         return ResponseEntity.ok().body(BenefitResponseDto.toBenefitResponse(benefit));
     }
 
+
+    @GetMapping("/current")
+    @PreAuthorize("hasRole('CLIENT')")
+    public ResponseEntity<List<BenefitResponseDto>> getAllCurrent(@AuthenticationPrincipal JwtUserDetails userDetails){
+        List<Benefit> benefits = benefitService.getAllByUser(userDetails.getId());
+        return ResponseEntity.ok().body(BenefitResponseDto.toListBenefitrResponse(benefits));
+    }
 
 
 }

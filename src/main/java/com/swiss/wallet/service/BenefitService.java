@@ -108,4 +108,14 @@ public class BenefitService {
                 );
         return benefit;
     }
+
+    public List<Benefit> getAllByUser(Long id) {
+        UserEntity user = userRepository.findById(id)
+                .orElseThrow(
+                        () -> new ObjectNotFoundException(String.format("User id = %s not found", id))
+                );
+
+        return benefitRepository.findAllByUser(user);
+
+    }
 }

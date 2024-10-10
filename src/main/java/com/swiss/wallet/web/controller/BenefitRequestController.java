@@ -3,10 +3,7 @@ package com.swiss.wallet.web.controller;
 import com.swiss.wallet.entity.BenefitRequest;
 import com.swiss.wallet.jwt.JwtUserDetails;
 import com.swiss.wallet.service.BenefitRequestService;
-import com.swiss.wallet.web.dto.BenefitReqCreateDto;
-import com.swiss.wallet.web.dto.BenefitReqResponseDto;
-import com.swiss.wallet.web.dto.UpdateStatusBenefitReqDto;
-import com.swiss.wallet.web.dto.UserResponseDto;
+import com.swiss.wallet.web.dto.*;
 import com.swiss.wallet.web.exception.ErrorMessage;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -105,5 +102,13 @@ public class BenefitRequestController {
     public ResponseEntity<Void> removeBenefitRequest(@PathVariable Long id){
         benefitRequestService.removeBenefitRequest(id);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/current")
+    @PreAuthorize("hasRole('CLIENT')")
+    public ResponseEntity<List<BenefitReqResponseDto>> currentBenefitReq(@AuthenticationPrincipal JwtUserDetails userDetails){
+        List<BenefitRequest> benefitRequests = benefitRequestService.getAllByUser(userDetails.getId());
+
+        return ResponseEntity.ok().body(BenefitReqResponseDto.toListRequestBenefits(benefitRequests));
     }
 }

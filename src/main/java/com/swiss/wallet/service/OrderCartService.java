@@ -196,8 +196,8 @@ public class OrderCartService {
         orderCarts.stream()
                 .forEach(orderCart -> {
                     LocalDateTime dateTime = orderCart.getDateTime();
-                    dateTime = dateTime.plusMinutes(2);
-                    if (!orderCart.getDateTime().isAfter(dateTime)){
+                    dateTime = dateTime.plusDays(2);
+                    if (orderCart.getDateTime().isAfter(dateTime)){
                         if (orderCart.getStatus() == StatusOrderCart.PENDING){
                         logger.info("orderlog " + orderCart.getId());
                         cancelOrderCart(orderCart.getId());
