@@ -22,23 +22,18 @@ public class Benefit {
     @Column(name = "status")
     private StatusBenefit statusBenefit;
 
-    private String description;
+    @ManyToOne
+    @JoinColumn(name = "benefitActiveId")
+    private BenefitActive benefitActive;
 
     private LocalDateTime expireDate;
 
-    public Benefit(Long id, UserEntity user, float value, StatusBenefit statusBenefit, String description, LocalDateTime expireDate) {
+    public Benefit(Long id, UserEntity user, float value, StatusBenefit statusBenefit, BenefitActive benefitActive, LocalDateTime expireDate) {
         this.id = id;
         this.user = user;
         this.value = value;
         this.statusBenefit = statusBenefit;
-        this.description = description;
-        this.expireDate = expireDate;
-    }
-
-    public Benefit(float value, StatusBenefit statusBenefit, String description, LocalDateTime expireDate) {
-        this.value = value;
-        this.statusBenefit = statusBenefit;
-        this.description = description;
+        this.benefitActive = benefitActive;
         this.expireDate = expireDate;
     }
 
@@ -85,11 +80,11 @@ public class Benefit {
         this.expireDate = expireDate;
     }
 
-    public String getDescription() {
-        return description;
+    public BenefitActive getBenefitActive() {
+        return benefitActive;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setBenefitActive(BenefitActive benefitActive) {
+        this.benefitActive = benefitActive;
     }
 }

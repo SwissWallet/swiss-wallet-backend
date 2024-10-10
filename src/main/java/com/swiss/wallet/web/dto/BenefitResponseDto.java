@@ -15,7 +15,7 @@ public record BenefitResponseDto(Long id,
                                  String statusBenefit,
                                  @JsonFormat(pattern = "dd/MM/yyyy - HH:mm")
                                  LocalDateTime expireDate,
-                                 String description) {
+                                 BenefitActiveResponseDto benefitActiveResponseDt) {
 
     public static BenefitResponseDto toBenefitResponse(Benefit benefit){
         return new BenefitResponseDto(
@@ -24,7 +24,7 @@ public record BenefitResponseDto(Long id,
                 benefit.getValue(),
                 benefit.getStatusBenefit().name(),
                 benefit.getExpireDate(),
-                benefit.getDescription()
+                BenefitActiveResponseDto.toResponse(benefit.getBenefitActive())
         );
     }
 

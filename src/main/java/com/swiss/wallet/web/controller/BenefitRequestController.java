@@ -48,7 +48,7 @@ public class BenefitRequestController {
     public ResponseEntity<BenefitReqResponseDto> saveBenefitRequest(
             @RequestBody BenefitReqCreateDto dto,
             @AuthenticationPrincipal JwtUserDetails userDetails){
-        BenefitRequest benefitRequest = benefitRequestService.createRequestBenefit(userDetails.getId(), dto.description());
+        BenefitRequest benefitRequest = benefitRequestService.createRequestBenefit(userDetails.getId(), dto.idBenefit());
         return ResponseEntity.status(HttpStatus.CREATED).body(BenefitReqResponseDto.toBenefitResponse(benefitRequest));
     }
 
