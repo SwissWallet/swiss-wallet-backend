@@ -36,4 +36,10 @@ public class BenefitActiveController {
         return ResponseEntity.ok().body(BenefitActiveResponseDto.toListBenefitrResponse(benefitActives));
     }
 
+    @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<BenefitActiveResponseDto> getById(@PathVariable Long id){
+        BenefitActive benefitActive = activeService.findById(id);
+        return ResponseEntity.ok().body(BenefitActiveResponseDto.toResponse(benefitActive));
+    }
 }

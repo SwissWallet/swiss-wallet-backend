@@ -35,5 +35,11 @@ public class BenefitActiveService {
         return benefitActiveRepository.findAll();
     }
 
-
+    @Transactional(readOnly = true)
+    public BenefitActive findById(Long id){
+        return benefitActiveRepository.findById(id)
+                .orElseThrow(
+                        () -> new ObjectNotFoundException("Benefit not found!")
+                );
+    }
 }
