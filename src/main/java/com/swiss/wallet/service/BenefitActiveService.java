@@ -1,11 +1,14 @@
 package com.swiss.wallet.service;
 
 import com.swiss.wallet.entity.BenefitActive;
+import com.swiss.wallet.exception.ObjectNotFoundException;
 import com.swiss.wallet.exception.UserUniqueViolationException;
 import com.swiss.wallet.repository.IBenefitActiveRepository;
 import com.swiss.wallet.web.dto.BenefitActiveCreateDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 public class BenefitActiveService {
@@ -26,4 +29,11 @@ public class BenefitActiveService {
         }
         return benefitActiveRepository.save(benefitActive);
     }
+
+    @Transactional(readOnly = true)
+    public List<BenefitActive> listAll(){
+        return benefitActiveRepository.findAll();
+    }
+
+
 }
