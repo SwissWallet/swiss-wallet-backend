@@ -24,22 +24,29 @@ public class BenefitActiveController {
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<BenefitActiveResponseDto> saveBenefit(@RequestBody @Valid BenefitActiveCreateDto dto){
+    public ResponseEntity<BenefitActiveResponseDto> saveBenefit(@RequestBody @Valid BenefitActiveCreateDto dto) {
         BenefitActive benefitActive = activeService.createBenefit(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(BenefitActiveResponseDto.toResponse(benefitActive));
     }
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN') or hasRole('CLIENT')")
-    public ResponseEntity<List<BenefitActiveResponseDto>> listAll(){
+    public ResponseEntity<List<BenefitActiveResponseDto>> listAll() {
         List<BenefitActive> benefitActives = activeService.listAll();
         return ResponseEntity.ok().body(BenefitActiveResponseDto.toListBenefitrResponse(benefitActives));
     }
 
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<BenefitActiveResponseDto> getById(@PathVariable Long id){
+    public ResponseEntity<BenefitActiveResponseDto> getById(@PathVariable Long id) {
         BenefitActive benefitActive = activeService.findById(id);
         return ResponseEntity.ok().body(BenefitActiveResponseDto.toResponse(benefitActive));
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> deleteById(@PathVariable Long id) {
+        activeService.deleteById(id);
+        return ResponseEntity.ok().build();
     }
 }

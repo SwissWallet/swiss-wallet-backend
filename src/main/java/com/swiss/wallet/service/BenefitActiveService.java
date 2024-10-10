@@ -42,4 +42,9 @@ public class BenefitActiveService {
                         () -> new ObjectNotFoundException("Benefit not found!")
                 );
     }
+
+    public void deleteById(Long id) {
+        BenefitActive benefitActive = findById(id);
+        benefitActiveRepository.deleteById(benefitActive.getId());
+    }
 }
