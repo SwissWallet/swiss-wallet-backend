@@ -1,9 +1,11 @@
 package com.swiss.wallet.service;
 
+import com.swiss.wallet.entity.BenefitActive;
 import com.swiss.wallet.entity.BenefitRequest;
 import com.swiss.wallet.entity.StatusRequestBenefit;
 import com.swiss.wallet.entity.UserEntity;
 import com.swiss.wallet.exception.ObjectNotFoundException;
+import com.swiss.wallet.repository.IBenefitActiveRepository;
 import com.swiss.wallet.repository.IBenefitRequestRepository;
 import com.swiss.wallet.repository.IUserRepository;
 import org.springframework.stereotype.Service;
@@ -16,24 +18,30 @@ import java.util.List;
 public class BenefitRequestService {
 
     private final IBenefitRequestRepository benefitRequestRepository;
+    private final IBenefitActiveRepository benefitActiveRepository;
     private final IUserRepository userRepository;
 
-    public BenefitRequestService(IBenefitRequestRepository benefitRequestRepository, IUserRepository userRepository) {
+    public BenefitRequestService(IBenefitRequestRepository benefitRequestRepository, IBenefitActiveRepository benefitActiveRepository, IUserRepository userRepository) {
         this.benefitRequestRepository = benefitRequestRepository;
+        this.benefitActiveRepository = benefitActiveRepository;
         this.userRepository = userRepository;
     }
 
     @Transactional
-    public BenefitRequest createRequestBenefit(Long idUser, String description){
+    public BenefitRequest createRequestBenefit(Long idUser, Long idBenefit){
 
         UserEntity user =  userRepository.findById(idUser)
                 .orElseThrow(
                         () -> new ObjectNotFoundException(String.format("User not found. Please check the user ID or username and try again."))
                 );
+        BenefitActive benefitActive = benefitActiveRepository.findById(idBenefit)
+                .orElseThrow(
+                        () -> new ObjectNotFoundException(String.format("Benefit not found. Please check the user ID or username and try again."))
+        );
         BenefitRequest benefitRequest = new BenefitRequest();
 
         benefitRequest.setUser(user);
-        benefitRequest.setDescription(description);
+        benefitRequest.setBenefitActive(benefitActive);
         benefitRequest.setDateTime(LocalDateTime.now());
         benefitRequest.setStatus(StatusRequestBenefit.SENT);
         return benefitRequestRepository.save(benefitRequest);

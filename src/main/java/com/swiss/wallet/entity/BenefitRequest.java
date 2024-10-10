@@ -20,12 +20,16 @@ public class BenefitRequest {
 
     private LocalDateTime dateTime;
 
-    private String description;
+    @ManyToOne
+    @JoinColumn(name = "benefitActiveId")
+    private BenefitActive benefitActive;
 
-    public BenefitRequest(StatusRequestBenefit status, LocalDateTime dateTime, String description) {
+    public BenefitRequest(Long id, UserEntity user, StatusRequestBenefit status, LocalDateTime dateTime, BenefitActive benefitActive) {
+        this.id = id;
+        this.user = user;
         this.status = status;
         this.dateTime = dateTime;
-        this.description = description;
+        this.benefitActive = benefitActive;
     }
 
     public BenefitRequest() {
@@ -63,11 +67,11 @@ public class BenefitRequest {
         this.dateTime = dateTime;
     }
 
-    public String getDescription() {
-        return description;
+    public BenefitActive getBenefitActive() {
+        return benefitActive;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setBenefitActive(BenefitActive benefitActive) {
+        this.benefitActive = benefitActive;
     }
 }

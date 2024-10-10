@@ -13,7 +13,7 @@ public record BenefitReqResponseDto (Long id,
                                      StatusRequestBenefit status,
                                      @JsonFormat(pattern = "dd/MM/yyyy - HH:mm")
                                      LocalDateTime dateTime,
-                                     String description){
+                                     BenefitActiveResponseDto benefitActive){
 
     public static BenefitReqResponseDto toBenefitResponse(BenefitRequest benefitRequest){
         return new BenefitReqResponseDto(
@@ -21,7 +21,7 @@ public record BenefitReqResponseDto (Long id,
                 UserResponseDto.toUserResponse(benefitRequest.getUser()),
                 benefitRequest.getStatus(),
                 benefitRequest.getDateTime(),
-                benefitRequest.getDescription()
+                BenefitActiveResponseDto.toResponse(benefitRequest.getBenefitActive())
         );
     }
 

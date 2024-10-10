@@ -2,10 +2,7 @@ package com.swiss.wallet.service;
 
 import com.swiss.wallet.entity.*;
 import com.swiss.wallet.exception.ObjectNotFoundException;
-import com.swiss.wallet.repository.IAccountRepository;
-import com.swiss.wallet.repository.IBenefitRepository;
-import com.swiss.wallet.repository.IExtractRepository;
-import com.swiss.wallet.repository.IUserRepository;
+import com.swiss.wallet.repository.*;
 import com.swiss.wallet.web.dto.BenefitCreateDto;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -24,14 +21,16 @@ public class BenefitService {
     private final IUserRepository userRepository;
     private final IAccountRepository accountRepository;
     private final IExtractRepository extractRepository;
+    private final IBenefitActiveRepository benefitActiveRepository;
 
     private static final Logger logger = LoggerFactory.getLogger(BenefitService.class);
 
-    public BenefitService(IBenefitRepository benefitRepository, IUserRepository userRepository, IAccountRepository accountRepository, IExtractRepository extractRepository) {
+    public BenefitService(IBenefitRepository benefitRepository, IUserRepository userRepository, IAccountRepository accountRepository, IExtractRepository extractRepository, IBenefitActiveRepository benefitActiveRepository) {
         this.benefitRepository = benefitRepository;
         this.userRepository = userRepository;
         this.accountRepository = accountRepository;
         this.extractRepository = extractRepository;
+        this.benefitActiveRepository = benefitActiveRepository;
     }
 
     @Transactional
@@ -39,6 +38,10 @@ public class BenefitService {
         UserEntity user = userRepository.findById(dto.userId())
                 .orElseThrow(
                         () -> new ObjectNotFoundException(String.format("User not found. Please check the user ID or username and try again."))
+                );
+        BenefitActive  benefitActive = benefitActiveRepository.findById(dto.userId())
+                .orElseThrow(
+                        () -> new ObjectNotFoundException(String.format("Benefit active not found. Please check the user ID or username and try again."))
                 );
 
         LocalDateTime now = LocalDateTime.now();
@@ -48,7 +51,7 @@ public class BenefitService {
         benefit.setUser(user);
         benefit.setValue(dto.value());
         benefit.setExpireDate(LocalDateTime.now().plusMinutes(dto.months()));
-        benefit.setDescription(dto.description() );
+        benefit.setBenefitActive(benefitActive);
         return benefitRepository.save(benefit);
 
     }
