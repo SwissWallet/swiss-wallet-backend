@@ -106,9 +106,9 @@ public class BenefitRequestController {
 
     @GetMapping("/current")
     @PreAuthorize("hasRole('CLIENT')")
-    public ResponseEntity<List<BenefitReqResponseDto>> currentBenefitReq(@AuthenticationPrincipal JwtUserDetails userDetails){
-        List<BenefitRequest> benefitRequests = benefitRequestService.getAllByUser(userDetails.getId());
+    public ResponseEntity<BenefitGlobalResponseDto> currentBenefitReq(@AuthenticationPrincipal JwtUserDetails userDetails){
+        BenefitGlobalResponseDto benefitGlobalResponseDto = benefitRequestService.getAllByUser(userDetails.getId());
 
-        return ResponseEntity.ok().body(BenefitReqResponseDto.toListRequestBenefits(benefitRequests));
+        return ResponseEntity.ok().body(benefitGlobalResponseDto);
     }
 }

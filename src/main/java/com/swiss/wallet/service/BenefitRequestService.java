@@ -8,10 +8,15 @@ import com.swiss.wallet.exception.ObjectNotFoundException;
 import com.swiss.wallet.repository.IBenefitActiveRepository;
 import com.swiss.wallet.repository.IBenefitRequestRepository;
 import com.swiss.wallet.repository.IUserRepository;
+import com.swiss.wallet.web.dto.BenefitActiveResponseDto;
+import com.swiss.wallet.web.dto.BenefitGlobalResponseDto;
+import com.swiss.wallet.web.dto.BenefitReqResponseDto;
+import com.swiss.wallet.web.dto.BenefitResponseDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -84,13 +89,25 @@ public class BenefitRequestService {
 
     }
 
-    public List<BenefitRequest> getAllByUser(Long id) {
+    public BenefitGlobalResponseDto getAllByUser(Long id) {
 
         UserEntity user = userRepository.findById(id).orElseThrow(
                 () -> new ObjectNotFoundException(String.format("User not found. Please check the user ID or username and try again."))
         );
 
-        return benefitRequestRepository.findAllByUser(user);
+        List<BenefitRequest> benefitRequest = benefitRequestRepository.findAllByUser(user);
+        List<Long> ids = new ArrayList<>();
 
+        benefitRequest.stream()
+                .forEach(benefitRequest1 -> {
+                    ids.add(benefitRequest1.getBenefitActive().getId());
+                });
+
+        List<BenefitActive> benefitActives = benefitActiveRepository.findByIdNotIn(ids);
+
+        BenefitGlobalResponseDto benefitGlobalResponseDto = new BenefitGlobalResponseDto();
+        benefitGlobalResponseDto.setActiveResponseDtos(BenefitActiveResponseDto.toListBenefitrResponse(benefitActives));
+        benefitGlobalResponseDto.setReqResponseDtos(BenefitReqResponseDto.toListRequestBenefits(benefitRequest));
+        return benefitGlobalResponseDto;
     }
 }
