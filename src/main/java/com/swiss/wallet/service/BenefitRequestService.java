@@ -98,12 +98,18 @@ public class BenefitRequestService {
         List<BenefitRequest> benefitRequest = benefitRequestRepository.findAllByUser(user);
         List<Long> ids = new ArrayList<>();
 
+
         benefitRequest.stream()
                 .forEach(benefitRequest1 -> {
                     ids.add(benefitRequest1.getBenefitActive().getId());
                 });
 
-        List<BenefitActive> benefitActives = benefitActiveRepository.findByIdNotIn(ids);
+        List<BenefitActive> benefitActives;
+        if (!ids.isEmpty()){
+            benefitActives = benefitActiveRepository.findByIdNotIn(ids);
+        }else {
+            benefitActives = benefitActiveRepository.findAll();
+        }
 
         BenefitGlobalResponseDto benefitGlobalResponseDto = new BenefitGlobalResponseDto();
         benefitGlobalResponseDto.setActiveResponseDtos(BenefitActiveResponseDto.toListBenefitrResponse(benefitActives));
