@@ -6,6 +6,7 @@ import com.swiss.wallet.entity.Extract;
 import com.swiss.wallet.entity.UserEntity;
 import com.swiss.wallet.exception.*;
 import com.swiss.wallet.repository.*;
+import com.swiss.wallet.web.controller.BackendClient;
 import com.swiss.wallet.web.dto.*;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -25,8 +26,9 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final IOrderRepository orderRepository;
     private final IFavoriteRepository favoriteRepository;
+    private final BackendClient backendClient;
 
-    public UserService(IUserRepository userRepository, IAddressRepository addressRepository, IAccountRepository accountRepository, IExtractRepository extractRepository, PasswordEncoder passwordEncoder, IOrderRepository orderRepository, IFavoriteRepository favoriteRepository) {
+    public UserService(IUserRepository userRepository, IAddressRepository addressRepository, IAccountRepository accountRepository, IExtractRepository extractRepository, PasswordEncoder passwordEncoder, IOrderRepository orderRepository, IFavoriteRepository favoriteRepository, BackendClient backendClient) {
         this.userRepository = userRepository;
         this.addressRepository = addressRepository;
         this.accountRepository = accountRepository;
@@ -34,6 +36,7 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
         this.orderRepository = orderRepository;
         this.favoriteRepository = favoriteRepository;
+        this.backendClient = backendClient;
     }
 
     @Transactional
@@ -49,6 +52,14 @@ public class UserService {
             Account account = new Account();
             account.setUser(user);
             accountRepository.save(account);
+
+            BankUserCreateDto bankUserCreateDto = new BankUserCreateDto(
+                    user.getUsername(),
+                    user.getName(),
+                    user.getCpf(),
+                    user.getPhone(),
+                    userAddressCreateDto.user().password());
+            backendClient.saveUser(bankUserCreateDto);
             return user;
         }catch (DataIntegrityViolationException ex){
             throw new UserUniqueViolationException(String.format("A user with this username= %s already exists. Please use a different username.", userAddressCreateDto.user().username()));
