@@ -1,5 +1,6 @@
 package com.swiss.wallet.web.controller;
 
+import com.swiss.wallet.web.dto.BankPurchaseCreateDto;
 import com.swiss.wallet.web.dto.BankUserCreateDto;
 import com.swiss.wallet.web.dto.UserPasswordChangeDto;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -16,4 +17,10 @@ public interface BackendClient {
 
     @DeleteMapping("/users")
     String deleteUser(@RequestParam("id") Long id);
+
+    @PostMapping("/purchases")
+    String savePurchase(@RequestBody BankPurchaseCreateDto bankPurchaseCreateDto);
+
+    @PostMapping("/purchases/pix")
+    String savePurchasePix(@RequestBody BankPurchaseCreateDto bankPurchaseCreateDto);
 }

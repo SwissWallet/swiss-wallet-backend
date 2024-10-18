@@ -9,6 +9,9 @@ import com.swiss.wallet.exception.ValueInvalidException;
 import com.swiss.wallet.repository.IAccountRepository;
 import com.swiss.wallet.repository.IExtractRepository;
 import com.swiss.wallet.repository.IUserRepository;
+import com.swiss.wallet.web.controller.BackendClient;
+import com.swiss.wallet.web.dto.BankPurchaseCreateDto;
+import com.swiss.wallet.web.dto.PurchasePointsDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,12 +25,14 @@ public class AccountService {
     private final IUserRepository userRepository;
     private final IExtractRepository extractRepository;
     private final NotificationService notificationService;
+    private final BackendClient backendClient;
 
-    public AccountService(IAccountRepository accountRepository, IUserRepository userRepository, IExtractRepository extractRepository, NotificationService notificationService) {
+    public AccountService(IAccountRepository accountRepository, IUserRepository userRepository, IExtractRepository extractRepository, NotificationService notificationService, BackendClient backendClient) {
         this.accountRepository = accountRepository;
         this.userRepository = userRepository;
         this.extractRepository = extractRepository;
         this.notificationService = notificationService;
+        this.backendClient = backendClient;
     }
 
     @Transactional(readOnly = true)
@@ -74,5 +79,36 @@ public class AccountService {
                     notificationService.sendNotification(tokenNotification.getToken(), "Deposito", String.format("Foram Depositados %.0f pontos", value));
                 });
 
+    }
+
+    public void purchasePoints(Long id, PurchasePointsDto purchasePointsDto) {
+        UserEntity user = userRepository.findById(id)
+                .orElseThrow(
+                        () -> new ObjectNotFoundException(String.format("User not found. Please check the user ID or username and try again."))
+                );
+        Account account = accountRepository.findAccountByUser(user)
+                .orElseThrow(
+                        () -> new ObjectNotFoundException(String.format("Account not found. Please check the User %s and try again", user.getName()))
+                );
+
+        BankPurchaseCreateDto bankPurchaseCreateDto = new BankPurchaseCreateDto(user.getUsername(), purchasePointsDto.typePayment(), purchasePointsDto.value());
+        if (purchasePointsDto.typePayment() != "PIX"){
+            backendClient.savePurchase(bankPurchaseCreateDto);
+        }else {
+            backendClient.savePurchasePix(bankPurchaseCreateDto);
+        }
+
+        if (purchasePointsDto.points() <= 0 || purchasePointsDto.points() == null){
+            throw new ValueInvalidException(String.format("Invalid value for deposit"));
+        }
+        account.setValue(account.getValue() + purchasePointsDto.points());
+
+        Extract extract = new Extract();
+        extract.setAccount(account);
+        extract.setValue(purchasePointsDto.points());
+        extract.setType(Extract.Type.DEPOSIT);
+        extract.setDescription(String.format("Deposit into user account username = %s", user.getUsername()));
+        extract.setDate(LocalDateTime.now());
+        extractRepository.save(extract);
     }
 }
