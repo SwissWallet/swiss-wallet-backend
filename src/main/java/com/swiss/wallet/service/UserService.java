@@ -129,6 +129,7 @@ public class UserService {
         }
 
         user.setPassword(passwordEncoder.encode(passwordChangeDto.newPassword()));
+        backendClient.updatePassword(passwordChangeDto, user.getId());
         userRepository.save(user);
     }
 
