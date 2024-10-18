@@ -168,7 +168,8 @@ public class UserService {
         orderRepository.deleteAllByUser(user);
         favoriteRepository.deleteAllByUser(user);
         accountRepository.deleteById(account.getId());
-        userRepository.deleteById(id);
+        backendClient.deleteUser(user.getId());
+        userRepository.deleteById(user.getId());
         addressRepository.deleteById(address.getId());
     }
 
