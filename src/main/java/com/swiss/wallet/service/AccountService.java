@@ -12,11 +12,13 @@ import com.swiss.wallet.repository.IUserRepository;
 import com.swiss.wallet.web.controller.BackendClient;
 import com.swiss.wallet.web.dto.BankPurchaseCreateDto;
 import com.swiss.wallet.web.dto.PurchasePointsDto;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class AccountService {
@@ -107,4 +109,26 @@ public class AccountService {
         extract.setDate(LocalDateTime.now());
         extractRepository.save(extract);
     }
+
+    public String generatePointsPix(Long id, PurchasePointsDto purchasePointsDto) {
+        UserEntity user = userRepository.findById(id)
+                .orElseThrow(
+                        () -> new ObjectNotFoundException(String.format("User not found. Please check the user ID or username and try again."))
+                );
+        Account account = accountRepository.findAccountByUser(user)
+                .orElseThrow(
+                        () -> new ObjectNotFoundException(String.format("Account not found. Please check the User %s and try again", user.getName()))
+                );
+
+        BankPurchaseCreateDto bankPurchaseCreateDto = new BankPurchaseCreateDto(user.getUsername(), purchasePointsDto.typePayment(), purchasePointsDto.value());
+        if (purchasePointsDto.points() <= 0 || purchasePointsDto.points() == null){
+            throw new ValueInvalidException(String.format("Invalid value for deposit"));
+        }
+        return backendClient.savePurchasePix(bankPurchaseCreateDto);
+    }
+
+
+    @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.MINUTES)
+    public void
+
 }

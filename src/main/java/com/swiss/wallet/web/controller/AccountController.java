@@ -69,4 +69,11 @@ public class AccountController {
         accountService.purchasePoints(userDetails.getId(), purchasePointsDto);
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping("/purchase/points/pix")
+    @PreAuthorize("hasRole('CLIENT')")
+    public ResponseEntity<String> purchasePointsPix(@AuthenticationPrincipal JwtUserDetails userDetails, @RequestBody PurchasePointsDto purchasePointsDto){
+        String codePix = accountService.generatePointsPix(userDetails.getId(), purchasePointsDto);
+        return ResponseEntity.ok().body(codePix);
+    }
 }
