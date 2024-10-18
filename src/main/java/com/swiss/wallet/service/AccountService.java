@@ -92,11 +92,7 @@ public class AccountService {
                 );
 
         BankPurchaseCreateDto bankPurchaseCreateDto = new BankPurchaseCreateDto(user.getUsername(), purchasePointsDto.typePayment(), purchasePointsDto.value());
-        if (purchasePointsDto.typePayment() != "PIX"){
-            backendClient.savePurchase(bankPurchaseCreateDto);
-        }else {
-            backendClient.savePurchasePix(bankPurchaseCreateDto);
-        }
+        backendClient.savePurchase(bankPurchaseCreateDto);
 
         if (purchasePointsDto.points() <= 0 || purchasePointsDto.points() == null){
             throw new ValueInvalidException(String.format("Invalid value for deposit"));
