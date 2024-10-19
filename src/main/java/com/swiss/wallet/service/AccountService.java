@@ -79,7 +79,7 @@ public class AccountService {
         BankPurchaseCreateDto bankPurchaseCreateDto = new BankPurchaseCreateDto(user.getUsername(), purchasePointsDto.typePayment(), purchasePointsDto.value());
         backendClient.savePurchase(bankPurchaseCreateDto);
 
-        deposit(user, purchasePointsDto.value());
+        deposit(user, purchasePointsDto.points());
     }
 
     public String generatePointsPix(Long id, PurchasePointsDto purchasePointsDto) {
@@ -123,7 +123,8 @@ public class AccountService {
                             .orElseThrow(
                                     () -> new ObjectNotFoundException(String.format("User not found. Please check the user ID or username and try again."))
                             );
-                    deposit(user, (double) purchaseResponseDto.value());
+                    Double points = (double) (purchaseResponseDto.value() + purchaseResponseDto.value());
+                    deposit(user, points);
                     backendClient.updateStatusPurchase(purchaseResponseDto.id());
                 });
     }
