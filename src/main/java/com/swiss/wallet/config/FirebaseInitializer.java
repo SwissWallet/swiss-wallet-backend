@@ -24,7 +24,6 @@ public class FirebaseInitializer implements CommandLineRunner {
         String jsonString = new String(decodedBytes, StandardCharsets.UTF_8);
 
         JSONObject jsonObject = new JSONObject(jsonString);
-        System.out.println(jsonObject.toString(2));
         return jsonObject;
     }
 
