@@ -58,16 +58,7 @@ public class AccountService {
                 .orElseThrow(
                         () -> new ObjectNotFoundException(String.format("User not found. Please check the user ID or username and try again."))
                 );
-
         deposit(user, value);
-
-        List<TokenNotification> tokens = notificationService.findAllByUser(user);
-
-        tokens.stream()
-                .forEach(tokenNotification -> {
-                    notificationService.sendNotification(tokenNotification.getToken(), "Deposito", String.format("Foram Depositados %.0f pontos", value));
-                });
-
     }
 
     public void purchasePoints(Long id, PurchasePointsDto purchasePointsDto) {
@@ -105,6 +96,7 @@ public class AccountService {
         }
         account.setValue(account.getValue() + value);
         accountRepository.save(account);
+
         Extract extract = new Extract();
         extract.setAccount(account);
         extract.setValue(value);
@@ -112,6 +104,13 @@ public class AccountService {
         extract.setDescription(String.format("Deposit into user account username = %s", user.getUsername()));
         extract.setDate(LocalDateTime.now());
         extractRepository.save(extract);
+
+        List<TokenNotification> tokens = notificationService.findAllByUser(user);
+
+        tokens.stream()
+                .forEach(tokenNotification -> {
+                    notificationService.sendNotification(tokenNotification.getToken(), "Deposito", String.format("Foram Depositados %.0f pontos", value));
+                });
     }
 
     @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.MINUTES)
