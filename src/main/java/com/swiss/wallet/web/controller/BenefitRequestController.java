@@ -98,7 +98,7 @@ public class BenefitRequestController {
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
             })
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('CLIENT')")
     public ResponseEntity<Void> removeBenefitRequest(@PathVariable Long id){
         benefitRequestService.removeBenefitRequest(id);
         return ResponseEntity.ok().build();

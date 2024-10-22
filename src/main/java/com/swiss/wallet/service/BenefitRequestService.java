@@ -67,11 +67,8 @@ public class BenefitRequestService {
 
         switch (status) {
             case "SENT" -> request.setStatus(StatusRequestBenefit.SENT);
-            case "UNDER_ANALYSIS" -> request.setStatus(StatusRequestBenefit.UNDER_ANALYSIS);
             case "APPROVED" -> request.setStatus(StatusRequestBenefit.APPROVED);
             case "NOT_APPROVED" -> request.setStatus(StatusRequestBenefit.NOT_APPROVED);
-            case "PENDING_DOCUMENTS" -> request.setStatus(StatusRequestBenefit.PENDING_DOCUMENTS);
-            case "IN_PROGRESS" -> request.setStatus(StatusRequestBenefit.IN_PROGRESS);
             case "CLOSED" -> request.setStatus(StatusRequestBenefit.CLOSED);
             default -> request.setStatus(StatusRequestBenefit.SENT);
         };
