@@ -60,7 +60,6 @@ public class BenefitRequestService {
 
     @Transactional
     public void updateStatus(Long idBenefit, String status){
-
         BenefitRequest request = benefitRequestRepository.findById(idBenefit).orElseThrow(
                 () -> new ObjectNotFoundException(String.format("Benefit request not found. Please check the user ID or username and try again."))
         );
@@ -74,6 +73,7 @@ public class BenefitRequestService {
         };
 
         benefitRequestRepository.save(request);
+        removeBenefitRequest(request.getId());
     }
 
     public void removeBenefitRequest(Long id){
