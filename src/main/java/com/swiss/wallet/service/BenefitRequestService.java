@@ -8,10 +8,15 @@ import com.swiss.wallet.exception.ObjectNotFoundException;
 import com.swiss.wallet.repository.IBenefitActiveRepository;
 import com.swiss.wallet.repository.IBenefitRequestRepository;
 import com.swiss.wallet.repository.IUserRepository;
+import com.swiss.wallet.web.dto.BenefitActiveResponseDto;
+import com.swiss.wallet.web.dto.BenefitGlobalResponseDto;
+import com.swiss.wallet.web.dto.BenefitReqResponseDto;
+import com.swiss.wallet.web.dto.BenefitResponseDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -55,33 +60,54 @@ public class BenefitRequestService {
 
     @Transactional
     public void updateStatus(Long idBenefit, String status){
-
         BenefitRequest request = benefitRequestRepository.findById(idBenefit).orElseThrow(
                 () -> new ObjectNotFoundException(String.format("Benefit request not found. Please check the user ID or username and try again."))
         );
 
         switch (status) {
             case "SENT" -> request.setStatus(StatusRequestBenefit.SENT);
-            case "UNDER_ANALYSIS" -> request.setStatus(StatusRequestBenefit.UNDER_ANALYSIS);
             case "APPROVED" -> request.setStatus(StatusRequestBenefit.APPROVED);
             case "NOT_APPROVED" -> request.setStatus(StatusRequestBenefit.NOT_APPROVED);
-            case "PENDING_DOCUMENTS" -> request.setStatus(StatusRequestBenefit.PENDING_DOCUMENTS);
-            case "IN_PROGRESS" -> request.setStatus(StatusRequestBenefit.IN_PROGRESS);
             case "CLOSED" -> request.setStatus(StatusRequestBenefit.CLOSED);
             default -> request.setStatus(StatusRequestBenefit.SENT);
         };
 
         benefitRequestRepository.save(request);
+        removeBenefitRequest(request.getId());
     }
 
     public void removeBenefitRequest(Long id){
         BenefitRequest request = benefitRequestRepository.findById(id).orElseThrow(
                 () -> new ObjectNotFoundException(String.format("Benefit request not found. Please check the user ID or username and try again."))
         );
-
-        request.setStatus(StatusRequestBenefit.CLOSED);
-        benefitRequestRepository.save(request);
-
+        benefitRequestRepository.deleteById(request.getId());
     }
 
+    public BenefitGlobalResponseDto getAllByUser(Long id) {
+
+        UserEntity user = userRepository.findById(id).orElseThrow(
+                () -> new ObjectNotFoundException(String.format("User not found. Please check the user ID or username and try again."))
+        );
+
+        List<BenefitRequest> benefitRequest = benefitRequestRepository.findAllByUser(user);
+        List<Long> ids = new ArrayList<>();
+
+
+        benefitRequest.stream()
+                .forEach(benefitRequest1 -> {
+                    ids.add(benefitRequest1.getBenefitActive().getId());
+                });
+
+        List<BenefitActive> benefitActives;
+        if (!ids.isEmpty()){
+            benefitActives = benefitActiveRepository.findByIdNotIn(ids);
+        }else {
+            benefitActives = benefitActiveRepository.findAll();
+        }
+
+        BenefitGlobalResponseDto benefitGlobalResponseDto = new BenefitGlobalResponseDto();
+        benefitGlobalResponseDto.setActiveResponseDtos(BenefitActiveResponseDto.toListBenefitrResponse(benefitActives));
+        benefitGlobalResponseDto.setReqResponseDtos(BenefitReqResponseDto.toListRequestBenefits(benefitRequest));
+        return benefitGlobalResponseDto;
+    }
 }

@@ -4,6 +4,7 @@ import com.swiss.wallet.entity.Account;
 import com.swiss.wallet.jwt.JwtUserDetails;
 import com.swiss.wallet.service.AccountService;
 import com.swiss.wallet.web.dto.AccountResponseDto;
+import com.swiss.wallet.web.dto.PurchasePointsDto;
 import com.swiss.wallet.web.dto.UserResponseDto;
 import com.swiss.wallet.web.exception.ErrorMessage;
 import io.swagger.v3.oas.annotations.Operation;
@@ -54,10 +55,25 @@ public class AccountController {
                     @ApiResponse(responseCode = "403", description = "User not allowed to access this resource",
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
             })
+
     @PostMapping("/register-deposit")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> registerDeposit(@RequestParam String username, @RequestParam Double value){
         accountService.registerDeposit(username, value);
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/purchase/points")
+    @PreAuthorize("hasRole('CLIENT')")
+    public ResponseEntity<Void> purchasePoints(@AuthenticationPrincipal JwtUserDetails userDetails, @RequestBody PurchasePointsDto purchasePointsDto){
+        accountService.purchasePoints(userDetails.getId(), purchasePointsDto);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/purchase/points/pix")
+    @PreAuthorize("hasRole('CLIENT')")
+    public ResponseEntity<String> purchasePointsPix(@AuthenticationPrincipal JwtUserDetails userDetails, @RequestBody PurchasePointsDto purchasePointsDto){
+        String codePix = accountService.generatePointsPix(userDetails.getId(), purchasePointsDto);
+        return ResponseEntity.ok().body(codePix);
     }
 }
