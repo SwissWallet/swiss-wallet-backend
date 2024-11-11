@@ -8,4 +8,6 @@ import java.util.List;
 
 public interface ITokenRepository extends JpaRepository<TokenNotification, Long> {
     List<TokenNotification> findAllByUser(UserEntity user);
+
+    void deleteAllByUser(UserEntity user);
 }

@@ -19,7 +19,7 @@ public interface BackendClient {
     String updatePassword(@RequestBody UserPasswordChangeDto passwordChangeDto, @RequestParam("id") Long id);
 
     @DeleteMapping("/users")
-    String deleteUser(@RequestParam("id") Long id);
+    String deleteUser(@RequestParam("username") String username);
 
     @PostMapping("/purchases")
     String savePurchase(@RequestBody BankPurchaseCreateDto bankPurchaseCreateDto);
