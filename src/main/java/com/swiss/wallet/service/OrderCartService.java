@@ -119,6 +119,11 @@ public class OrderCartService {
 
     @Transactional(readOnly = true)
     public List<OrderCart> findAll() {
+        return iOrderCartRepository.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    public List<OrderCart> findAllByStatus() {
         return iOrderCartRepository.findByStatusAll(StatusOrderCart.PENDING);
     }
 
