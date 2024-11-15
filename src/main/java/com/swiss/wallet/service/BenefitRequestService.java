@@ -1,11 +1,9 @@
 package com.swiss.wallet.service;
 
-import com.swiss.wallet.entity.BenefitActive;
-import com.swiss.wallet.entity.BenefitRequest;
-import com.swiss.wallet.entity.StatusRequestBenefit;
-import com.swiss.wallet.entity.UserEntity;
+import com.swiss.wallet.entity.*;
 import com.swiss.wallet.exception.ObjectNotFoundException;
 import com.swiss.wallet.repository.IBenefitActiveRepository;
+import com.swiss.wallet.repository.IBenefitRepository;
 import com.swiss.wallet.repository.IBenefitRequestRepository;
 import com.swiss.wallet.repository.IUserRepository;
 import com.swiss.wallet.web.dto.BenefitActiveResponseDto;
@@ -25,11 +23,13 @@ public class BenefitRequestService {
     private final IBenefitRequestRepository benefitRequestRepository;
     private final IBenefitActiveRepository benefitActiveRepository;
     private final IUserRepository userRepository;
+    private final IBenefitRepository benefitRepository;
 
-    public BenefitRequestService(IBenefitRequestRepository benefitRequestRepository, IBenefitActiveRepository benefitActiveRepository, IUserRepository userRepository) {
+    public BenefitRequestService(IBenefitRequestRepository benefitRequestRepository, IBenefitActiveRepository benefitActiveRepository, IUserRepository userRepository, IBenefitRepository benefitRepository) {
         this.benefitRequestRepository = benefitRequestRepository;
         this.benefitActiveRepository = benefitActiveRepository;
         this.userRepository = userRepository;
+        this.benefitRepository = benefitRepository;
     }
 
     @Transactional
@@ -90,12 +90,18 @@ public class BenefitRequestService {
         );
 
         List<BenefitRequest> benefitRequest = benefitRequestRepository.findAllByUser(user);
+        List<Benefit> benefits = benefitRepository.findAllByUser(user);
+
         List<Long> ids = new ArrayList<>();
 
 
         benefitRequest.stream()
                 .forEach(benefitRequest1 -> {
                     ids.add(benefitRequest1.getBenefitActive().getId());
+                });
+        benefits.stream()
+                .forEach(benefit -> {
+                    ids.add(benefit.getBenefitActive().getId());
                 });
 
         List<BenefitActive> benefitActives;
