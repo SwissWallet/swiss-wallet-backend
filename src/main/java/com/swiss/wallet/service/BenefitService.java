@@ -64,8 +64,7 @@ public class BenefitService {
                 .forEach(benefit -> {
                     if (!benefit.getExpireDate().isAfter(LocalDateTime.now())){
                         if (benefit.getStatusBenefit() == StatusBenefit.ACTIVE) {
-                            benefit.setStatusBenefit(StatusBenefit.INACTIVE);
-                            benefitRepository.save(benefit);
+                            benefitRepository.deleteById(benefit.getId());
                         }
                     }else{
                             Account account = accountRepository.findAccountByUser(benefit.getUser()).orElseThrow(
