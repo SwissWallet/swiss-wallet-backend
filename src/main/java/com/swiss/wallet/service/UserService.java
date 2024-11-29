@@ -20,6 +20,7 @@ import java.util.List;
 public class UserService {
 
     private final IUserRepository userRepository;
+    private final ITokenRepository tokenRepository;
     private final IAddressRepository addressRepository;
     private final IAccountRepository accountRepository;
     private final IExtractRepository extractRepository;
@@ -28,8 +29,9 @@ public class UserService {
     private final IFavoriteRepository favoriteRepository;
     private final BackendClient backendClient;
 
-    public UserService(IUserRepository userRepository, IAddressRepository addressRepository, IAccountRepository accountRepository, IExtractRepository extractRepository, PasswordEncoder passwordEncoder, IOrderRepository orderRepository, IFavoriteRepository favoriteRepository, BackendClient backendClient) {
+    public UserService(IUserRepository userRepository, ITokenRepository tokenRepository, IAddressRepository addressRepository, IAccountRepository accountRepository, IExtractRepository extractRepository, PasswordEncoder passwordEncoder, IOrderRepository orderRepository, IFavoriteRepository favoriteRepository, BackendClient backendClient) {
         this.userRepository = userRepository;
+        this.tokenRepository = tokenRepository;
         this.addressRepository = addressRepository;
         this.accountRepository = accountRepository;
         this.extractRepository = extractRepository;
@@ -165,10 +167,11 @@ public class UserService {
                         () -> new ObjectNotFoundException(String.format("Account not found. Please check the user ID or username and try again."))
                 );
         extractRepository.deleteAllByAccount(account);
+        tokenRepository.deleteAllByUser(user);
         orderRepository.deleteAllByUser(user);
         favoriteRepository.deleteAllByUser(user);
         accountRepository.deleteById(account.getId());
-        backendClient.deleteUser(user.getId());
+        backendClient.deleteUser(user.getUsername());
         userRepository.deleteById(user.getId());
         addressRepository.deleteById(address.getId());
     }

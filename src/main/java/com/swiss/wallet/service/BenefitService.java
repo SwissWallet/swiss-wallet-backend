@@ -39,7 +39,7 @@ public class BenefitService {
                 .orElseThrow(
                         () -> new ObjectNotFoundException(String.format("User not found. Please check the user ID or username and try again."))
                 );
-        BenefitActive  benefitActive = benefitActiveRepository.findById(dto.userId())
+        BenefitActive  benefitActive = benefitActiveRepository.findById(dto.idBenefit())
                 .orElseThrow(
                         () -> new ObjectNotFoundException(String.format("Benefit active not found. Please check the user ID or username and try again."))
                 );
@@ -64,8 +64,7 @@ public class BenefitService {
                 .forEach(benefit -> {
                     if (!benefit.getExpireDate().isAfter(LocalDateTime.now())){
                         if (benefit.getStatusBenefit() == StatusBenefit.ACTIVE) {
-                            benefit.setStatusBenefit(StatusBenefit.INACTIVE);
-                            benefitRepository.save(benefit);
+                            benefitRepository.deleteById(benefit.getId());
                         }
                     }else{
                             Account account = accountRepository.findAccountByUser(benefit.getUser()).orElseThrow(
