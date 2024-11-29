@@ -1,0 +1,47 @@
+package com.swiss.wallet.config;
+
+import com.google.auth.oauth2.GoogleCredentials;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.FirebaseOptions;
+import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Configuration;
+
+import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+
+@Configuration
+public class FirebaseInitializer implements CommandLineRunner {
+
+
+    private String privateKey = "ewogICJ0eXBlIjogInNlcnZpY2VfYWNjb3VudCIsCiAgInByb2plY3RfaWQiOiAidGVzdGUtNThjMTYiLAogICJwcml2YXRlX2tleV9pZCI6ICI1MTc2NzhjNWU1ZmUzOGNiN2IwNWRjNTJlOGZiZjkyYWI4MmU4YmU2IiwKICAicHJpdmF0ZV9rZXkiOiAiLS0tLS1CRUdJTiBQUklWQVRFIEtFWS0tLS0tXG5NSUlFdlFJQkFEQU5CZ2txaGtpRzl3MEJBUUVGQUFTQ0JLY3dnZ1NqQWdFQUFvSUJBUURhZ3ZZRFhYK2REU0VhXG5xakxzZzlXTUZxZVZnVlo0YXFkVmtOSjZqaFhPeWY4QnN2S1MxbzduYTVsOWZjUzJrbTRtUDN2NEs1UEFucm9HXG5XTkpRZXBWV0hGZDNTVVoyb1VmRW5mNzlCYUZZa1ZzTkhWZVJRQ3dyNlBXQkdSTjErVWhSQ3o1ZjFDZ1l4RkluXG44aDlLa2lpR3JjZGdjUTJuelJUc2ZRMGMwZXJ4czljSGl0a3VGMDFGZ0loT2ZVRU0yOGRXWXF2VS9UZ2NLdlprXG5IdzNWK2R4Q3dWOE90NTVLVGhWU3RHNjFCUWdRb2pPVWdJS0ZBK0NWallNbnVacEFPSFJSTUJ0RVd2eFBQZi92XG5wZU0yM2d1WThwN1krRnNqeTBFVzU3QWp3eHlSanN5ckIxTC83UkJZeTFscGtUcXdTenUySlZQWXBpWm9iUFA1XG5NK05Qbi9raEFnTUJBQUVDZ2dFQUNpdFNHN0g4UUdqZUE0bXNPUW1ocEpWaFV6bmp0bEx3V3JFVXVwTm1QR3QyXG5MTFFSU2ZnbVNtcmRoOU9VbGhLV2diMHVuY3daWWp1QTJNN0ZhdTFwaWNwajM2OVBVaklMVHdFelhyOG1WU0xlXG5vK3VicWF6YzRXWkVGcS8rRWQxNkdodDEyYXZiK2RzWkg3Yks4Z04vVTFVL0ZDUHV5TUpvbU9Edy9VaGZzTVBoXG56UDlPNEh5Smpwb0FVeHVTYlRnNVQxWkFkS1FrWTlybWJTOW1kTDZtRVcvMExOcjdaTFFveDQxUXlISlB1dERXXG5sNHoydkRuYlR3UjFzckcwbWZlb094SjhSaFBvQVVYcFdtTHpHc3RmYmtWeHFMblMrN1IxbGFnT2NxaTFmM2FqXG5ZZFpua1J1S2FoRjZFb1FrcWNIYy8xZGZPejNhSWRvVGtDL1BOSjR5U1FLQmdRRDcraTBKaVVucnlqdUN4b3BKXG5ZL0FUN1NHQ1BuQy94dmIxekNBMXNnVG12Y2xoVjh3WTZIVUFaZ1FSU1lXd0JxbWozb1ZKZWVRWTFZYWRkd3UxXG5DVk53RGFsbVVrS3hHMk5uUXpzaTQyVUhHdkJJN1dwWVFOd2J1bkRCNXNrT3M0M0o1TDhaOGsrNGZXeXBSTWZMXG5ERzZqRVlYUHRnT3h0eDQ1QUsxMHo3bTdnd0tCZ1FEZUFBTUJMcXY0b3NHQXAxbG9FTWJrb2pMcE9DZi9kNjBEXG5Hc2VsUTVkalRHVWphc2M5ajR1ODBWRjlxN01JWDk5RFRFTGcrdldFTVlhVjJ3aEVsMlhCWkFoYlFhWk55aHFBXG5lYkg0YW01QlNtWmtMTHN4UWY2bVJsWUZBaUFsc0tyOXN0UEZtYkV4SEs0VUJyaGg0aGpNUHQwVGNad2hIbWVmXG53UU5naDliaml3S0JnUURETEkzMEJBWmhBQjFHZDVpbnJpUkltdlhJbDZybnNTcWJTMGhycnY5QzV5QjBLUGhyXG5GcXVCNm9NZURNL2pmOVdvbTNTc2JDQzA1N2ZFZ25Cc0F0UkJTQ085b053TnFRUSsrUUYyVGFKMGRYWkhWclozXG5zNDJLWU1oME9ObmxiRWpZYURscDFKblJjajFYZzNJcUlmQVVtVDhIbTVtUzd4OFcwaUtKQjFsN0Z3S0JnR2FaXG4yTW1tR1dMclRjVTVFdkF1dU0yWVRURk9lK1h0R0xBVG8ydTFCbldsTENVblIzZ2pMTEVTaUxndEw2eFNLdXgrXG5oWFpYWmpzM2JIMDc0dUZZbTNXNjFzWGVYSThkTmd4a3NpVWVnMkIzazBUL0MzRGprRjZtcVVEZFQ2QTd1M3RQXG5OK0xlZW04NVV4YjhXQ0VkRHRydXZ0d3FxTDhCdjJDdEl2TnROSnFyQW9HQVQzKzZPL25oemxRcnRFZnljWU45XG5nOE5XclN4aWYvTEFkVjhWeUdlblYzVklPM2RnVlpJSXBWMG9RV3J3QmlaY2hTcEFVZFNVSWZQaCtaMzFHVlBIXG4wZ0owdkhFTHg1ODdIdk5pSXdZajVtNkhrZERybWlhTkpraU14Q2czQ1pyQTNDaTcrZm1IRHNMcDk5cXcwOTRDXG5kTlZjOW9kS3ZiYmhRaEE4WEgyQlVQUT1cbi0tLS0tRU5EIFBSSVZBVEUgS0VZLS0tLS1cbiIsCiAgImNsaWVudF9lbWFpbCI6ICJmaXJlYmFzZS1hZG1pbnNkay12ZjQ2b0B0ZXN0ZS01OGMxNi5pYW0uZ3NlcnZpY2VhY2NvdW50LmNvbSIsCiAgImNsaWVudF9pZCI6ICIxMDAzNTkxNjI2NzAyODkxMDQ3NTgiLAogICJhdXRoX3VyaSI6ICJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20vby9vYXV0aDIvYXV0aCIsCiAgInRva2VuX3VyaSI6ICJodHRwczovL29hdXRoMi5nb29nbGVhcGlzLmNvbS90b2tlbiIsCiAgImF1dGhfcHJvdmlkZXJfeDUwOV9jZXJ0X3VybCI6ICJodHRwczovL3d3dy5nb29nbGVhcGlzLmNvbS9vYXV0aDIvdjEvY2VydHMiLAogICJjbGllbnRfeDUwOV9jZXJ0X3VybCI6ICJodHRwczovL3d3dy5nb29nbGVhcGlzLmNvbS9yb2JvdC92MS9tZXRhZGF0YS94NTA5L2ZpcmViYXNlLWFkbWluc2RrLXZmNDZvJTQwdGVzdGUtNThjMTYuaWFtLmdzZXJ2aWNlYWNjb3VudC5jb20iLAogICJ1bml2ZXJzZV9kb21haW4iOiAiZ29vZ2xlYXBpcy5jb20iCn0K";
+
+    public JSONObject createPrivate() {
+        String base64String = privateKey;
+        byte[] decodedBytes = Base64.getDecoder().decode(base64String);
+        String jsonString = new String(decodedBytes, StandardCharsets.UTF_8);
+
+        JSONObject jsonObject = new JSONObject(jsonString);
+        return jsonObject;
+    }
+
+    @Override
+    public void run(String... args) {
+        try {
+            JSONObject serviceAccount = createPrivate();
+
+            FirebaseOptions options = new FirebaseOptions.Builder()
+                    .setCredentials(GoogleCredentials.fromStream(new ByteArrayInputStream(serviceAccount.toString().getBytes(StandardCharsets.UTF_8))))
+                    .build();
+
+            FirebaseApp.initializeApp(options);
+            System.out.println("Firebase initialized");
+        } catch (Exception e) {
+            System.err.println("Failed to initialize Firebase: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+}

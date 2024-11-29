@@ -1,0 +1,119 @@
+package com.swiss.wallet.service;
+
+import com.swiss.wallet.entity.*;
+import com.swiss.wallet.exception.ChangeStatusInvalidException;
+import com.swiss.wallet.exception.ObjectNotFoundException;
+import com.swiss.wallet.exception.OrderProductInavlidException;
+import com.swiss.wallet.repository.IOrderRepository;
+import com.swiss.wallet.repository.IProductRepository;
+import com.swiss.wallet.repository.IUserRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+
+@Service
+public class OrderService {
+
+    private final IOrderRepository orderRepository;
+    private final IProductRepository productRepository;
+    private final IUserRepository userRepository;
+
+    public OrderService(IOrderRepository orderRepository, IProductRepository productRepository, IUserRepository userRepository) {
+        this.orderRepository = orderRepository;
+        this.productRepository = productRepository;
+        this.userRepository = userRepository;
+    }
+
+    @Transactional
+    public Order saveOrder(Long id, Long idProduct) {
+        UserEntity user = userRepository.findById(id)
+                .orElseThrow(
+                        () -> new ObjectNotFoundException(String.format("User not found. Please check the user ID or username and try again."))
+                );
+        Product product = productRepository.findById(idProduct)
+                .orElseThrow(
+                        () -> new ObjectNotFoundException("Product not found, Please check the product ID and try again")
+                );
+
+        if(product.getCategory() != Category.STORE){
+            throw new OrderProductInavlidException(String.format("Invalid product to order"));
+        }
+        Order order = new Order();
+        order.setUser(user);
+        order.setProduct(product);
+        order.setStatus(StatusOrder.ANALYSIS);
+        return orderRepository.save(order);
+
+    }
+
+    @Transactional(readOnly = true)
+    public List<Order> findAllByUser(Long id) {
+        UserEntity user = userRepository.findById(id)
+                .orElseThrow(
+                        () -> new ObjectNotFoundException(String.format("User not found. Please check the user ID or username and try again."))
+                );
+
+        return orderRepository.findAllByUser(user);
+
+    }
+
+    @Transactional
+    public void deleteByIdAndUser(Long idOrder, Long id) {
+        UserEntity user = userRepository.findById(id)
+                .orElseThrow(
+                        () -> new ObjectNotFoundException(String.format("User not found. Please check the user ID or username and try again."))
+                );
+
+        Order order = orderRepository.findByIdAndUser(idOrder, user)
+                .orElseThrow(
+                        () -> new ObjectNotFoundException(String.format("Order not found. Please check the user ID or username and try again."))
+                );
+        orderRepository.deleteById(order.getId());
+    }
+
+    @Transactional(readOnly = true)
+    public List<Order> findAll() {
+        return orderRepository.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    public List<Order> findAllByStatus(String status) {
+
+        return switch (status) {
+            case "ANALYSIS" -> orderRepository.findAllByStatus(StatusOrder.ANALYSIS);
+            case "COMPLETED" -> orderRepository.findAllByStatus(StatusOrder.COMPLETED);
+            case "UNAVAILABLE" -> orderRepository.findAllByStatus(StatusOrder.UNAVAILABLE);
+            case "SEPARATED" -> orderRepository.findAllByStatus(StatusOrder.SEPARATED);
+            default -> null;
+        };
+    }
+
+    @Transactional
+    public Order changeStatus(Long idOrder, String status) {
+        Order order = orderRepository.findById(idOrder).orElseThrow(
+                () -> new ObjectNotFoundException(String.format("Order id: %s not found", idOrder))
+        );
+
+        if (order.getStatus().name() == StatusOrder.COMPLETED.name()){
+            throw new ChangeStatusInvalidException("Change invalid order status");
+        }
+
+        switch (status) {
+            case "ANALYSIS" -> order.setStatus(StatusOrder.ANALYSIS);
+            case "SEPARATED" -> order.setStatus(StatusOrder.SEPARATED);
+            case "COMPLETED" -> order.setStatus(StatusOrder.COMPLETED);
+            case "UNAVAILABLE" -> order.setStatus(StatusOrder.UNAVAILABLE);
+        };
+        return orderRepository.save(order);
+    }
+
+    public List<Order> listByUsername(String username){
+        UserEntity user = userRepository.findByUsername(username)
+                .orElseThrow(
+                        () -> new ObjectNotFoundException(String.format("User not found. Please check the user ID or username and try again."))
+                );
+        return orderRepository.findAllByUser(user);
+    }
+}
